@@ -1,6 +1,5 @@
 # Multi-stage build for smaller final image
-# Stage 1: Build dependencies
-FROM python:3.11-slim AS builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
@@ -17,8 +16,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # Pre-download NLTK data (used by context_gate.py)
 RUN python -c "import nltk; nltk.download('stopwords', download_dir='/nltk_data')"
 
-# Stage 2: Production image
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
