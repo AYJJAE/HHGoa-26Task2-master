@@ -1,0 +1,8 @@
+steps:
+  # Build the container image from the backend directory
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/studio-5469755347-14b91/github.com/ayjjae/hhgoa-26task2-master:$COMMIT_SHA', '-f', 'Dockerfile', '.']
+    dir: 'backend'
+# Push the container image to Container Registry
+images:
+  - 'gcr.io/studio-5469755347-14b91/github.com/ayjjae/hhgoa-26task2-master:$COMMIT_SHA'
