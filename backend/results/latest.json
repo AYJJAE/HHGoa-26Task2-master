@@ -1,0 +1,42 @@
+{
+  "Hybrid RRF (Passage)": {
+    "quality": {
+      "Recall@1": 33.0,
+      "Recall@5": 68.0,
+      "Recall@10": 80.0,
+      "MRR": 0.4855
+    },
+    "latency": {
+      "query_embedding_ms": {
+        "P50": 14.19,
+        "P70": 17.05,
+        "P100": 25.72
+      },
+      "dense_retrieval_ms": {
+        "P50": 5.86,
+        "P70": 6.19,
+        "P100": 9.17
+      },
+      "sparse_retrieval_ms": {
+        "P50": 29.17,
+        "P70": 31.56,
+        "P100": 38.26
+      },
+      "rrf_fusion_ms": {
+        "P50": 0.24,
+        "P70": 0.27,
+        "P100": 2.71
+      },
+      "context_assembly_ms": {
+        "P50": 0.01,
+        "P70": 0.01,
+        "P100": 0.01
+      },
+      "total_retrieval_ms": {
+        "P50": 50.42,
+        "P70": 54.94,
+        "P100": 65.44
+      }
+    }
+  }
+}

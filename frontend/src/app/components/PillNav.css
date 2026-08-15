@@ -1,0 +1,54 @@
+.pill-nav-container {
+  display: flex;
+  position: relative;
+  border-radius: 9999px;
+  padding: 4px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.pill-nav-indicator {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: calc(100% - 8px);
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pill-nav-item {
+  position: relative;
+  z-index: 2;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.pill-nav-link {
+  display: block;
+  padding: 8px 24px;
+  text-decoration: none;
+}
+
+.pill-nav-text {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .pill-nav-link {
+    padding: 6px 14px;
+  }
+  
+  .pill-nav-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+}

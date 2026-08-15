@@ -1,0 +1,2502 @@
+[
+  {
+    "query_id": "mock_0_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 0?",
+    "Eng_Query": "This is a mock query 0?",
+    "Answer": "मॉक उत्तर 0 यहाँ है।",
+    "Eng_Answer": "The mock answer 0 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 0. It contains the answer.",
+        "This is a distractor passage for query 0.",
+        "Another irrelevant passage for 0."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 0 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 0 के लिए एक भटकाने वाला मार्ग है।",
+        "0 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_1_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 1?",
+    "Eng_Query": "This is a mock query 1?",
+    "Answer": "मॉक उत्तर 1 यहाँ है।",
+    "Eng_Answer": "The mock answer 1 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 1. It contains the answer.",
+        "This is a distractor passage for query 1.",
+        "Another irrelevant passage for 1."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 1 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 1 के लिए एक भटकाने वाला मार्ग है।",
+        "1 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_2_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 2?",
+    "Eng_Query": "This is a mock query 2?",
+    "Answer": "मॉक उत्तर 2 यहाँ है।",
+    "Eng_Answer": "The mock answer 2 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 2. It contains the answer.",
+        "This is a distractor passage for query 2.",
+        "Another irrelevant passage for 2."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 2 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 2 के लिए एक भटकाने वाला मार्ग है।",
+        "2 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_3_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 3?",
+    "Eng_Query": "This is a mock query 3?",
+    "Answer": "मॉक उत्तर 3 यहाँ है।",
+    "Eng_Answer": "The mock answer 3 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 3. It contains the answer.",
+        "This is a distractor passage for query 3.",
+        "Another irrelevant passage for 3."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 3 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 3 के लिए एक भटकाने वाला मार्ग है।",
+        "3 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_4_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 4?",
+    "Eng_Query": "This is a mock query 4?",
+    "Answer": "मॉक उत्तर 4 यहाँ है।",
+    "Eng_Answer": "The mock answer 4 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 4. It contains the answer.",
+        "This is a distractor passage for query 4.",
+        "Another irrelevant passage for 4."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 4 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 4 के लिए एक भटकाने वाला मार्ग है।",
+        "4 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_5_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 5?",
+    "Eng_Query": "This is a mock query 5?",
+    "Answer": "मॉक उत्तर 5 यहाँ है।",
+    "Eng_Answer": "The mock answer 5 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 5. It contains the answer.",
+        "This is a distractor passage for query 5.",
+        "Another irrelevant passage for 5."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 5 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 5 के लिए एक भटकाने वाला मार्ग है।",
+        "5 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_6_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 6?",
+    "Eng_Query": "This is a mock query 6?",
+    "Answer": "मॉक उत्तर 6 यहाँ है।",
+    "Eng_Answer": "The mock answer 6 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 6. It contains the answer.",
+        "This is a distractor passage for query 6.",
+        "Another irrelevant passage for 6."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 6 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 6 के लिए एक भटकाने वाला मार्ग है।",
+        "6 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_7_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 7?",
+    "Eng_Query": "This is a mock query 7?",
+    "Answer": "मॉक उत्तर 7 यहाँ है।",
+    "Eng_Answer": "The mock answer 7 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 7. It contains the answer.",
+        "This is a distractor passage for query 7.",
+        "Another irrelevant passage for 7."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 7 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 7 के लिए एक भटकाने वाला मार्ग है।",
+        "7 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_8_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 8?",
+    "Eng_Query": "This is a mock query 8?",
+    "Answer": "मॉक उत्तर 8 यहाँ है।",
+    "Eng_Answer": "The mock answer 8 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 8. It contains the answer.",
+        "This is a distractor passage for query 8.",
+        "Another irrelevant passage for 8."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 8 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 8 के लिए एक भटकाने वाला मार्ग है।",
+        "8 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_9_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 9?",
+    "Eng_Query": "This is a mock query 9?",
+    "Answer": "मॉक उत्तर 9 यहाँ है।",
+    "Eng_Answer": "The mock answer 9 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 9. It contains the answer.",
+        "This is a distractor passage for query 9.",
+        "Another irrelevant passage for 9."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 9 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 9 के लिए एक भटकाने वाला मार्ग है।",
+        "9 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_10_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 10?",
+    "Eng_Query": "This is a mock query 10?",
+    "Answer": "मॉक उत्तर 10 यहाँ है।",
+    "Eng_Answer": "The mock answer 10 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 10. It contains the answer.",
+        "This is a distractor passage for query 10.",
+        "Another irrelevant passage for 10."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 10 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 10 के लिए एक भटकाने वाला मार्ग है।",
+        "10 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_11_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 11?",
+    "Eng_Query": "This is a mock query 11?",
+    "Answer": "मॉक उत्तर 11 यहाँ है।",
+    "Eng_Answer": "The mock answer 11 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 11. It contains the answer.",
+        "This is a distractor passage for query 11.",
+        "Another irrelevant passage for 11."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 11 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 11 के लिए एक भटकाने वाला मार्ग है।",
+        "11 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_12_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 12?",
+    "Eng_Query": "This is a mock query 12?",
+    "Answer": "मॉक उत्तर 12 यहाँ है।",
+    "Eng_Answer": "The mock answer 12 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 12. It contains the answer.",
+        "This is a distractor passage for query 12.",
+        "Another irrelevant passage for 12."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 12 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 12 के लिए एक भटकाने वाला मार्ग है।",
+        "12 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_13_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 13?",
+    "Eng_Query": "This is a mock query 13?",
+    "Answer": "मॉक उत्तर 13 यहाँ है।",
+    "Eng_Answer": "The mock answer 13 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 13. It contains the answer.",
+        "This is a distractor passage for query 13.",
+        "Another irrelevant passage for 13."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 13 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 13 के लिए एक भटकाने वाला मार्ग है।",
+        "13 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_14_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 14?",
+    "Eng_Query": "This is a mock query 14?",
+    "Answer": "मॉक उत्तर 14 यहाँ है।",
+    "Eng_Answer": "The mock answer 14 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 14. It contains the answer.",
+        "This is a distractor passage for query 14.",
+        "Another irrelevant passage for 14."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 14 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 14 के लिए एक भटकाने वाला मार्ग है।",
+        "14 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_15_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 15?",
+    "Eng_Query": "This is a mock query 15?",
+    "Answer": "मॉक उत्तर 15 यहाँ है।",
+    "Eng_Answer": "The mock answer 15 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 15. It contains the answer.",
+        "This is a distractor passage for query 15.",
+        "Another irrelevant passage for 15."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 15 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 15 के लिए एक भटकाने वाला मार्ग है।",
+        "15 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_16_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 16?",
+    "Eng_Query": "This is a mock query 16?",
+    "Answer": "मॉक उत्तर 16 यहाँ है।",
+    "Eng_Answer": "The mock answer 16 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 16. It contains the answer.",
+        "This is a distractor passage for query 16.",
+        "Another irrelevant passage for 16."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 16 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 16 के लिए एक भटकाने वाला मार्ग है।",
+        "16 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_17_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 17?",
+    "Eng_Query": "This is a mock query 17?",
+    "Answer": "मॉक उत्तर 17 यहाँ है।",
+    "Eng_Answer": "The mock answer 17 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 17. It contains the answer.",
+        "This is a distractor passage for query 17.",
+        "Another irrelevant passage for 17."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 17 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 17 के लिए एक भटकाने वाला मार्ग है।",
+        "17 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_18_0",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 18?",
+    "Eng_Query": "This is a mock query 18?",
+    "Answer": "मॉक उत्तर 18 यहाँ है।",
+    "Eng_Answer": "The mock answer 18 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 18. It contains the answer.",
+        "This is a distractor passage for query 18.",
+        "Another irrelevant passage for 18."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 18 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 18 के लिए एक भटकाने वाला मार्ग है।",
+        "18 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_19_0",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 19?",
+    "Eng_Query": "This is a mock query 19?",
+    "Answer": "मॉक उत्तर 19 यहाँ है।",
+    "Eng_Answer": "The mock answer 19 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 19. It contains the answer.",
+        "This is a distractor passage for query 19.",
+        "Another irrelevant passage for 19."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 19 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 19 के लिए एक भटकाने वाला मार्ग है।",
+        "19 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_0_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 0?",
+    "Eng_Query": "This is a mock query 0?",
+    "Answer": "मॉक उत्तर 0 यहाँ है।",
+    "Eng_Answer": "The mock answer 0 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 0. It contains the answer.",
+        "This is a distractor passage for query 0.",
+        "Another irrelevant passage for 0."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 0 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 0 के लिए एक भटकाने वाला मार्ग है।",
+        "0 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_1_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 1?",
+    "Eng_Query": "This is a mock query 1?",
+    "Answer": "मॉक उत्तर 1 यहाँ है।",
+    "Eng_Answer": "The mock answer 1 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 1. It contains the answer.",
+        "This is a distractor passage for query 1.",
+        "Another irrelevant passage for 1."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 1 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 1 के लिए एक भटकाने वाला मार्ग है।",
+        "1 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_2_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 2?",
+    "Eng_Query": "This is a mock query 2?",
+    "Answer": "मॉक उत्तर 2 यहाँ है।",
+    "Eng_Answer": "The mock answer 2 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 2. It contains the answer.",
+        "This is a distractor passage for query 2.",
+        "Another irrelevant passage for 2."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 2 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 2 के लिए एक भटकाने वाला मार्ग है।",
+        "2 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_3_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 3?",
+    "Eng_Query": "This is a mock query 3?",
+    "Answer": "मॉक उत्तर 3 यहाँ है।",
+    "Eng_Answer": "The mock answer 3 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 3. It contains the answer.",
+        "This is a distractor passage for query 3.",
+        "Another irrelevant passage for 3."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 3 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 3 के लिए एक भटकाने वाला मार्ग है।",
+        "3 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_4_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 4?",
+    "Eng_Query": "This is a mock query 4?",
+    "Answer": "मॉक उत्तर 4 यहाँ है।",
+    "Eng_Answer": "The mock answer 4 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 4. It contains the answer.",
+        "This is a distractor passage for query 4.",
+        "Another irrelevant passage for 4."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 4 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 4 के लिए एक भटकाने वाला मार्ग है।",
+        "4 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_5_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 5?",
+    "Eng_Query": "This is a mock query 5?",
+    "Answer": "मॉक उत्तर 5 यहाँ है।",
+    "Eng_Answer": "The mock answer 5 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 5. It contains the answer.",
+        "This is a distractor passage for query 5.",
+        "Another irrelevant passage for 5."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 5 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 5 के लिए एक भटकाने वाला मार्ग है।",
+        "5 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_6_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 6?",
+    "Eng_Query": "This is a mock query 6?",
+    "Answer": "मॉक उत्तर 6 यहाँ है।",
+    "Eng_Answer": "The mock answer 6 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 6. It contains the answer.",
+        "This is a distractor passage for query 6.",
+        "Another irrelevant passage for 6."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 6 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 6 के लिए एक भटकाने वाला मार्ग है।",
+        "6 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_7_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 7?",
+    "Eng_Query": "This is a mock query 7?",
+    "Answer": "मॉक उत्तर 7 यहाँ है।",
+    "Eng_Answer": "The mock answer 7 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 7. It contains the answer.",
+        "This is a distractor passage for query 7.",
+        "Another irrelevant passage for 7."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 7 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 7 के लिए एक भटकाने वाला मार्ग है।",
+        "7 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_8_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 8?",
+    "Eng_Query": "This is a mock query 8?",
+    "Answer": "मॉक उत्तर 8 यहाँ है।",
+    "Eng_Answer": "The mock answer 8 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 8. It contains the answer.",
+        "This is a distractor passage for query 8.",
+        "Another irrelevant passage for 8."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 8 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 8 के लिए एक भटकाने वाला मार्ग है।",
+        "8 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_9_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 9?",
+    "Eng_Query": "This is a mock query 9?",
+    "Answer": "मॉक उत्तर 9 यहाँ है।",
+    "Eng_Answer": "The mock answer 9 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 9. It contains the answer.",
+        "This is a distractor passage for query 9.",
+        "Another irrelevant passage for 9."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 9 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 9 के लिए एक भटकाने वाला मार्ग है।",
+        "9 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_10_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 10?",
+    "Eng_Query": "This is a mock query 10?",
+    "Answer": "मॉक उत्तर 10 यहाँ है।",
+    "Eng_Answer": "The mock answer 10 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 10. It contains the answer.",
+        "This is a distractor passage for query 10.",
+        "Another irrelevant passage for 10."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 10 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 10 के लिए एक भटकाने वाला मार्ग है।",
+        "10 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_11_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 11?",
+    "Eng_Query": "This is a mock query 11?",
+    "Answer": "मॉक उत्तर 11 यहाँ है।",
+    "Eng_Answer": "The mock answer 11 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 11. It contains the answer.",
+        "This is a distractor passage for query 11.",
+        "Another irrelevant passage for 11."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 11 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 11 के लिए एक भटकाने वाला मार्ग है।",
+        "11 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_12_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 12?",
+    "Eng_Query": "This is a mock query 12?",
+    "Answer": "मॉक उत्तर 12 यहाँ है।",
+    "Eng_Answer": "The mock answer 12 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 12. It contains the answer.",
+        "This is a distractor passage for query 12.",
+        "Another irrelevant passage for 12."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 12 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 12 के लिए एक भटकाने वाला मार्ग है।",
+        "12 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_13_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 13?",
+    "Eng_Query": "This is a mock query 13?",
+    "Answer": "मॉक उत्तर 13 यहाँ है।",
+    "Eng_Answer": "The mock answer 13 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 13. It contains the answer.",
+        "This is a distractor passage for query 13.",
+        "Another irrelevant passage for 13."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 13 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 13 के लिए एक भटकाने वाला मार्ग है।",
+        "13 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_14_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 14?",
+    "Eng_Query": "This is a mock query 14?",
+    "Answer": "मॉक उत्तर 14 यहाँ है।",
+    "Eng_Answer": "The mock answer 14 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 14. It contains the answer.",
+        "This is a distractor passage for query 14.",
+        "Another irrelevant passage for 14."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 14 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 14 के लिए एक भटकाने वाला मार्ग है।",
+        "14 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_15_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 15?",
+    "Eng_Query": "This is a mock query 15?",
+    "Answer": "मॉक उत्तर 15 यहाँ है।",
+    "Eng_Answer": "The mock answer 15 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 15. It contains the answer.",
+        "This is a distractor passage for query 15.",
+        "Another irrelevant passage for 15."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 15 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 15 के लिए एक भटकाने वाला मार्ग है।",
+        "15 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_16_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 16?",
+    "Eng_Query": "This is a mock query 16?",
+    "Answer": "मॉक उत्तर 16 यहाँ है।",
+    "Eng_Answer": "The mock answer 16 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 16. It contains the answer.",
+        "This is a distractor passage for query 16.",
+        "Another irrelevant passage for 16."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 16 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 16 के लिए एक भटकाने वाला मार्ग है।",
+        "16 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_17_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 17?",
+    "Eng_Query": "This is a mock query 17?",
+    "Answer": "मॉक उत्तर 17 यहाँ है।",
+    "Eng_Answer": "The mock answer 17 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 17. It contains the answer.",
+        "This is a distractor passage for query 17.",
+        "Another irrelevant passage for 17."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 17 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 17 के लिए एक भटकाने वाला मार्ग है।",
+        "17 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_18_1",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 18?",
+    "Eng_Query": "This is a mock query 18?",
+    "Answer": "मॉक उत्तर 18 यहाँ है।",
+    "Eng_Answer": "The mock answer 18 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 18. It contains the answer.",
+        "This is a distractor passage for query 18.",
+        "Another irrelevant passage for 18."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 18 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 18 के लिए एक भटकाने वाला मार्ग है।",
+        "18 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_19_1",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 19?",
+    "Eng_Query": "This is a mock query 19?",
+    "Answer": "मॉक उत्तर 19 यहाँ है।",
+    "Eng_Answer": "The mock answer 19 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 19. It contains the answer.",
+        "This is a distractor passage for query 19.",
+        "Another irrelevant passage for 19."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 19 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 19 के लिए एक भटकाने वाला मार्ग है।",
+        "19 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_0_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 0?",
+    "Eng_Query": "This is a mock query 0?",
+    "Answer": "मॉक उत्तर 0 यहाँ है।",
+    "Eng_Answer": "The mock answer 0 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 0. It contains the answer.",
+        "This is a distractor passage for query 0.",
+        "Another irrelevant passage for 0."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 0 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 0 के लिए एक भटकाने वाला मार्ग है।",
+        "0 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_1_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 1?",
+    "Eng_Query": "This is a mock query 1?",
+    "Answer": "मॉक उत्तर 1 यहाँ है।",
+    "Eng_Answer": "The mock answer 1 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 1. It contains the answer.",
+        "This is a distractor passage for query 1.",
+        "Another irrelevant passage for 1."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 1 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 1 के लिए एक भटकाने वाला मार्ग है।",
+        "1 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_2_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 2?",
+    "Eng_Query": "This is a mock query 2?",
+    "Answer": "मॉक उत्तर 2 यहाँ है।",
+    "Eng_Answer": "The mock answer 2 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 2. It contains the answer.",
+        "This is a distractor passage for query 2.",
+        "Another irrelevant passage for 2."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 2 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 2 के लिए एक भटकाने वाला मार्ग है।",
+        "2 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_3_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 3?",
+    "Eng_Query": "This is a mock query 3?",
+    "Answer": "मॉक उत्तर 3 यहाँ है।",
+    "Eng_Answer": "The mock answer 3 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 3. It contains the answer.",
+        "This is a distractor passage for query 3.",
+        "Another irrelevant passage for 3."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 3 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 3 के लिए एक भटकाने वाला मार्ग है।",
+        "3 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_4_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 4?",
+    "Eng_Query": "This is a mock query 4?",
+    "Answer": "मॉक उत्तर 4 यहाँ है।",
+    "Eng_Answer": "The mock answer 4 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 4. It contains the answer.",
+        "This is a distractor passage for query 4.",
+        "Another irrelevant passage for 4."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 4 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 4 के लिए एक भटकाने वाला मार्ग है।",
+        "4 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_5_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 5?",
+    "Eng_Query": "This is a mock query 5?",
+    "Answer": "मॉक उत्तर 5 यहाँ है।",
+    "Eng_Answer": "The mock answer 5 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 5. It contains the answer.",
+        "This is a distractor passage for query 5.",
+        "Another irrelevant passage for 5."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 5 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 5 के लिए एक भटकाने वाला मार्ग है।",
+        "5 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_6_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 6?",
+    "Eng_Query": "This is a mock query 6?",
+    "Answer": "मॉक उत्तर 6 यहाँ है।",
+    "Eng_Answer": "The mock answer 6 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 6. It contains the answer.",
+        "This is a distractor passage for query 6.",
+        "Another irrelevant passage for 6."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 6 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 6 के लिए एक भटकाने वाला मार्ग है।",
+        "6 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_7_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 7?",
+    "Eng_Query": "This is a mock query 7?",
+    "Answer": "मॉक उत्तर 7 यहाँ है।",
+    "Eng_Answer": "The mock answer 7 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 7. It contains the answer.",
+        "This is a distractor passage for query 7.",
+        "Another irrelevant passage for 7."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 7 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 7 के लिए एक भटकाने वाला मार्ग है।",
+        "7 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_8_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 8?",
+    "Eng_Query": "This is a mock query 8?",
+    "Answer": "मॉक उत्तर 8 यहाँ है।",
+    "Eng_Answer": "The mock answer 8 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 8. It contains the answer.",
+        "This is a distractor passage for query 8.",
+        "Another irrelevant passage for 8."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 8 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 8 के लिए एक भटकाने वाला मार्ग है।",
+        "8 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_9_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 9?",
+    "Eng_Query": "This is a mock query 9?",
+    "Answer": "मॉक उत्तर 9 यहाँ है।",
+    "Eng_Answer": "The mock answer 9 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 9. It contains the answer.",
+        "This is a distractor passage for query 9.",
+        "Another irrelevant passage for 9."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 9 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 9 के लिए एक भटकाने वाला मार्ग है।",
+        "9 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_10_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 10?",
+    "Eng_Query": "This is a mock query 10?",
+    "Answer": "मॉक उत्तर 10 यहाँ है।",
+    "Eng_Answer": "The mock answer 10 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 10. It contains the answer.",
+        "This is a distractor passage for query 10.",
+        "Another irrelevant passage for 10."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 10 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 10 के लिए एक भटकाने वाला मार्ग है।",
+        "10 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_11_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 11?",
+    "Eng_Query": "This is a mock query 11?",
+    "Answer": "मॉक उत्तर 11 यहाँ है।",
+    "Eng_Answer": "The mock answer 11 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 11. It contains the answer.",
+        "This is a distractor passage for query 11.",
+        "Another irrelevant passage for 11."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 11 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 11 के लिए एक भटकाने वाला मार्ग है।",
+        "11 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_12_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 12?",
+    "Eng_Query": "This is a mock query 12?",
+    "Answer": "मॉक उत्तर 12 यहाँ है।",
+    "Eng_Answer": "The mock answer 12 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 12. It contains the answer.",
+        "This is a distractor passage for query 12.",
+        "Another irrelevant passage for 12."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 12 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 12 के लिए एक भटकाने वाला मार्ग है।",
+        "12 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_13_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 13?",
+    "Eng_Query": "This is a mock query 13?",
+    "Answer": "मॉक उत्तर 13 यहाँ है।",
+    "Eng_Answer": "The mock answer 13 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 13. It contains the answer.",
+        "This is a distractor passage for query 13.",
+        "Another irrelevant passage for 13."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 13 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 13 के लिए एक भटकाने वाला मार्ग है।",
+        "13 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_14_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 14?",
+    "Eng_Query": "This is a mock query 14?",
+    "Answer": "मॉक उत्तर 14 यहाँ है।",
+    "Eng_Answer": "The mock answer 14 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 14. It contains the answer.",
+        "This is a distractor passage for query 14.",
+        "Another irrelevant passage for 14."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 14 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 14 के लिए एक भटकाने वाला मार्ग है।",
+        "14 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_15_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 15?",
+    "Eng_Query": "This is a mock query 15?",
+    "Answer": "मॉक उत्तर 15 यहाँ है।",
+    "Eng_Answer": "The mock answer 15 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 15. It contains the answer.",
+        "This is a distractor passage for query 15.",
+        "Another irrelevant passage for 15."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 15 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 15 के लिए एक भटकाने वाला मार्ग है।",
+        "15 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_16_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 16?",
+    "Eng_Query": "This is a mock query 16?",
+    "Answer": "मॉक उत्तर 16 यहाँ है।",
+    "Eng_Answer": "The mock answer 16 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 16. It contains the answer.",
+        "This is a distractor passage for query 16.",
+        "Another irrelevant passage for 16."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 16 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 16 के लिए एक भटकाने वाला मार्ग है।",
+        "16 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_17_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 17?",
+    "Eng_Query": "This is a mock query 17?",
+    "Answer": "मॉक उत्तर 17 यहाँ है।",
+    "Eng_Answer": "The mock answer 17 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 17. It contains the answer.",
+        "This is a distractor passage for query 17.",
+        "Another irrelevant passage for 17."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 17 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 17 के लिए एक भटकाने वाला मार्ग है।",
+        "17 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_18_2",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 18?",
+    "Eng_Query": "This is a mock query 18?",
+    "Answer": "मॉक उत्तर 18 यहाँ है।",
+    "Eng_Answer": "The mock answer 18 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 18. It contains the answer.",
+        "This is a distractor passage for query 18.",
+        "Another irrelevant passage for 18."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 18 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 18 के लिए एक भटकाने वाला मार्ग है।",
+        "18 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_19_2",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 19?",
+    "Eng_Query": "This is a mock query 19?",
+    "Answer": "मॉक उत्तर 19 यहाँ है।",
+    "Eng_Answer": "The mock answer 19 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 19. It contains the answer.",
+        "This is a distractor passage for query 19.",
+        "Another irrelevant passage for 19."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 19 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 19 के लिए एक भटकाने वाला मार्ग है।",
+        "19 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_0_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 0?",
+    "Eng_Query": "This is a mock query 0?",
+    "Answer": "मॉक उत्तर 0 यहाँ है।",
+    "Eng_Answer": "The mock answer 0 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 0. It contains the answer.",
+        "This is a distractor passage for query 0.",
+        "Another irrelevant passage for 0."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 0 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 0 के लिए एक भटकाने वाला मार्ग है।",
+        "0 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_1_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 1?",
+    "Eng_Query": "This is a mock query 1?",
+    "Answer": "मॉक उत्तर 1 यहाँ है।",
+    "Eng_Answer": "The mock answer 1 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 1. It contains the answer.",
+        "This is a distractor passage for query 1.",
+        "Another irrelevant passage for 1."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 1 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 1 के लिए एक भटकाने वाला मार्ग है।",
+        "1 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_2_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 2?",
+    "Eng_Query": "This is a mock query 2?",
+    "Answer": "मॉक उत्तर 2 यहाँ है।",
+    "Eng_Answer": "The mock answer 2 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 2. It contains the answer.",
+        "This is a distractor passage for query 2.",
+        "Another irrelevant passage for 2."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 2 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 2 के लिए एक भटकाने वाला मार्ग है।",
+        "2 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_3_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 3?",
+    "Eng_Query": "This is a mock query 3?",
+    "Answer": "मॉक उत्तर 3 यहाँ है।",
+    "Eng_Answer": "The mock answer 3 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 3. It contains the answer.",
+        "This is a distractor passage for query 3.",
+        "Another irrelevant passage for 3."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 3 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 3 के लिए एक भटकाने वाला मार्ग है।",
+        "3 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_4_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 4?",
+    "Eng_Query": "This is a mock query 4?",
+    "Answer": "मॉक उत्तर 4 यहाँ है।",
+    "Eng_Answer": "The mock answer 4 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 4. It contains the answer.",
+        "This is a distractor passage for query 4.",
+        "Another irrelevant passage for 4."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 4 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 4 के लिए एक भटकाने वाला मार्ग है।",
+        "4 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_5_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 5?",
+    "Eng_Query": "This is a mock query 5?",
+    "Answer": "मॉक उत्तर 5 यहाँ है।",
+    "Eng_Answer": "The mock answer 5 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 5. It contains the answer.",
+        "This is a distractor passage for query 5.",
+        "Another irrelevant passage for 5."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 5 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 5 के लिए एक भटकाने वाला मार्ग है।",
+        "5 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_6_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 6?",
+    "Eng_Query": "This is a mock query 6?",
+    "Answer": "मॉक उत्तर 6 यहाँ है।",
+    "Eng_Answer": "The mock answer 6 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 6. It contains the answer.",
+        "This is a distractor passage for query 6.",
+        "Another irrelevant passage for 6."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 6 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 6 के लिए एक भटकाने वाला मार्ग है।",
+        "6 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_7_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 7?",
+    "Eng_Query": "This is a mock query 7?",
+    "Answer": "मॉक उत्तर 7 यहाँ है।",
+    "Eng_Answer": "The mock answer 7 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 7. It contains the answer.",
+        "This is a distractor passage for query 7.",
+        "Another irrelevant passage for 7."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 7 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 7 के लिए एक भटकाने वाला मार्ग है।",
+        "7 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_8_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 8?",
+    "Eng_Query": "This is a mock query 8?",
+    "Answer": "मॉक उत्तर 8 यहाँ है।",
+    "Eng_Answer": "The mock answer 8 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 8. It contains the answer.",
+        "This is a distractor passage for query 8.",
+        "Another irrelevant passage for 8."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 8 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 8 के लिए एक भटकाने वाला मार्ग है।",
+        "8 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_9_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 9?",
+    "Eng_Query": "This is a mock query 9?",
+    "Answer": "मॉक उत्तर 9 यहाँ है।",
+    "Eng_Answer": "The mock answer 9 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 9. It contains the answer.",
+        "This is a distractor passage for query 9.",
+        "Another irrelevant passage for 9."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 9 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 9 के लिए एक भटकाने वाला मार्ग है।",
+        "9 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_10_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 10?",
+    "Eng_Query": "This is a mock query 10?",
+    "Answer": "मॉक उत्तर 10 यहाँ है।",
+    "Eng_Answer": "The mock answer 10 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 10. It contains the answer.",
+        "This is a distractor passage for query 10.",
+        "Another irrelevant passage for 10."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 10 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 10 के लिए एक भटकाने वाला मार्ग है।",
+        "10 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_11_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 11?",
+    "Eng_Query": "This is a mock query 11?",
+    "Answer": "मॉक उत्तर 11 यहाँ है।",
+    "Eng_Answer": "The mock answer 11 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 11. It contains the answer.",
+        "This is a distractor passage for query 11.",
+        "Another irrelevant passage for 11."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 11 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 11 के लिए एक भटकाने वाला मार्ग है।",
+        "11 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_12_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 12?",
+    "Eng_Query": "This is a mock query 12?",
+    "Answer": "मॉक उत्तर 12 यहाँ है।",
+    "Eng_Answer": "The mock answer 12 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 12. It contains the answer.",
+        "This is a distractor passage for query 12.",
+        "Another irrelevant passage for 12."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 12 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 12 के लिए एक भटकाने वाला मार्ग है।",
+        "12 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_13_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 13?",
+    "Eng_Query": "This is a mock query 13?",
+    "Answer": "मॉक उत्तर 13 यहाँ है।",
+    "Eng_Answer": "The mock answer 13 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 13. It contains the answer.",
+        "This is a distractor passage for query 13.",
+        "Another irrelevant passage for 13."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 13 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 13 के लिए एक भटकाने वाला मार्ग है।",
+        "13 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_14_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 14?",
+    "Eng_Query": "This is a mock query 14?",
+    "Answer": "मॉक उत्तर 14 यहाँ है।",
+    "Eng_Answer": "The mock answer 14 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 14. It contains the answer.",
+        "This is a distractor passage for query 14.",
+        "Another irrelevant passage for 14."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 14 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 14 के लिए एक भटकाने वाला मार्ग है।",
+        "14 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_15_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 15?",
+    "Eng_Query": "This is a mock query 15?",
+    "Answer": "मॉक उत्तर 15 यहाँ है।",
+    "Eng_Answer": "The mock answer 15 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 15. It contains the answer.",
+        "This is a distractor passage for query 15.",
+        "Another irrelevant passage for 15."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 15 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 15 के लिए एक भटकाने वाला मार्ग है।",
+        "15 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_16_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 16?",
+    "Eng_Query": "This is a mock query 16?",
+    "Answer": "मॉक उत्तर 16 यहाँ है।",
+    "Eng_Answer": "The mock answer 16 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 16. It contains the answer.",
+        "This is a distractor passage for query 16.",
+        "Another irrelevant passage for 16."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 16 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 16 के लिए एक भटकाने वाला मार्ग है।",
+        "16 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_17_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 17?",
+    "Eng_Query": "This is a mock query 17?",
+    "Answer": "मॉक उत्तर 17 यहाँ है।",
+    "Eng_Answer": "The mock answer 17 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 17. It contains the answer.",
+        "This is a distractor passage for query 17.",
+        "Another irrelevant passage for 17."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 17 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 17 के लिए एक भटकाने वाला मार्ग है।",
+        "17 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_18_3",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 18?",
+    "Eng_Query": "This is a mock query 18?",
+    "Answer": "मॉक उत्तर 18 यहाँ है।",
+    "Eng_Answer": "The mock answer 18 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 18. It contains the answer.",
+        "This is a distractor passage for query 18.",
+        "Another irrelevant passage for 18."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 18 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 18 के लिए एक भटकाने वाला मार्ग है।",
+        "18 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_19_3",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 19?",
+    "Eng_Query": "This is a mock query 19?",
+    "Answer": "मॉक उत्तर 19 यहाँ है।",
+    "Eng_Answer": "The mock answer 19 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 19. It contains the answer.",
+        "This is a distractor passage for query 19.",
+        "Another irrelevant passage for 19."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 19 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 19 के लिए एक भटकाने वाला मार्ग है।",
+        "19 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_0_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 0?",
+    "Eng_Query": "This is a mock query 0?",
+    "Answer": "मॉक उत्तर 0 यहाँ है।",
+    "Eng_Answer": "The mock answer 0 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 0. It contains the answer.",
+        "This is a distractor passage for query 0.",
+        "Another irrelevant passage for 0."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 0 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 0 के लिए एक भटकाने वाला मार्ग है।",
+        "0 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_1_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 1?",
+    "Eng_Query": "This is a mock query 1?",
+    "Answer": "मॉक उत्तर 1 यहाँ है।",
+    "Eng_Answer": "The mock answer 1 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 1. It contains the answer.",
+        "This is a distractor passage for query 1.",
+        "Another irrelevant passage for 1."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 1 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 1 के लिए एक भटकाने वाला मार्ग है।",
+        "1 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_2_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 2?",
+    "Eng_Query": "This is a mock query 2?",
+    "Answer": "मॉक उत्तर 2 यहाँ है।",
+    "Eng_Answer": "The mock answer 2 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 2. It contains the answer.",
+        "This is a distractor passage for query 2.",
+        "Another irrelevant passage for 2."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 2 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 2 के लिए एक भटकाने वाला मार्ग है।",
+        "2 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_3_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 3?",
+    "Eng_Query": "This is a mock query 3?",
+    "Answer": "मॉक उत्तर 3 यहाँ है।",
+    "Eng_Answer": "The mock answer 3 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 3. It contains the answer.",
+        "This is a distractor passage for query 3.",
+        "Another irrelevant passage for 3."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 3 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 3 के लिए एक भटकाने वाला मार्ग है।",
+        "3 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_4_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 4?",
+    "Eng_Query": "This is a mock query 4?",
+    "Answer": "मॉक उत्तर 4 यहाँ है।",
+    "Eng_Answer": "The mock answer 4 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 4. It contains the answer.",
+        "This is a distractor passage for query 4.",
+        "Another irrelevant passage for 4."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 4 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 4 के लिए एक भटकाने वाला मार्ग है।",
+        "4 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_5_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 5?",
+    "Eng_Query": "This is a mock query 5?",
+    "Answer": "मॉक उत्तर 5 यहाँ है।",
+    "Eng_Answer": "The mock answer 5 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 5. It contains the answer.",
+        "This is a distractor passage for query 5.",
+        "Another irrelevant passage for 5."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 5 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 5 के लिए एक भटकाने वाला मार्ग है।",
+        "5 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_6_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 6?",
+    "Eng_Query": "This is a mock query 6?",
+    "Answer": "मॉक उत्तर 6 यहाँ है।",
+    "Eng_Answer": "The mock answer 6 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 6. It contains the answer.",
+        "This is a distractor passage for query 6.",
+        "Another irrelevant passage for 6."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 6 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 6 के लिए एक भटकाने वाला मार्ग है।",
+        "6 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_7_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 7?",
+    "Eng_Query": "This is a mock query 7?",
+    "Answer": "मॉक उत्तर 7 यहाँ है।",
+    "Eng_Answer": "The mock answer 7 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 7. It contains the answer.",
+        "This is a distractor passage for query 7.",
+        "Another irrelevant passage for 7."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 7 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 7 के लिए एक भटकाने वाला मार्ग है।",
+        "7 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_8_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 8?",
+    "Eng_Query": "This is a mock query 8?",
+    "Answer": "मॉक उत्तर 8 यहाँ है।",
+    "Eng_Answer": "The mock answer 8 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 8. It contains the answer.",
+        "This is a distractor passage for query 8.",
+        "Another irrelevant passage for 8."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 8 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 8 के लिए एक भटकाने वाला मार्ग है।",
+        "8 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_9_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 9?",
+    "Eng_Query": "This is a mock query 9?",
+    "Answer": "मॉक उत्तर 9 यहाँ है।",
+    "Eng_Answer": "The mock answer 9 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 9. It contains the answer.",
+        "This is a distractor passage for query 9.",
+        "Another irrelevant passage for 9."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 9 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 9 के लिए एक भटकाने वाला मार्ग है।",
+        "9 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_10_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 10?",
+    "Eng_Query": "This is a mock query 10?",
+    "Answer": "मॉक उत्तर 10 यहाँ है।",
+    "Eng_Answer": "The mock answer 10 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 10. It contains the answer.",
+        "This is a distractor passage for query 10.",
+        "Another irrelevant passage for 10."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 10 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 10 के लिए एक भटकाने वाला मार्ग है।",
+        "10 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_11_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 11?",
+    "Eng_Query": "This is a mock query 11?",
+    "Answer": "मॉक उत्तर 11 यहाँ है।",
+    "Eng_Answer": "The mock answer 11 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 11. It contains the answer.",
+        "This is a distractor passage for query 11.",
+        "Another irrelevant passage for 11."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 11 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 11 के लिए एक भटकाने वाला मार्ग है।",
+        "11 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_12_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 12?",
+    "Eng_Query": "This is a mock query 12?",
+    "Answer": "मॉक उत्तर 12 यहाँ है।",
+    "Eng_Answer": "The mock answer 12 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 12. It contains the answer.",
+        "This is a distractor passage for query 12.",
+        "Another irrelevant passage for 12."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 12 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 12 के लिए एक भटकाने वाला मार्ग है।",
+        "12 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_13_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 13?",
+    "Eng_Query": "This is a mock query 13?",
+    "Answer": "मॉक उत्तर 13 यहाँ है।",
+    "Eng_Answer": "The mock answer 13 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 13. It contains the answer.",
+        "This is a distractor passage for query 13.",
+        "Another irrelevant passage for 13."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 13 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 13 के लिए एक भटकाने वाला मार्ग है।",
+        "13 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_14_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 14?",
+    "Eng_Query": "This is a mock query 14?",
+    "Answer": "मॉक उत्तर 14 यहाँ है।",
+    "Eng_Answer": "The mock answer 14 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 14. It contains the answer.",
+        "This is a distractor passage for query 14.",
+        "Another irrelevant passage for 14."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 14 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 14 के लिए एक भटकाने वाला मार्ग है।",
+        "14 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_15_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 15?",
+    "Eng_Query": "This is a mock query 15?",
+    "Answer": "मॉक उत्तर 15 यहाँ है।",
+    "Eng_Answer": "The mock answer 15 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 15. It contains the answer.",
+        "This is a distractor passage for query 15.",
+        "Another irrelevant passage for 15."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 15 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 15 के लिए एक भटकाने वाला मार्ग है।",
+        "15 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_16_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 16?",
+    "Eng_Query": "This is a mock query 16?",
+    "Answer": "मॉक उत्तर 16 यहाँ है।",
+    "Eng_Answer": "The mock answer 16 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 16. It contains the answer.",
+        "This is a distractor passage for query 16.",
+        "Another irrelevant passage for 16."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 16 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 16 के लिए एक भटकाने वाला मार्ग है।",
+        "16 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_17_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 17?",
+    "Eng_Query": "This is a mock query 17?",
+    "Answer": "मॉक उत्तर 17 यहाँ है।",
+    "Eng_Answer": "The mock answer 17 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 17. It contains the answer.",
+        "This is a distractor passage for query 17.",
+        "Another irrelevant passage for 17."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 17 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 17 के लिए एक भटकाने वाला मार्ग है।",
+        "17 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_18_4",
+    "target_lang": "hi",
+    "query": "यह एक मॉक प्रश्न है 18?",
+    "Eng_Query": "This is a mock query 18?",
+    "Answer": "मॉक उत्तर 18 यहाँ है।",
+    "Eng_Answer": "The mock answer 18 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 18. It contains the answer.",
+        "This is a distractor passage for query 18.",
+        "Another irrelevant passage for 18."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 18 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 18 के लिए एक भटकाने वाला मार्ग है।",
+        "18 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "mock_19_4",
+    "target_lang": "mr",
+    "query": "यह एक मॉक प्रश्न है 19?",
+    "Eng_Query": "This is a mock query 19?",
+    "Answer": "मॉक उत्तर 19 यहाँ है।",
+    "Eng_Answer": "The mock answer 19 is here.",
+    "passages": {
+      "English_passages": [
+        "This is the correct passage for query 19. It contains the answer.",
+        "This is a distractor passage for query 19.",
+        "Another irrelevant passage for 19."
+      ],
+      "Translated_passages": [
+        "यह प्रश्न 19 के लिए सही मार्ग है। इसमें उत्तर है।",
+        "यह प्रश्न 19 के लिए एक भटकाने वाला मार्ग है।",
+        "19 के लिए एक और अप्रासंगिक मार्ग।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  }
+]

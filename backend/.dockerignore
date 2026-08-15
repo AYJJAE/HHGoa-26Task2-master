@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.env
+.pytest_cache/
+.vscode/
+.idea/
+.git/
+.DS_Store
+qdrant_data/
+data/
+results/

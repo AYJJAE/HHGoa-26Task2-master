@@ -1,0 +1,440 @@
+import json
+import os
+
+def create_mock_dataset():
+    """
+    Creates a factual multilingual mock dataset that matches the MSMARCO-XI schema.
+    Each record has real Q&A content so the RAG pipeline can actually retrieve and ground answers.
+    """
+    data = [
+        {
+            "query_id": "fact_0",
+            "target_lang": "hi",
+            "query": "भारत की राजधानी क्या है?",
+            "Eng_Query": "What is the capital of India?",
+            "Answer": "भारत की राजधानी नई दिल्ली है।",
+            "Eng_Answer": "The capital of India is New Delhi.",
+            "passages": {
+                "English_passages": [
+                    "New Delhi is the capital of India. It serves as the seat of the Government of India and is located on the banks of the Yamuna River. New Delhi was designed by British architects Edwin Lutyens and Herbert Baker and was inaugurated on 13 February 1931.",
+                    "Mumbai is the financial capital of India and the most populous city. It is located on the west coast of India.",
+                    "Kolkata, formerly known as Calcutta, was the capital of British India until 1911."
+                ],
+                "Translated_passages": [
+                    "नई दिल्ली भारत की राजधानी है। यह भारत सरकार की सीट के रूप में कार्य करती है और यमुना नदी के तट पर स्थित है। नई दिल्ली को ब्रिटिश वास्तुकारों एडविन लुटियंस और हर्बर्ट बेकर ने डिजाइन किया था और इसका उद्घाटन 13 फरवरी 1931 को हुआ था।",
+                    "मुंबई भारत की वित्तीय राजधानी और सबसे अधिक आबादी वाला शहर है। यह भारत के पश्चिमी तट पर स्थित है।",
+                    "कोलकाता, जिसे पहले कलकत्ता के नाम से जाना जाता था, 1911 तक ब्रिटिश भारत की राजधानी थी।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_1",
+            "target_lang": "hi",
+            "query": "ताजमहल कहाँ स्थित है?",
+            "Eng_Query": "Where is the Taj Mahal located?",
+            "Answer": "ताजमहल आगरा, उत्तर प्रदेश, भारत में स्थित है।",
+            "Eng_Answer": "The Taj Mahal is located in Agra, Uttar Pradesh, India.",
+            "passages": {
+                "English_passages": [
+                    "The Taj Mahal is an ivory-white marble mausoleum on the right bank of the river Yamuna in Agra, Uttar Pradesh, India. It was commissioned in 1631 by the fifth Mughal emperor, Shah Jahan, to house the tomb of his beloved wife, Mumtaz Mahal. The Taj Mahal is a UNESCO World Heritage Site.",
+                    "Agra is a city on the banks of the Yamuna river in the Indian state of Uttar Pradesh. It is the fourth-most populous city in Uttar Pradesh.",
+                    "The Red Fort is a historic fort in Old Delhi, India, that served as the main residence of the Mughal emperors."
+                ],
+                "Translated_passages": [
+                    "ताजमहल भारत के उत्तर प्रदेश के आगरा में यमुना नदी के दाहिने किनारे पर स्थित एक हाथीदांत-सफ़ेद संगमरमर का मक़बरा है। इसे 1631 में पांचवें मुगल सम्राट शाहजहाँ ने अपनी प्रिय पत्नी मुमताज़ महल के मक़बरे के लिए बनवाया था। ताजमहल एक यूनेस्को विश्व धरोहर स्थल है।",
+                    "आगरा भारतीय राज्य उत्तर प्रदेश में यमुना नदी के तट पर एक शहर है। यह उत्तर प्रदेश का चौथा सबसे अधिक आबादी वाला शहर है।",
+                    "लाल किला पुरानी दिल्ली, भारत में एक ऐतिहासिक किला है, जो मुगल सम्राटों के मुख्य निवास के रूप में कार्य करता था।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_2",
+            "target_lang": "hi",
+            "query": "भारत का सबसे बड़ा राज्य कौन सा है?",
+            "Eng_Query": "What is the largest state in India?",
+            "Answer": "क्षेत्रफल की दृष्टि से राजस्थान भारत का सबसे बड़ा राज्य है।",
+            "Eng_Answer": "Rajasthan is the largest state of India by area.",
+            "passages": {
+                "English_passages": [
+                    "Rajasthan is the largest state of India by area. It covers 342,239 square kilometres, which is 10.4% of the total geographical area of India. Rajasthan is located on the northwestern side of India. The state capital is Jaipur, also known as the Pink City.",
+                    "Uttar Pradesh is the most populous state in India with over 200 million people. Its capital is Lucknow.",
+                    "Madhya Pradesh is located in the central part of India. It was the largest state by area until 2000 when Chhattisgarh was carved out."
+                ],
+                "Translated_passages": [
+                    "राजस्थान क्षेत्रफल की दृष्टि से भारत का सबसे बड़ा राज्य है। यह 342,239 वर्ग किलोमीटर का क्षेत्र कवर करता है, जो भारत के कुल भौगोलिक क्षेत्र का 10.4% है। राजस्थान भारत के उत्तर-पश्चिमी भाग में स्थित है। राज्य की राजधानी जयपुर है, जिसे गुलाबी शहर भी कहा जाता है।",
+                    "उत्तर प्रदेश 200 मिलियन से अधिक लोगों के साथ भारत का सबसे अधिक आबादी वाला राज्य है। इसकी राजधानी लखनऊ है।",
+                    "मध्य प्रदेश भारत के मध्य भाग में स्थित है। 2000 तक यह क्षेत्रफल की दृष्टि से सबसे बड़ा राज्य था जब छत्तीसगढ़ को अलग किया गया था।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_3",
+            "target_lang": "hi",
+            "query": "गंगा नदी कहाँ से निकलती है?",
+            "Eng_Query": "Where does the Ganges river originate?",
+            "Answer": "गंगा नदी गंगोत्री ग्लेशियर से निकलती है।",
+            "Eng_Answer": "The Ganges river originates from the Gangotri Glacier.",
+            "passages": {
+                "English_passages": [
+                    "The Ganges is the most sacred river in Hinduism. It originates from the Gangotri Glacier at Gaumukh in the Indian state of Uttarakhand. The river flows through India and Bangladesh for approximately 2,525 kilometres before emptying into the Bay of Bengal.",
+                    "The Yamuna is the longest tributary of the Ganges. It originates from the Yamunotri Glacier in Uttarakhand.",
+                    "The Brahmaputra river originates from the Angsi Glacier in Tibet."
+                ],
+                "Translated_passages": [
+                    "गंगा हिंदू धर्म में सबसे पवित्र नदी है। यह भारतीय राज्य उत्तराखंड में गौमुख के गंगोत्री ग्लेशियर से निकलती है। यह नदी भारत और बांग्लादेश से होकर लगभग 2,525 किलोमीटर बहती हुई बंगाल की खाड़ी में गिरती है।",
+                    "यमुना गंगा की सबसे लंबी सहायक नदी है। यह उत्तराखंड में यमुनोत्री ग्लेशियर से निकलती है।",
+                    "ब्रह्मपुत्र नदी तिब्बत में अंग्सी ग्लेशियर से निकलती है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_4",
+            "target_lang": "en",
+            "query": "Who wrote the Indian national anthem?",
+            "Eng_Query": "Who wrote the Indian national anthem?",
+            "Answer": "Rabindranath Tagore wrote the Indian national anthem.",
+            "Eng_Answer": "Rabindranath Tagore wrote the Indian national anthem.",
+            "passages": {
+                "English_passages": [
+                    "Jana Gana Mana is the national anthem of India. It was written by Rabindranath Tagore in Bengali and was first sung on 27 December 1911 at the Calcutta session of the Indian National Congress. It was officially adopted as the national anthem on 24 January 1950.",
+                    "Vande Mataram is the national song of India, written by Bankim Chandra Chattopadhyay.",
+                    "Rabindranath Tagore was the first non-European to win the Nobel Prize in Literature in 1913."
+                ],
+                "Translated_passages": [
+                    "जन गण मन भारत का राष्ट्रगान है। इसे रबीन्द्रनाथ टैगोर ने बंगाली में लिखा था और पहली बार 27 दिसंबर 1911 को भारतीय राष्ट्रीय कांग्रेस के कलकत्ता अधिवेशन में गाया गया था। इसे 24 जनवरी 1950 को आधिकारिक रूप से राष्ट्रगान के रूप में अपनाया गया था।",
+                    "वंदे मातरम् भारत का राष्ट्रीय गीत है, जिसे बंकिम चंद्र चट्टोपाध्याय ने लिखा था।",
+                    "रबीन्द्रनाथ टैगोर 1913 में साहित्य में नोबेल पुरस्कार जीतने वाले पहले गैर-यूरोपीय थे।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_5",
+            "target_lang": "en",
+            "query": "What is the population of India?",
+            "Eng_Query": "What is the population of India?",
+            "Answer": "India has a population of approximately 1.4 billion people.",
+            "Eng_Answer": "India has a population of approximately 1.4 billion people.",
+            "passages": {
+                "English_passages": [
+                    "India is the most populous country in the world with an estimated population of over 1.4 billion people as of 2023, surpassing China. India accounts for about 17.7% of the world's total population. The country has a population density of approximately 464 people per square kilometre.",
+                    "China had been the world's most populous country for centuries but was overtaken by India in 2023.",
+                    "The United States is the third most populous country with about 330 million people."
+                ],
+                "Translated_passages": [
+                    "भारत 2023 तक 1.4 अरब से अधिक लोगों की अनुमानित जनसंख्या के साथ दुनिया का सबसे अधिक आबादी वाला देश है, जिसने चीन को पीछे छोड़ दिया है। भारत दुनिया की कुल आबादी का लगभग 17.7% है।",
+                    "चीन सदियों से दुनिया का सबसे अधिक आबादी वाला देश रहा था लेकिन 2023 में भारत ने इसे पीछे छोड़ दिया।",
+                    "संयुक्त राज्य अमेरिका लगभग 330 मिलियन लोगों के साथ तीसरा सबसे अधिक आबादी वाला देश है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_6",
+            "target_lang": "en",
+            "query": "When did India gain independence?",
+            "Eng_Query": "When did India gain independence?",
+            "Answer": "India gained independence on 15 August 1947.",
+            "Eng_Answer": "India gained independence on 15 August 1947.",
+            "passages": {
+                "English_passages": [
+                    "India gained independence from British colonial rule on 15 August 1947. Jawaharlal Nehru became the first Prime Minister of independent India. The Indian Independence Act 1947 was passed by the British Parliament, partitioning British India into two new independent dominions: India and Pakistan.",
+                    "The Indian independence movement was a series of historic events with the ultimate aim of ending British rule in India.",
+                    "Mahatma Gandhi was a prominent leader of the Indian independence movement who advocated for nonviolent civil disobedience."
+                ],
+                "Translated_passages": [
+                    "भारत ने 15 अगस्त 1947 को ब्रिटिश औपनिवेशिक शासन से स्वतंत्रता प्राप्त की। जवाहरलाल नेहरू स्वतंत्र भारत के पहले प्रधानमंत्री बने। भारतीय स्वतंत्रता अधिनियम 1947 ब्रिटिश संसद द्वारा पारित किया गया था।",
+                    "भारतीय स्वतंत्रता आंदोलन ऐतिहासिक घटनाओं की एक श्रृंखला थी जिसका अंतिम उद्देश्य भारत में ब्रिटिश शासन को समाप्त करना था।",
+                    "महात्मा गांधी भारतीय स्वतंत्रता आंदोलन के एक प्रमुख नेता थे जिन्होंने अहिंसक सविनय अवज्ञा की वकालत की।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_7",
+            "target_lang": "hi",
+            "query": "भारत का राष्ट्रीय पशु क्या है?",
+            "Eng_Query": "What is the national animal of India?",
+            "Answer": "बंगाल टाइगर भारत का राष्ट्रीय पशु है।",
+            "Eng_Answer": "The Bengal Tiger is the national animal of India.",
+            "passages": {
+                "English_passages": [
+                    "The Bengal Tiger (Panthera tigris tigris) is the national animal of India. It was designated as the national animal in 1973, replacing the lion. Project Tiger was launched in 1973 to protect the Bengal Tiger and its habitat. India has approximately 3,167 tigers as of the 2022 census.",
+                    "The Indian Peacock is the national bird of India. The male peacock is known for its colorful plumage.",
+                    "The Asiatic Lion is found only in the Gir Forest of Gujarat, India."
+                ],
+                "Translated_passages": [
+                    "बंगाल टाइगर (पैंथेरा टाइग्रिस टाइग्रिस) भारत का राष्ट्रीय पशु है। इसे 1973 में शेर की जगह राष्ट्रीय पशु के रूप में नामित किया गया था। बंगाल टाइगर और इसके आवास की रक्षा के लिए 1973 में प्रोजेक्ट टाइगर शुरू किया गया था। 2022 की जनगणना के अनुसार भारत में लगभग 3,167 बाघ हैं।",
+                    "भारतीय मोर भारत का राष्ट्रीय पक्षी है। नर मोर अपने रंगीन पंखों के लिए जाना जाता है।",
+                    "एशियाई शेर केवल भारत के गुजरात के गिर वन में पाया जाता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_8",
+            "target_lang": "en",
+            "query": "What is the currency of India?",
+            "Eng_Query": "What is the currency of India?",
+            "Answer": "The Indian Rupee (INR) is the official currency of India.",
+            "Eng_Answer": "The Indian Rupee (INR) is the official currency of India.",
+            "passages": {
+                "English_passages": [
+                    "The Indian Rupee (sign: ₹; code: INR) is the official currency of India. The rupee is managed and issued by the Reserve Bank of India. The modern rupee is subdivided into 100 paise. The symbol ₹ was officially adopted in 2010.",
+                    "The Reserve Bank of India (RBI) is the central banking institution of India, established on 1 April 1935.",
+                    "The US Dollar is the world's primary reserve currency and is used as the standard currency in international trade."
+                ],
+                "Translated_passages": [
+                    "भारतीय रुपया (चिह्न: ₹; कोड: INR) भारत की आधिकारिक मुद्रा है। रुपये का प्रबंधन और जारी भारतीय रिजर्व बैंक द्वारा किया जाता है। आधुनिक रुपया 100 पैसे में विभाजित है। ₹ प्रतीक को आधिकारिक रूप से 2010 में अपनाया गया था।",
+                    "भारतीय रिजर्व बैंक (RBI) भारत की केंद्रीय बैंकिंग संस्था है, जिसकी स्थापना 1 अप्रैल 1935 को हुई थी।",
+                    "अमेरिकी डॉलर दुनिया की प्राथमिक आरक्षित मुद्रा है और अंतरराष्ट्रीय व्यापार में मानक मुद्रा के रूप में उपयोग किया जाता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_9",
+            "target_lang": "hi",
+            "query": "भारत के प्रथम प्रधानमंत्री कौन थे?",
+            "Eng_Query": "Who was the first Prime Minister of India?",
+            "Answer": "जवाहरलाल नेहरू भारत के प्रथम प्रधानमंत्री थे।",
+            "Eng_Answer": "Jawaharlal Nehru was the first Prime Minister of India.",
+            "passages": {
+                "English_passages": [
+                    "Jawaharlal Nehru was the first Prime Minister of India, serving from 15 August 1947 until his death on 27 May 1964. He was a central figure in Indian politics both before and after independence. Nehru advocated for secular democracy and non-alignment during the Cold War.",
+                    "Sardar Vallabhbhai Patel was the first Deputy Prime Minister of India and is known as the Iron Man of India.",
+                    "Narendra Modi is the current Prime Minister of India, serving since 2014."
+                ],
+                "Translated_passages": [
+                    "जवाहरलाल नेहरू भारत के पहले प्रधानमंत्री थे, जिन्होंने 15 अगस्त 1947 से 27 मई 1964 को अपनी मृत्यु तक सेवा की। वे स्वतंत्रता से पहले और बाद में भारतीय राजनीति में एक केंद्रीय व्यक्ति थे। नेहरू ने शीत युद्ध के दौरान धर्मनिरपेक्ष लोकतंत्र और गुटनिरपेक्षता की वकालत की।",
+                    "सरदार वल्लभभाई पटेल भारत के पहले उप प्रधानमंत्री थे और उन्हें भारत के लौह पुरुष के रूप में जाना जाता है।",
+                    "नरेंद्र मोदी भारत के वर्तमान प्रधानमंत्री हैं, 2014 से सेवा कर रहे हैं।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_10",
+            "target_lang": "en",
+            "query": "What is the highest mountain peak in India?",
+            "Eng_Query": "What is the highest mountain peak in India?",
+            "Answer": "Kangchenjunga is the highest mountain peak in India at 8,586 metres.",
+            "Eng_Answer": "Kangchenjunga is the highest mountain peak in India at 8,586 metres.",
+            "passages": {
+                "English_passages": [
+                    "Kangchenjunga is the highest mountain peak in India at 8,586 metres (28,169 ft). It is the third highest mountain in the world after Mount Everest and K2. Kangchenjunga is located on the border between Nepal and the Indian state of Sikkim.",
+                    "Mount Everest is the highest mountain in the world at 8,849 metres, located on the border of Nepal and Tibet.",
+                    "Nanda Devi is the second highest mountain in India at 7,816 metres, located in Uttarakhand."
+                ],
+                "Translated_passages": [
+                    "कंचनजंगा 8,586 मीटर (28,169 फीट) की ऊंचाई पर भारत की सबसे ऊंची पर्वत चोटी है। यह माउंट एवरेस्ट और K2 के बाद दुनिया का तीसरा सबसे ऊंचा पर्वत है। कंचनजंगा नेपाल और भारतीय राज्य सिक्किम की सीमा पर स्थित है।",
+                    "माउंट एवरेस्ट 8,849 मीटर पर दुनिया का सबसे ऊंचा पर्वत है, जो नेपाल और तिब्बत की सीमा पर स्थित है।",
+                    "नंदा देवी 7,816 मीटर पर भारत का दूसरा सबसे ऊंचा पर्वत है, जो उत्तराखंड में स्थित है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_11",
+            "target_lang": "hi",
+            "query": "भारत का सबसे लंबा नदी पुल कौन सा है?",
+            "Eng_Query": "What is the longest river bridge in India?",
+            "Answer": "ढोला-सदिया पुल (भूपेन हजारिका सेतु) भारत का सबसे लंबा नदी पुल है।",
+            "Eng_Answer": "The Dhola-Sadiya Bridge (Bhupen Hazarika Setu) is the longest river bridge in India.",
+            "passages": {
+                "English_passages": [
+                    "The Dhola-Sadiya Bridge, officially known as the Bhupen Hazarika Setu, is the longest river bridge in India at 9.15 kilometres. It spans the Lohit River in the state of Assam and was inaugurated on 26 May 2017. The bridge connects Assam to Arunachal Pradesh.",
+                    "The Mahatma Gandhi Setu was one of the longest bridges in India, spanning the Ganges near Patna, Bihar.",
+                    "The Howrah Bridge in Kolkata is one of the busiest cantilever bridges in the world."
+                ],
+                "Translated_passages": [
+                    "ढोला-सदिया पुल, जिसे आधिकारिक रूप से भूपेन हजारिका सेतु के रूप में जाना जाता है, 9.15 किलोमीटर की लंबाई के साथ भारत का सबसे लंबा नदी पुल है। यह असम राज्य में लोहित नदी पर फैला है और इसका उद्घाटन 26 मई 2017 को किया गया था। यह पुल असम को अरुणाचल प्रदेश से जोड़ता है।",
+                    "महात्मा गांधी सेतु भारत के सबसे लंबे पुलों में से एक था, जो पटना, बिहार के पास गंगा पर फैला था।",
+                    "कोलकाता में हावड़ा ब्रिज दुनिया के सबसे व्यस्त कैंटिलीवर पुलों में से एक है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_12",
+            "target_lang": "en",
+            "query": "What is the national flower of India?",
+            "Eng_Query": "What is the national flower of India?",
+            "Answer": "The Lotus is the national flower of India.",
+            "Eng_Answer": "The Lotus is the national flower of India.",
+            "passages": {
+                "English_passages": [
+                    "The Lotus (Nelumbo nucifera) is the national flower of India. It is a sacred flower in Hinduism and Buddhism. The lotus grows in shallow, murky waters and is known for its ability to bloom beautifully despite growing in muddy conditions. It symbolizes purity, beauty, and divinity.",
+                    "The Rose is the national flower of the United States and England.",
+                    "The Jasmine is the national flower of Pakistan and the Philippines."
+                ],
+                "Translated_passages": [
+                    "कमल (नेलुम्बो नूसीफेरा) भारत का राष्ट्रीय फूल है। यह हिंदू धर्म और बौद्ध धर्म में एक पवित्र फूल है। कमल उथले, गंदे पानी में उगता है और कीचड़ भरी स्थितियों में उगने के बावजूद खूबसूरती से खिलने की अपनी क्षमता के लिए जाना जाता है।",
+                    "गुलाब संयुक्त राज्य अमेरिका और इंग्लैंड का राष्ट्रीय फूल है।",
+                    "चमेली पाकिस्तान और फिलीपींस का राष्ट्रीय फूल है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_13",
+            "target_lang": "hi",
+            "query": "भारतीय संविधान कब लागू हुआ?",
+            "Eng_Query": "When did the Indian Constitution come into effect?",
+            "Answer": "भारतीय संविधान 26 जनवरी 1950 को लागू हुआ।",
+            "Eng_Answer": "The Indian Constitution came into effect on 26 January 1950.",
+            "passages": {
+                "English_passages": [
+                    "The Constitution of India came into effect on 26 January 1950, which is celebrated as Republic Day. It was adopted by the Constituent Assembly on 26 November 1949. Dr. B.R. Ambedkar is known as the Father of the Indian Constitution. It is the longest written constitution of any country in the world.",
+                    "The Constituent Assembly of India was established to write the Constitution and first met on 9 December 1946.",
+                    "Republic Day is celebrated every year on 26 January with a grand parade in New Delhi."
+                ],
+                "Translated_passages": [
+                    "भारत का संविधान 26 जनवरी 1950 को लागू हुआ, जिसे गणतंत्र दिवस के रूप में मनाया जाता है। इसे 26 नवंबर 1949 को संविधान सभा द्वारा अपनाया गया था। डॉ. बी.आर. अम्बेडकर को भारतीय संविधान का जनक कहा जाता है। यह दुनिया के किसी भी देश का सबसे लंबा लिखित संविधान है।",
+                    "भारत की संविधान सभा संविधान लिखने के लिए स्थापित की गई थी और इसकी पहली बैठक 9 दिसंबर 1946 को हुई।",
+                    "गणतंत्र दिवस हर साल 26 जनवरी को नई दिल्ली में एक भव्य परेड के साथ मनाया जाता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_14",
+            "target_lang": "en",
+            "query": "What is the official language of India?",
+            "Eng_Query": "What is the official language of India?",
+            "Answer": "Hindi and English are the official languages of the Government of India.",
+            "Eng_Answer": "Hindi and English are the official languages of the Government of India.",
+            "passages": {
+                "English_passages": [
+                    "Hindi written in Devanagari script is the official language of the Union Government of India. English is used as an additional official language for government proceedings. India has 22 scheduled languages recognized by the Constitution in its Eighth Schedule. There is no national language declared in the Indian Constitution.",
+                    "Sanskrit is one of the oldest languages in the world and is one of the 22 scheduled languages of India.",
+                    "Tamil is one of the oldest classical languages, with a literary tradition spanning over 2,000 years."
+                ],
+                "Translated_passages": [
+                    "देवनागरी लिपि में लिखी गई हिंदी भारत की केंद्र सरकार की आधिकारिक भाषा है। अंग्रेजी का उपयोग सरकारी कार्यवाही के लिए अतिरिक्त आधिकारिक भाषा के रूप में किया जाता है। भारत में संविधान की आठवीं अनुसूची में मान्यता प्राप्त 22 अनुसूचित भाषाएं हैं।",
+                    "संस्कृत दुनिया की सबसे प्राचीन भाषाओं में से एक है और भारत की 22 अनुसूचित भाषाओं में से एक है।",
+                    "तमिल सबसे पुरानी शास्त्रीय भाषाओं में से एक है, जिसकी साहित्यिक परंपरा 2,000 से अधिक वर्षों तक फैली हुई है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_15",
+            "target_lang": "hi",
+            "query": "चंद्रयान-3 कब लॉन्च हुआ?",
+            "Eng_Query": "When was Chandrayaan-3 launched?",
+            "Answer": "चंद्रयान-3 को 14 जुलाई 2023 को लॉन्च किया गया था।",
+            "Eng_Answer": "Chandrayaan-3 was launched on 14 July 2023.",
+            "passages": {
+                "English_passages": [
+                    "Chandrayaan-3 was launched on 14 July 2023 by the Indian Space Research Organisation (ISRO) from the Satish Dhawan Space Centre in Sriharikota, Andhra Pradesh. It successfully landed on the Moon's south pole on 23 August 2023, making India the fourth country to land on the Moon and the first to land near the lunar south pole.",
+                    "ISRO is the space agency of the Government of India, headquartered in Bengaluru, Karnataka.",
+                    "Chandrayaan-1 was India's first lunar probe, launched on 22 October 2008."
+                ],
+                "Translated_passages": [
+                    "चंद्रयान-3 को 14 जुलाई 2023 को भारतीय अंतरिक्ष अनुसंधान संगठन (इसरो) द्वारा आंध्र प्रदेश के श्रीहरिकोटा स्थित सतीश धवन अंतरिक्ष केंद्र से लॉन्च किया गया था। इसने 23 अगस्त 2023 को चंद्रमा के दक्षिणी ध्रुव पर सफलतापूर्वक लैंड किया, जिससे भारत चंद्रमा पर उतरने वाला चौथा देश और चंद्र दक्षिणी ध्रुव के पास उतरने वाला पहला देश बन गया।",
+                    "इसरो भारत सरकार की अंतरिक्ष एजेंसी है, जिसका मुख्यालय बेंगलुरु, कर्नाटक में है।",
+                    "चंद्रयान-1 भारत का पहला चंद्र अन्वेषण यान था, जिसे 22 अक्टूबर 2008 को लॉन्च किया गया था।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_16",
+            "target_lang": "en",
+            "query": "What is the area of India?",
+            "Eng_Query": "What is the area of India?",
+            "Answer": "India has an area of approximately 3.287 million square kilometres.",
+            "Eng_Answer": "India has an area of approximately 3.287 million square kilometres.",
+            "passages": {
+                "English_passages": [
+                    "India has an area of approximately 3,287,263 square kilometres (1,269,219 square miles), making it the seventh-largest country in the world by area. India is bounded by the Indian Ocean on the south, the Arabian Sea on the southwest, and the Bay of Bengal on the southeast.",
+                    "Russia is the largest country in the world by area, covering over 17 million square kilometres.",
+                    "India shares land borders with Pakistan, China, Nepal, Bhutan, Bangladesh, and Myanmar."
+                ],
+                "Translated_passages": [
+                    "भारत का क्षेत्रफल लगभग 3,287,263 वर्ग किलोमीटर (1,269,219 वर्ग मील) है, जो इसे क्षेत्रफल के हिसाब से दुनिया का सातवां सबसे बड़ा देश बनाता है। भारत दक्षिण में हिंद महासागर, दक्षिण-पश्चिम में अरब सागर और दक्षिण-पूर्व में बंगाल की खाड़ी से घिरा है।",
+                    "रूस क्षेत्रफल की दृष्टि से दुनिया का सबसे बड़ा देश है, जो 17 मिलियन वर्ग किलोमीटर से अधिक का क्षेत्र कवर करता है।",
+                    "भारत पाकिस्तान, चीन, नेपाल, भूटान, बांग्लादेश और म्यांमार के साथ भूमि सीमा साझा करता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_17",
+            "target_lang": "hi",
+            "query": "भारत में कितने राज्य हैं?",
+            "Eng_Query": "How many states are there in India?",
+            "Answer": "भारत में 28 राज्य और 8 केंद्र शासित प्रदेश हैं।",
+            "Eng_Answer": "India has 28 states and 8 union territories.",
+            "passages": {
+                "English_passages": [
+                    "India is a federal union comprising 28 states and 8 union territories. The states and union territories are further subdivided into districts and smaller administrative units. The most recently created state is Telangana, which was carved out of Andhra Pradesh in 2014.",
+                    "Each state in India has its own elected government, while union territories are directly governed by the central government.",
+                    "Rajasthan is the largest state by area and Uttar Pradesh is the most populous state."
+                ],
+                "Translated_passages": [
+                    "भारत 28 राज्यों और 8 केंद्र शासित प्रदेशों से मिलकर बना एक संघीय संघ है। राज्यों और केंद्र शासित प्रदेशों को जिलों और छोटी प्रशासनिक इकाइयों में विभाजित किया गया है। सबसे हाल ही में बनाया गया राज्य तेलंगाना है, जिसे 2014 में आंध्र प्रदेश से अलग किया गया था।",
+                    "भारत में प्रत्येक राज्य की अपनी निर्वाचित सरकार है, जबकि केंद्र शासित प्रदेश सीधे केंद्र सरकार द्वारा शासित होते हैं।",
+                    "राजस्थान क्षेत्रफल की दृष्टि से सबसे बड़ा राज्य है और उत्तर प्रदेश सबसे अधिक आबादी वाला राज्य है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_18",
+            "target_lang": "en",
+            "query": "Who is known as the Father of the Nation of India?",
+            "Eng_Query": "Who is known as the Father of the Nation of India?",
+            "Answer": "Mahatma Gandhi is known as the Father of the Nation of India.",
+            "Eng_Answer": "Mahatma Gandhi is known as the Father of the Nation of India.",
+            "passages": {
+                "English_passages": [
+                    "Mohandas Karamchand Gandhi, known as Mahatma Gandhi, is widely regarded as the Father of the Nation of India. He was born on 2 October 1869 in Porbandar, Gujarat. Gandhi led the Indian independence movement against British rule through nonviolent civil disobedience, including the famous Salt March of 1930.",
+                    "Subhas Chandra Bose was another prominent leader who sought Indian independence through armed struggle.",
+                    "B.R. Ambedkar is known as the Father of the Indian Constitution."
+                ],
+                "Translated_passages": [
+                    "मोहनदास करमचंद गांधी, जिन्हें महात्मा गांधी के नाम से जाना जाता है, व्यापक रूप से भारत के राष्ट्रपिता के रूप में माने जाते हैं। उनका जन्म 2 अक्टूबर 1869 को पोरबंदर, गुजरात में हुआ था। गांधी ने 1930 के प्रसिद्ध नमक मार्च सहित अहिंसक सविनय अवज्ञा के माध्यम से ब्रिटिश शासन के खिलाफ भारतीय स्वतंत्रता आंदोलन का नेतृत्व किया।",
+                    "सुभाष चंद्र बोस एक अन्य प्रमुख नेता थे जिन्होंने सशस्त्र संघर्ष के माध्यम से भारतीय स्वतंत्रता की मांग की।",
+                    "बी.आर. अम्बेडकर को भारतीय संविधान का जनक कहा जाता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        },
+        {
+            "query_id": "fact_19",
+            "target_lang": "hi",
+            "query": "भारत का सबसे बड़ा शहर कौन सा है?",
+            "Eng_Query": "What is the largest city in India?",
+            "Answer": "मुंबई जनसंख्या के हिसाब से भारत का सबसे बड़ा शहर है।",
+            "Eng_Answer": "Mumbai is the largest city in India by population.",
+            "passages": {
+                "English_passages": [
+                    "Mumbai is the largest city in India by population with approximately 20.4 million people in the metropolitan area. Formerly known as Bombay, Mumbai is the financial capital of India and the capital of the state of Maharashtra. It is home to the Bombay Stock Exchange and the Reserve Bank of India headquarters.",
+                    "Delhi is the second-largest city in India and includes the national capital territory of New Delhi.",
+                    "Bengaluru (Bangalore) is known as the Silicon Valley of India due to its thriving IT industry."
+                ],
+                "Translated_passages": [
+                    "मुंबई महानगर क्षेत्र में लगभग 20.4 मिलियन लोगों के साथ जनसंख्या के हिसाब से भारत का सबसे बड़ा शहर है। पहले बॉम्बे के नाम से जाना जाने वाला मुंबई भारत की वित्तीय राजधानी और महाराष्ट्र राज्य की राजधानी है। यह बॉम्बे स्टॉक एक्सचेंज और भारतीय रिजर्व बैंक मुख्यालय का घर है।",
+                    "दिल्ली भारत का दूसरा सबसे बड़ा शहर है और इसमें नई दिल्ली का राष्ट्रीय राजधानी क्षेत्र शामिल है।",
+                    "बेंगलुरु (बैंगलोर) को अपने फलते-फूलते आईटी उद्योग के कारण भारत की सिलिकॉन वैली के रूप में जाना जाता है।"
+                ],
+                "is_selected": [1, 0, 0]
+            }
+        }
+    ]
+
+    os.makedirs(os.path.dirname(os.path.abspath(__file__)), exist_ok=True)
+    output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mock_dataset.json")
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"Factual mock dataset created at {output_path} with {len(data)} records.")
+
+if __name__ == "__main__":
+    create_mock_dataset()
