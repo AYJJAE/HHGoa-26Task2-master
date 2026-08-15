@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # Pre-download NLTK data (used by context_gate.py)
-RUN python -c "import nltk; nltk.download('stopwords', download_dir='/nltk_data')"
+RUN PYTHONPATH=/install/lib/python3.12/site-packages python -c "import nltk; nltk.download('stopwords', download_dir='/nltk_data')"
 
 FROM python:3.12-slim
 
