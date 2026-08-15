@@ -70,7 +70,6 @@ Pygments
 pyparsing
 python-dateutil
 python-multipart
-pywin32
 PyYAML
 qdrant-client
 regex
@@ -99,7 +98,6 @@ uritemplate
 urllib3
 uvicorn
 websockets
-win32_setctime
 xxhash
 yarl
 slowapi
