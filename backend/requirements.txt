@@ -24,7 +24,8 @@ google-api-core
 google-api-python-client
 google-auth
 google-auth-httplib2
-google-generativeai
+google-genai
+tenacity
 googleapis-common-protos
 grpcio
 grpcio-status

@@ -51,7 +51,6 @@ export default function HomePage() {
             ]}
             activeHref=""
             className="home-pill-nav"
-            ease="power2.easeOut"
             baseColor="rgba(6, 26, 18, 0.65)"
             pillColor="#FF137D"
             hoveredPillTextColor="#FFFFFF"

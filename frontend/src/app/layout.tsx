@@ -1,24 +1,20 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import React from "react";
 import "./globals.css";
 
-const londrina = localFont({
-  src: "../../public/fonts/LondrinaSolid.otf",
-  variable: "--font-londrina",
-});
-
 export const metadata: Metadata = {
-  title: "HH Goa 2026 — Multilingual Voice RAG",
-  description: "Voice-enabled multilingual Retrieval-Augmented Generation system supporting Hindi, Marathi, and English. Powered by BGE-M3 hybrid search, Gemini LLM, and Sarvam STT.",
-  keywords: ["RAG", "multilingual", "voice", "Hindi", "Marathi", "search", "AI", "HH Goa"],
+  title: "HH Goa 2026 — Multilingual Voice-Enabled RAG",
+  description: "Voice-enabled multilingual Retrieval-Augmented Generation system supporting English, Hindi, Marathi, and Konkani. Powered by ElevenLabs primary STT, Sarvam fallback, BGE-M3 hybrid search, and Gemini LLM.",
+  keywords: ["RAG", "multilingual", "voice", "Hindi", "Marathi", "Konkani", "ElevenLabs", "Sarvam", "BGE-M3", "HH Goa"],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${londrina.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

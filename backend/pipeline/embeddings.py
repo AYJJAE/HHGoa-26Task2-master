@@ -1,3 +1,7 @@
+import os
+import re
+import threading
+from collections import OrderedDict
 from typing import List, Dict, Any, Tuple
 from fastembed import TextEmbedding, SparseTextEmbedding
 
@@ -17,6 +21,32 @@ class EmbeddingPipeline:
         
         # Dimensions
         self.dense_dim = 384 # Change based on model. e.g. bge-small is 384, e5-large is 1024
+        self._query_cache_size = max(0, int(os.environ.get("RAG_QUERY_EMBED_CACHE_SIZE", "256")))
+        self._query_cache = OrderedDict()
+        self._cache_lock = threading.RLock()
+
+    @staticmethod
+    def normalize_query(query: str) -> str:
+        return re.sub(r"\s+", " ", query.strip()).casefold()
+
+    def embed_query(self, query: str):
+        """Embed one query with a bounded, thread-safe process-local LRU cache."""
+        key = self.normalize_query(query)
+        if self._query_cache_size:
+            with self._cache_lock:
+                cached = self._query_cache.get(key)
+                if cached is not None:
+                    self._query_cache.move_to_end(key)
+                    return cached[0], cached[1], True
+        dense, sparse = self.embed_queries([query])
+        value = (dense[0], sparse[0])
+        if self._query_cache_size:
+            with self._cache_lock:
+                self._query_cache[key] = value
+                self._query_cache.move_to_end(key)
+                while len(self._query_cache) > self._query_cache_size:
+                    self._query_cache.popitem(last=False)
+        return value[0], value[1], False
         
     def embed_documents(self, documents: List[str]) -> Tuple[List[List[float]], List[Dict[int, float]]]:
         """

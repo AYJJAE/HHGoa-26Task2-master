@@ -13,7 +13,6 @@ export interface PillNavProps {
   items: NavItem[];
   activeHref?: string;
   className?: string;
-  ease?: string;
   baseColor?: string;
   pillColor?: string;
   hoveredPillTextColor?: string;
@@ -26,7 +25,6 @@ export default function PillNav({
   items,
   activeHref = "",
   className = "",
-  ease = "power2.easeOut",
   baseColor = "rgba(6, 26, 18, 0.85)",
   pillColor = "#FFE600",
   hoveredPillTextColor = "#061A12",

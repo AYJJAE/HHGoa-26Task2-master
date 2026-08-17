@@ -200,8 +200,7 @@ export default function Strands({
   className = '',
   style
 }) {
-  const propsRef = useRef({});
-  propsRef.current = {
+  const propsRef = useRef({
     colors,
     count,
     speed,
@@ -220,7 +219,49 @@ export default function Strands({
     refraction,
     dispersion,
     glassSize
-  };
+  });
+
+  useEffect(() => {
+    propsRef.current = {
+      colors,
+      count,
+      speed,
+      amplitude,
+      waviness,
+      thickness,
+      glow,
+      taper,
+      spread,
+      hueShift,
+      intensity,
+      saturation,
+      opacity,
+      scale,
+      glass,
+      refraction,
+      dispersion,
+      glassSize
+    };
+  }, [
+    colors,
+    count,
+    speed,
+    amplitude,
+    waviness,
+    thickness,
+    glow,
+    taper,
+    spread,
+    hueShift,
+    intensity,
+    saturation,
+    opacity,
+    scale,
+    glass,
+    refraction,
+    dispersion,
+    glassSize
+  ]);
 
   const ctnDom = useRef(null);
 

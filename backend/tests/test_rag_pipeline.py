@@ -62,7 +62,7 @@ def test_stt_failure_isolation():
     original_transcribe = stt_client.transcribe_audio
     
     # Mock to fail
-    stt_client.transcribe_audio = lambda audio_bytes, filename: (False, "Could not transcribe audio due to API error.")
+    stt_client.transcribe_audio = lambda *args: (False, "Could not transcribe audio due to API error.")
     
     response = client.post("/api/voice_ask", files={"audio": ("dummy.wav", b"dummy")})
     assert response.status_code == 200

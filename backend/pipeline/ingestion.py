@@ -1,9 +1,10 @@
 import os
 import sys
 import argparse
-from pipeline.dataset_client import fetch_msmarco_xi_dataset
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from pipeline.dataset_client import fetch_msmarco_xi_dataset
 
 from pipeline.chunking import ChunkingPipeline
 from pipeline.embeddings import EmbeddingPipeline

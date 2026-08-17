@@ -1,0 +1,2229 @@
+{
+  "metadata": {
+    "dataset": "AI4Bharat MSMARCO-XI local fixture: mock_dataset.json",
+    "labeled_cases": 20,
+    "extra_cases": 2,
+    "repeats": 3,
+    "cold_initialization_ms": 208.371,
+    "indexed_strategies": [
+      "metadata",
+      "paragraph",
+      "passage",
+      "semantic",
+      "sentence",
+      "token"
+    ],
+    "stt": "excluded: benchmark begins after transcription",
+    "llm": "excluded: remote generation is measured by API telemetry, not retrieval benchmark"
+  },
+  "configurations": {
+    "metadata:top_3": {
+      "strategy": "metadata",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 20.125,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.949,
+          "min": 0.008,
+          "max": 4.995,
+          "p50": 0.015,
+          "p70": 2.218,
+          "p100": 4.995
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 13.61,
+          "min": 9.552,
+          "max": 34.164,
+          "p50": 12.276,
+          "p70": 13.488,
+          "p100": 34.164
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 13.183,
+          "min": 9.114,
+          "max": 33.573,
+          "p50": 11.873,
+          "p70": 13.065,
+          "p100": 33.573
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 9.302,
+          "min": 5.346,
+          "max": 30.028,
+          "p50": 8.002,
+          "p70": 8.717,
+          "p100": 30.028
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.014,
+          "min": 0.01,
+          "max": 0.025,
+          "p50": 0.013,
+          "p70": 0.014,
+          "p100": 0.025
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 14.576,
+          "min": 9.586,
+          "max": 37.839,
+          "p50": 12.541,
+          "p70": 15.377,
+          "p100": 37.839
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "metadata:top_5": {
+      "strategy": "metadata",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.515,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.008,
+          "max": 0.024,
+          "p50": 0.011,
+          "p70": 0.013,
+          "p100": 0.024
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.576,
+          "min": 9.059,
+          "max": 23.9,
+          "p50": 11.859,
+          "p70": 12.247,
+          "p100": 23.9
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.175,
+          "min": 8.739,
+          "max": 23.456,
+          "p50": 11.491,
+          "p70": 11.891,
+          "p100": 23.456
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.741,
+          "min": 5.299,
+          "max": 20.021,
+          "p50": 7.948,
+          "p70": 8.257,
+          "p100": 20.021
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.016,
+          "min": 0.012,
+          "max": 0.035,
+          "p50": 0.014,
+          "p70": 0.015,
+          "p100": 0.035
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.606,
+          "min": 9.083,
+          "max": 23.932,
+          "p50": 11.892,
+          "p70": 12.275,
+          "p100": 23.932
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "metadata:top_8": {
+      "strategy": "metadata",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.64,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.007,
+          "max": 0.021,
+          "p50": 0.011,
+          "p70": 0.012,
+          "p100": 0.021
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.624,
+          "min": 9.147,
+          "max": 25.028,
+          "p50": 11.805,
+          "p70": 12.21,
+          "p100": 25.028
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.231,
+          "min": 8.797,
+          "max": 24.498,
+          "p50": 11.38,
+          "p70": 11.797,
+          "p100": 24.498
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.521,
+          "min": 5.274,
+          "max": 20.533,
+          "p50": 7.739,
+          "p70": 8.107,
+          "p100": 20.533
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.019,
+          "min": 0.013,
+          "max": 0.033,
+          "p50": 0.018,
+          "p70": 0.018,
+          "p100": 0.033
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.656,
+          "min": 9.175,
+          "max": 25.067,
+          "p50": 11.836,
+          "p70": 12.246,
+          "p100": 25.067
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "metadata:top_10": {
+      "strategy": "metadata",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.919,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.008,
+          "max": 0.026,
+          "p50": 0.011,
+          "p70": 0.012,
+          "p100": 0.026
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.405,
+          "min": 9.248,
+          "max": 24.738,
+          "p50": 11.818,
+          "p70": 12.151,
+          "p100": 24.738
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.029,
+          "min": 8.872,
+          "max": 24.231,
+          "p50": 11.435,
+          "p70": 11.822,
+          "p100": 24.231
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.318,
+          "min": 5.361,
+          "max": 20.775,
+          "p50": 7.735,
+          "p70": 8.104,
+          "p100": 20.775
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.014,
+          "max": 0.04,
+          "p50": 0.019,
+          "p70": 0.02,
+          "p100": 0.04
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.439,
+          "min": 9.272,
+          "max": 24.795,
+          "p50": 11.851,
+          "p70": 12.182,
+          "p100": 24.795
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "paragraph:top_3": {
+      "strategy": "paragraph",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 14.075,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.02,
+          "p50": 0.011,
+          "p70": 0.013,
+          "p100": 0.02
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.621,
+          "min": 9.194,
+          "max": 25.059,
+          "p50": 11.807,
+          "p70": 12.229,
+          "p100": 25.059
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.219,
+          "min": 8.833,
+          "max": 24.554,
+          "p50": 11.416,
+          "p70": 11.841,
+          "p100": 24.554
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.529,
+          "min": 5.275,
+          "max": 21.0,
+          "p50": 7.722,
+          "p70": 8.066,
+          "p100": 21.0
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.009,
+          "max": 0.028,
+          "p50": 0.012,
+          "p70": 0.013,
+          "p100": 0.028
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.005,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.005
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.648,
+          "min": 9.215,
+          "max": 25.087,
+          "p50": 11.839,
+          "p70": 12.252,
+          "p100": 25.087
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "paragraph:top_5": {
+      "strategy": "paragraph",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.097,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.008,
+          "max": 0.021,
+          "p50": 0.012,
+          "p70": 0.014,
+          "p100": 0.021
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.616,
+          "min": 9.006,
+          "max": 24.663,
+          "p50": 11.889,
+          "p70": 12.185,
+          "p100": 24.663
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.213,
+          "min": 8.652,
+          "max": 24.18,
+          "p50": 11.495,
+          "p70": 11.791,
+          "p100": 24.18
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.597,
+          "min": 5.359,
+          "max": 20.342,
+          "p50": 7.727,
+          "p70": 8.146,
+          "p100": 20.342
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.017,
+          "min": 0.012,
+          "max": 0.031,
+          "p50": 0.015,
+          "p70": 0.017,
+          "p100": 0.031
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.002,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.648,
+          "min": 9.028,
+          "max": 24.691,
+          "p50": 11.92,
+          "p70": 12.212,
+          "p100": 24.691
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "paragraph:top_8": {
+      "strategy": "paragraph",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.643,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.008,
+          "max": 0.02,
+          "p50": 0.012,
+          "p70": 0.014,
+          "p100": 0.02
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.949,
+          "min": 9.717,
+          "max": 29.206,
+          "p50": 12.09,
+          "p70": 12.561,
+          "p100": 29.206
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.549,
+          "min": 9.326,
+          "max": 28.754,
+          "p50": 11.695,
+          "p70": 12.175,
+          "p100": 28.754
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.837,
+          "min": 5.364,
+          "max": 25.25,
+          "p50": 7.905,
+          "p70": 8.407,
+          "p100": 25.25
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.015,
+          "max": 0.033,
+          "p50": 0.019,
+          "p70": 0.021,
+          "p100": 0.033
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.983,
+          "min": 9.747,
+          "max": 29.246,
+          "p50": 12.125,
+          "p70": 12.6,
+          "p100": 29.246
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "paragraph:top_10": {
+      "strategy": "paragraph",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.905,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.008,
+          "max": 0.018,
+          "p50": 0.013,
+          "p70": 0.015,
+          "p100": 0.018
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 13.115,
+          "min": 9.149,
+          "max": 30.93,
+          "p50": 12.305,
+          "p70": 12.675,
+          "p100": 30.93
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.712,
+          "min": 8.817,
+          "max": 30.358,
+          "p50": 11.935,
+          "p70": 12.334,
+          "p100": 30.358
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.943,
+          "min": 5.427,
+          "max": 26.477,
+          "p50": 8.056,
+          "p70": 8.468,
+          "p100": 26.477
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.022,
+          "min": 0.014,
+          "max": 0.038,
+          "p50": 0.022,
+          "p70": 0.024,
+          "p100": 0.038
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 13.153,
+          "min": 9.177,
+          "max": 30.974,
+          "p50": 12.34,
+          "p70": 12.709,
+          "p100": 30.974
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "passage:top_3": {
+      "strategy": "passage",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 13.048,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.007,
+          "max": 0.053,
+          "p50": 0.011,
+          "p70": 0.012,
+          "p100": 0.053
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.72,
+          "min": 9.236,
+          "max": 24.456,
+          "p50": 11.936,
+          "p70": 12.426,
+          "p100": 24.456
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.349,
+          "min": 8.834,
+          "max": 23.973,
+          "p50": 11.58,
+          "p70": 12.075,
+          "p100": 23.973
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.677,
+          "min": 5.332,
+          "max": 20.587,
+          "p50": 7.773,
+          "p70": 8.285,
+          "p100": 20.587
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.009,
+          "max": 0.024,
+          "p50": 0.012,
+          "p70": 0.012,
+          "p100": 0.024
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.746,
+          "min": 9.269,
+          "max": 24.495,
+          "p50": 11.96,
+          "p70": 12.452,
+          "p100": 24.495
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "passage:top_5": {
+      "strategy": "passage",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.514,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.019,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.019
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.577,
+          "min": 9.13,
+          "max": 23.718,
+          "p50": 11.809,
+          "p70": 12.216,
+          "p100": 23.718
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.203,
+          "min": 8.776,
+          "max": 23.264,
+          "p50": 11.44,
+          "p70": 11.849,
+          "p100": 23.264
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.461,
+          "min": 5.233,
+          "max": 19.847,
+          "p50": 7.765,
+          "p70": 8.064,
+          "p100": 19.847
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.016,
+          "min": 0.011,
+          "max": 0.03,
+          "p50": 0.014,
+          "p70": 0.015,
+          "p100": 0.03
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.605,
+          "min": 9.152,
+          "max": 23.744,
+          "p50": 11.836,
+          "p70": 12.243,
+          "p100": 23.744
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "passage:top_8": {
+      "strategy": "passage",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.051,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.006,
+          "max": 0.027,
+          "p50": 0.01,
+          "p70": 0.011,
+          "p100": 0.027
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.338,
+          "min": 8.995,
+          "max": 24.382,
+          "p50": 11.698,
+          "p70": 11.973,
+          "p100": 24.382
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 11.975,
+          "min": 8.688,
+          "max": 23.826,
+          "p50": 11.373,
+          "p70": 11.643,
+          "p100": 23.826
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.316,
+          "min": 5.261,
+          "max": 20.27,
+          "p50": 7.746,
+          "p70": 8.061,
+          "p100": 20.27
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.018,
+          "min": 0.013,
+          "max": 0.034,
+          "p50": 0.017,
+          "p70": 0.017,
+          "p100": 0.034
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.369,
+          "min": 9.017,
+          "max": 24.416,
+          "p50": 11.727,
+          "p70": 12.009,
+          "p100": 24.416
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "passage:top_10": {
+      "strategy": "passage",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 13.915,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.02,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.02
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.6,
+          "min": 9.16,
+          "max": 25.068,
+          "p50": 11.744,
+          "p70": 12.122,
+          "p100": 25.068
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.223,
+          "min": 8.878,
+          "max": 24.264,
+          "p50": 11.401,
+          "p70": 11.737,
+          "p100": 24.264
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.515,
+          "min": 5.243,
+          "max": 24.078,
+          "p50": 7.735,
+          "p70": 8.064,
+          "p100": 24.078
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.014,
+          "max": 0.039,
+          "p50": 0.019,
+          "p70": 0.02,
+          "p100": 0.039
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.633,
+          "min": 9.184,
+          "max": 25.108,
+          "p50": 11.776,
+          "p70": 12.161,
+          "p100": 25.108
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "semantic:top_3": {
+      "strategy": "semantic",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.392,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.01,
+          "min": 0.007,
+          "max": 0.017,
+          "p50": 0.01,
+          "p70": 0.011,
+          "p100": 0.017
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.517,
+          "min": 9.042,
+          "max": 24.052,
+          "p50": 11.86,
+          "p70": 12.138,
+          "p100": 24.052
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.147,
+          "min": 8.736,
+          "max": 23.589,
+          "p50": 11.517,
+          "p70": 11.766,
+          "p100": 23.589
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.424,
+          "min": 5.366,
+          "max": 20.175,
+          "p50": 7.776,
+          "p70": 8.141,
+          "p100": 20.175
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.008,
+          "max": 0.025,
+          "p50": 0.012,
+          "p70": 0.013,
+          "p100": 0.025
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.542,
+          "min": 9.062,
+          "max": 24.081,
+          "p50": 11.884,
+          "p70": 12.163,
+          "p100": 24.081
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "semantic:top_5": {
+      "strategy": "semantic",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.27,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.01,
+          "min": 0.007,
+          "max": 0.024,
+          "p50": 0.01,
+          "p70": 0.011,
+          "p100": 0.024
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.54,
+          "min": 9.148,
+          "max": 25.315,
+          "p50": 11.673,
+          "p70": 12.057,
+          "p100": 25.315
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.176,
+          "min": 8.808,
+          "max": 24.864,
+          "p50": 11.291,
+          "p70": 11.714,
+          "p100": 24.864
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.498,
+          "min": 5.228,
+          "max": 21.284,
+          "p50": 7.652,
+          "p70": 8.042,
+          "p100": 21.284
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.014,
+          "min": 0.011,
+          "max": 0.032,
+          "p50": 0.014,
+          "p70": 0.014,
+          "p100": 0.032
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.566,
+          "min": 9.17,
+          "max": 25.349,
+          "p50": 11.701,
+          "p70": 12.084,
+          "p100": 25.349
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "semantic:top_8": {
+      "strategy": "semantic",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.753,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.008,
+          "max": 0.02,
+          "p50": 0.011,
+          "p70": 0.013,
+          "p100": 0.02
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.498,
+          "min": 9.345,
+          "max": 25.18,
+          "p50": 11.836,
+          "p70": 12.314,
+          "p100": 25.18
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.111,
+          "min": 8.938,
+          "max": 24.737,
+          "p50": 11.501,
+          "p70": 11.931,
+          "p100": 24.737
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.437,
+          "min": 5.44,
+          "max": 21.388,
+          "p50": 7.8,
+          "p70": 8.187,
+          "p100": 21.388
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.018,
+          "min": 0.013,
+          "max": 0.034,
+          "p50": 0.017,
+          "p70": 0.019,
+          "p100": 0.034
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.53,
+          "min": 9.379,
+          "max": 25.215,
+          "p50": 11.864,
+          "p70": 12.35,
+          "p100": 25.215
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "semantic:top_10": {
+      "strategy": "semantic",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.761,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.012,
+          "min": 0.007,
+          "max": 0.018,
+          "p50": 0.011,
+          "p70": 0.013,
+          "p100": 0.018
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.707,
+          "min": 9.12,
+          "max": 24.83,
+          "p50": 11.873,
+          "p70": 12.228,
+          "p100": 24.83
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.34,
+          "min": 8.803,
+          "max": 24.346,
+          "p50": 11.523,
+          "p70": 11.866,
+          "p100": 24.346
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.581,
+          "min": 5.245,
+          "max": 22.125,
+          "p50": 7.843,
+          "p70": 8.2,
+          "p100": 22.125
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.013,
+          "max": 0.036,
+          "p50": 0.019,
+          "p70": 0.021,
+          "p100": 0.036
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.741,
+          "min": 9.144,
+          "max": 24.874,
+          "p50": 11.904,
+          "p70": 12.266,
+          "p100": 24.874
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "sentence:top_3": {
+      "strategy": "sentence",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.44,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.019,
+          "p50": 0.01,
+          "p70": 0.011,
+          "p100": 0.019
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.582,
+          "min": 9.259,
+          "max": 24.201,
+          "p50": 11.828,
+          "p70": 12.11,
+          "p100": 24.201
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.206,
+          "min": 8.895,
+          "max": 23.684,
+          "p50": 11.433,
+          "p70": 11.747,
+          "p100": 23.684
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.475,
+          "min": 5.26,
+          "max": 20.412,
+          "p50": 7.712,
+          "p70": 8.098,
+          "p100": 20.412
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.009,
+          "max": 0.025,
+          "p50": 0.012,
+          "p70": 0.013,
+          "p100": 0.025
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.608,
+          "min": 9.28,
+          "max": 24.236,
+          "p50": 11.852,
+          "p70": 12.138,
+          "p100": 24.236
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "sentence:top_5": {
+      "strategy": "sentence",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.778,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.019,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.019
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.369,
+          "min": 9.13,
+          "max": 24.907,
+          "p50": 11.721,
+          "p70": 12.153,
+          "p100": 24.907
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 11.992,
+          "min": 8.764,
+          "max": 24.453,
+          "p50": 11.308,
+          "p70": 11.809,
+          "p100": 24.453
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.318,
+          "min": 5.279,
+          "max": 22.18,
+          "p50": 7.724,
+          "p70": 8.125,
+          "p100": 22.18
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.015,
+          "min": 0.011,
+          "max": 0.027,
+          "p50": 0.014,
+          "p70": 0.015,
+          "p100": 0.027
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.396,
+          "min": 9.154,
+          "max": 24.936,
+          "p50": 11.75,
+          "p70": 12.177,
+          "p100": 24.936
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "sentence:top_8": {
+      "strategy": "sentence",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 14.056,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.021,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.021
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.545,
+          "min": 9.05,
+          "max": 23.938,
+          "p50": 11.637,
+          "p70": 12.144,
+          "p100": 23.938
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.17,
+          "min": 8.726,
+          "max": 23.439,
+          "p50": 11.327,
+          "p70": 11.71,
+          "p100": 23.439
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.57,
+          "min": 5.213,
+          "max": 19.92,
+          "p50": 7.65,
+          "p70": 8.231,
+          "p100": 19.92
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.018,
+          "min": 0.012,
+          "max": 0.038,
+          "p50": 0.017,
+          "p70": 0.018,
+          "p100": 0.038
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.577,
+          "min": 9.075,
+          "max": 23.973,
+          "p50": 11.669,
+          "p70": 12.183,
+          "p100": 23.973
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "sentence:top_10": {
+      "strategy": "sentence",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.103,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.018,
+          "p50": 0.011,
+          "p70": 0.012,
+          "p100": 0.018
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.743,
+          "min": 9.442,
+          "max": 24.386,
+          "p50": 11.918,
+          "p70": 12.331,
+          "p100": 24.386
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.376,
+          "min": 9.095,
+          "max": 23.928,
+          "p50": 11.595,
+          "p70": 11.992,
+          "p100": 23.928
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.615,
+          "min": 5.352,
+          "max": 20.427,
+          "p50": 7.873,
+          "p70": 8.232,
+          "p100": 20.427
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.013,
+          "max": 0.041,
+          "p50": 0.019,
+          "p70": 0.02,
+          "p100": 0.041
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.776,
+          "min": 9.465,
+          "max": 24.442,
+          "p50": 11.949,
+          "p70": 12.363,
+          "p100": 24.442
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "token:top_3": {
+      "strategy": "token",
+      "top_k": 3,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.218,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.008,
+          "max": 0.022,
+          "p50": 0.011,
+          "p70": 0.012,
+          "p100": 0.022
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.589,
+          "min": 9.133,
+          "max": 25.305,
+          "p50": 11.719,
+          "p70": 12.23,
+          "p100": 25.305
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.209,
+          "min": 8.781,
+          "max": 24.789,
+          "p50": 11.351,
+          "p70": 11.852,
+          "p100": 24.789
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.527,
+          "min": 5.302,
+          "max": 20.857,
+          "p50": 7.776,
+          "p70": 8.077,
+          "p100": 20.857
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.01,
+          "max": 0.024,
+          "p50": 0.012,
+          "p70": 0.013,
+          "p100": 0.024
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.002,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.615,
+          "min": 9.155,
+          "max": 25.33,
+          "p50": 11.745,
+          "p70": 12.261,
+          "p100": 25.33
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "token:top_5": {
+      "strategy": "token",
+      "top_k": 5,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 12.708,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.013,
+          "min": 0.008,
+          "max": 0.019,
+          "p50": 0.012,
+          "p70": 0.015,
+          "p100": 0.019
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.777,
+          "min": 9.066,
+          "max": 25.27,
+          "p50": 12.079,
+          "p70": 12.581,
+          "p100": 25.27
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.353,
+          "min": 8.724,
+          "max": 24.784,
+          "p50": 11.648,
+          "p70": 12.117,
+          "p100": 24.784
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.516,
+          "min": 5.261,
+          "max": 21.311,
+          "p50": 7.907,
+          "p70": 8.236,
+          "p100": 21.311
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.016,
+          "min": 0.011,
+          "max": 0.03,
+          "p50": 0.015,
+          "p70": 0.017,
+          "p100": 0.03
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.808,
+          "min": 9.087,
+          "max": 25.306,
+          "p50": 12.104,
+          "p70": 12.612,
+          "p100": 25.306
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "token:top_8": {
+      "strategy": "token",
+      "top_k": 8,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.967,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.02,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.02
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.539,
+          "min": 9.534,
+          "max": 24.313,
+          "p50": 11.725,
+          "p70": 12.152,
+          "p100": 24.313
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.16,
+          "min": 9.163,
+          "max": 23.598,
+          "p50": 11.387,
+          "p70": 11.737,
+          "p100": 23.598
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.502,
+          "min": 5.275,
+          "max": 23.247,
+          "p50": 7.801,
+          "p70": 8.051,
+          "p100": 23.247
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.018,
+          "min": 0.01,
+          "max": 0.036,
+          "p50": 0.017,
+          "p70": 0.018,
+          "p100": 0.036
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.003,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.003
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.569,
+          "min": 9.557,
+          "max": 24.364,
+          "p50": 11.753,
+          "p70": 12.191,
+          "p100": 24.364
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    },
+    "token:top_10": {
+      "strategy": "token",
+      "top_k": 10,
+      "runs": 66,
+      "successes": 66,
+      "errors": 0,
+      "retries": 0,
+      "success_rate": 1.0,
+      "first_query_ms": 11.77,
+      "latency_ms": {
+        "query_embedding_ms": {
+          "count": 66,
+          "mean": 0.011,
+          "min": 0.007,
+          "max": 0.018,
+          "p50": 0.01,
+          "p70": 0.012,
+          "p100": 0.018
+        },
+        "vector_search_ms": {
+          "count": 66,
+          "mean": 12.574,
+          "min": 9.353,
+          "max": 24.218,
+          "p50": 11.784,
+          "p70": 12.216,
+          "p100": 24.218
+        },
+        "dense_retrieval_ms": {
+          "count": 66,
+          "mean": 12.199,
+          "min": 8.902,
+          "max": 23.747,
+          "p50": 11.417,
+          "p70": 11.854,
+          "p100": 23.747
+        },
+        "sparse_retrieval_ms": {
+          "count": 66,
+          "mean": 8.473,
+          "min": 5.323,
+          "max": 20.137,
+          "p50": 7.695,
+          "p70": 8.029,
+          "p100": 20.137
+        },
+        "rrf_fusion_ms": {
+          "count": 66,
+          "mean": 0.02,
+          "min": 0.013,
+          "max": 0.037,
+          "p50": 0.019,
+          "p70": 0.019,
+          "p100": 0.037
+        },
+        "reranking_ms": {
+          "count": 66,
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p50": 0.0,
+          "p70": 0.0,
+          "p100": 0.0
+        },
+        "context_assembly_ms": {
+          "count": 66,
+          "mean": 0.002,
+          "min": 0.001,
+          "max": 0.004,
+          "p50": 0.002,
+          "p70": 0.002,
+          "p100": 0.004
+        },
+        "total_retrieval_ms": {
+          "count": 66,
+          "mean": 12.606,
+          "min": 9.383,
+          "max": 24.255,
+          "p50": 11.814,
+          "p70": 12.247,
+          "p100": 24.255
+        }
+      },
+      "quality": {
+        "recall_at_1": 0.45,
+        "recall_at_3": 0.45,
+        "recall_at_5": 0.45,
+        "recall_at_8": 0.45,
+        "recall_at_10": 0.45,
+        "mrr": 0.45
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import sys
 import os
 import time
 import asyncio
+from typing import Optional, List, Dict, Any
 
 # Add parent directory to path to import pipeline modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,10 +22,19 @@ try:
     limiter = Limiter(key_func=get_remote_address)
     RATE_LIMITING_AVAILABLE = True
 except ImportError:
-    print("WARNING: slowapi not installed. Rate limiting disabled.")
-    print("         Install with: pip install slowapi")
     RATE_LIMITING_AVAILABLE = False
     limiter = None
+
+try:
+    from app.config import (
+        HIGH_CONFIDENCE_THRESHOLD,
+        MEDIUM_CONFIDENCE_THRESHOLD,
+        VERIFIER_MIN_CONFIDENCE
+    )
+except ImportError:
+    HIGH_CONFIDENCE_THRESHOLD = 0.75
+    MEDIUM_CONFIDENCE_THRESHOLD = 0.50
+    VERIFIER_MIN_CONFIDENCE = 0.55
 
 from pipeline.retrieval import RetrievalPipeline
 from pipeline.embeddings import EmbeddingPipeline
@@ -32,16 +42,18 @@ from pipeline.vector_store import VectorStore
 from pipeline.query_router import QueryRouter
 from pipeline.generation import GenerationPipeline
 from pipeline.grounding import GroundingValidator
-from .sarvam_client import SarvamClient
+from pipeline.context_gate import is_context_sufficient
+from .sarvam_client import TranscriptionResult
+from .stt_service import STTService
 
-app = FastAPI(title="HH Goa 2026 RAG API")
+app = FastAPI(title="HH Goa 2026 Voice RAG API")
 
 # --- Rate Limiting Registration ---
 if RATE_LIMITING_AVAILABLE:
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# --- CORS Configuration (production-safe) ---
+# --- CORS Configuration ---
 allowed_origins_str = os.environ.get("ALLOWED_ORIGINS", "*")
 if allowed_origins_str == "*":
     allowed_origins = ["*"]
@@ -51,212 +63,407 @@ else:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-print("Initializing Pipelines (This may take a moment to load models)...")
-# Initialize singletons to keep models in memory
+# --- Initialize Singletons Once in Memory ---
+router = QueryRouter()
+generator = GenerationPipeline(provider_name="gemini")
+grounder = GroundingValidator()
+stt_client = STTService()
+
 try:
     embedder = EmbeddingPipeline()
     store = VectorStore(collection_name="msmarco_xi", dense_dim=embedder.dense_dim)
     retriever = RetrievalPipeline(embedder, store)
-    router = QueryRouter()
-    generator = GenerationPipeline(provider_name="gemini") # Or dynamic based on env
-    grounder = GroundingValidator()
-    stt_client = SarvamClient()
-    print("Pipelines initialized successfully.")
-    
-    # --- Gemini API Key Health Check ---
-    gemini_key = os.environ.get("GEMINI_API_KEY", "")
-    if gemini_key and generator.provider.model:
-        print("[OK] GEMINI_API_KEY is set and Gemini model is loaded. Real generative answers enabled.")
-    elif gemini_key and not generator.provider.model:
-        print("[WARNING] GEMINI_API_KEY is set but Gemini model failed to initialize. Using extractive fallback.")
-    else:
-        print("[WARNING] GEMINI_API_KEY not set. Using extractive answer generation (returns top passage).")
-        
+    print("Pipelines, Verifier, and STT Failover Service initialized successfully.")
 except Exception as e:
-    print(f"Error initializing pipelines: {e}")
+    print(f"Notice: Initializing fallback retrieval: {e}")
+    try:
+        embedder = EmbeddingPipeline()
+        store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
+        retriever = RetrievalPipeline(embedder, store)
+    except Exception as e2:
+        print(f"Error initializing retriever: {e2}")
+        embedder = None
+        store = None
+        retriever = None
 
 class QueryRequest(BaseModel):
     query: str
 
+class RetrieveRequest(BaseModel):
+    query: str
+    top_k: Optional[int] = 5
+
 @app.get("/")
-def health_check():
-    """Health check endpoint — also used by Docker healthcheck."""
-    gemini_status = "active" if generator.provider.model else "extractive_fallback"
-    sarvam_status = "active" if stt_client.api_key else "mock"
+@app.get("/health")
+def health():
+    """Fast, lightweight health check endpoint."""
+    return {"status": "ok", "service": "HH Goa 2026 Voice RAG API"}
+
+@app.get("/health/ready")
+def health_ready():
+    """Detailed readiness check for external dependencies."""
+    gemini_status = "active" if (generator and generator.provider.model) else "extractive_fallback"
+    stt_status = "active" if (stt_client.primary.api_key or stt_client.fallback.api_key) else "unconfigured"
     return {
-        "status": "ok",
-        "message": "HH Goa 2026 API is running",
+        "status": "ready",
         "services": {
             "gemini": gemini_status,
-            "sarvam_stt": sarvam_status,
+            "stt": {
+                "primary": "elevenlabs" if stt_client.primary.api_key else "not_configured",
+                "fallback": "sarvam" if stt_client.fallback.api_key else "not_configured",
+                "status": stt_status
+            },
+            "vector_store": "ready" if store else "offline"
         }
     }
 
+@app.post("/api/retrieve")
+async def retrieve_only(payload: RetrieveRequest):
+    """Direct retrieval endpoint for low-latency benchmarking and indexing checks."""
+    t0 = time.perf_counter()
+    routing_info = router.route_query(payload.query)
+    strategy = {**routing_info.get("strategy", {}), "final_top_k": payload.top_k or 5}
+    retrieval_res = await asyncio.to_thread(retriever.retrieve, payload.query, strategy)
+    total_ms = (time.perf_counter() - t0) * 1000.0
+    return {
+        "query": payload.query,
+        "results": retrieval_res["results"],
+        "confidence": retrieval_res["confidence"],
+        "latency_metrics": {**retrieval_res["latency_ms"], "total_ms": total_ms}
+    }
+
 @app.post("/api/ask")
-@limiter.limit("30/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
+@limiter.limit("60/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
 async def ask_question(payload: QueryRequest, request: Request):
-    return process_rag_pipeline(payload.query)
+    """Process question through the full RAG and Gemini Verification pipeline."""
+    return await asyncio.to_thread(process_rag_pipeline, payload.query)
+
+@app.post("/api/transcribe")
+@limiter.limit("40/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
+async def transcribe_audio(
+    request: Request,
+    audio: UploadFile = File(...),
+    language: str = Form("auto"),
+):
+    """Voice transcription endpoint with ElevenLabs primary and Sarvam fallback."""
+    audio_bytes = await audio.read()
+    
+    transcription = await asyncio.to_thread(
+        stt_client.transcribe_audio, audio_bytes, audio.filename, audio.content_type, language
+    )
+    
+    if isinstance(transcription, tuple):
+        success, text = transcription
+        transcription = TranscriptionResult(success=success, text=text if success else "", error=None if success else text)
+    
+    if not transcription.success:
+        return {
+            "success": False,
+            "error": transcription.error or "Transcription failed.",
+            "provider": getattr(transcription, "provider", None),
+            "fallback_used": getattr(transcription, "fallback_used", False),
+            "latency_ms": getattr(transcription, "latency_ms", 0.0)
+        }
+        
+    return {
+        "success": True,
+        "text": transcription.text,
+        "language": transcription.language,
+        "provider": getattr(transcription, "provider", "elevenlabs"),
+        "fallback_used": getattr(transcription, "fallback_used", False),
+        "latency_ms": getattr(transcription, "latency_ms", 0.0)
+    }
 
 @app.post("/api/voice_ask")
-@limiter.limit("20/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
-async def ask_voice_question(request: Request, audio: UploadFile = File(...), debug: bool = False):
-    # 1. Speech-to-Text
-    t0 = time.perf_counter()
+@limiter.limit("30/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
+async def voice_ask(
+    request: Request,
+    audio: UploadFile = File(...),
+    language: str = Form("auto"),
+    debug: bool = Form(False)
+):
+    """End-to-end voice question answering."""
     audio_bytes = await audio.read()
-    success, transcript = stt_client.transcribe_audio(audio_bytes, audio.filename)
-    stt_latency = (time.perf_counter() - t0) * 1000
     
-    if not success or not transcript.strip():
+    transcription = await asyncio.to_thread(
+        stt_client.transcribe_audio, audio_bytes, audio.filename, audio.content_type, language
+    )
+    
+    if isinstance(transcription, tuple):
+        success, text = transcription
+        transcription = TranscriptionResult(success=success, text=text if success else "", error=None if success else text)
+    
+    if not transcription.success:
         return {
             "status": "error",
             "message": "We couldn't transcribe that audio. Please try again.",
-            "latency": {"stt_ms": stt_latency}
+            "transcription": {
+                "success": False,
+                "error": transcription.error,
+                "provider": transcription.provider,
+                "fallback_used": getattr(transcription, 'fallback_used', False)
+            },
+            "latency_metrics": {"stt_ms": transcription.latency_ms, "transcription_total_ms": transcription.latency_ms},
         }
         
-    # Process through standard RAG pipeline
-    response = process_rag_pipeline(transcript)
-    response["latency_metrics"]["stt_ms"] = stt_latency
-    response["latency_metrics"]["total_e2e_ms"] = response["latency_metrics"]["total_e2e_ms"] + stt_latency
+    response = await asyncio.to_thread(process_rag_pipeline, transcription.text, debug, transcription.language)
+    response["latency_metrics"]["stt_ms"] = transcription.latency_ms
+    response["latency_metrics"]["transcription_total_ms"] = transcription.latency_ms
+    response["latency_metrics"]["total_e2e_ms"] = response["latency_metrics"]["total_e2e_ms"] + transcription.latency_ms
+    response["transcription"] = {
+        "success": True,
+        "text": transcription.text,
+        "language": transcription.language,
+        "language_probability": transcription.language_probability,
+        "provider": transcription.provider,
+        "fallback_used": getattr(transcription, 'fallback_used', False),
+        "latency_ms": transcription.latency_ms
+    }
     return response
 
-def process_rag_pipeline(query: str, debug: bool = False):
+def calculate_final_confidence(
+    question_relevant: bool,
+    answers_question: bool,
+    supported_by_context: bool,
+    verifier_confidence: float,
+    grounded: bool,
+    relevance_score: float = 0.0,
+    retrieval_score: float = 0.0
+) -> str:
+    """Calculates Final Answer Confidence using a calibrated multi-signal policy:
+    - HIGH: Strong retrieval/relevance + fully grounded + high verifier confidence (>= 0.75)
+    - MEDIUM: Relevant evidence + supported answer + moderate confidence (>= 0.50)
+    - LOW: Supported but weak/partial evidence or ungrounded/refused
+    """
+    if not grounded or not question_relevant or not answers_question or not supported_by_context:
+        return "LOW"
+    
+    if verifier_confidence >= HIGH_CONFIDENCE_THRESHOLD and (relevance_score >= 0.50 or retrieval_score >= 0.60):
+        return "HIGH"
+    elif verifier_confidence >= MEDIUM_CONFIDENCE_THRESHOLD or relevance_score >= 0.45:
+        return "MEDIUM"
+    else:
+        return "LOW"
+
+def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = None):
+    """Calibrated Three-Stage RAG Pipeline:
+    STAGE 1: FAISS / Qdrant Hybrid Retrieval
+    STAGE 2: Evidence Relevance Scoring & Soft Gating
+    STAGE 3: Answer Generation & Grounding Verification
+    """
     t_start = time.perf_counter()
     metrics = {}
+    debug_info = {}
 
-    # 1. Query Router
+    # 1. Input Validation
+    if not isinstance(query, str) or not query.strip():
+        return {
+            "status": "error",
+            "message": "Please provide a non-empty question.",
+            "latency_metrics": {"total_e2e_ms": (time.perf_counter() - t_start) * 1000},
+        }
+    query = query.strip()
+
+    # 2. Query Processing & Routing
     t0 = time.perf_counter()
-    routing_info = router.route_query(query)
+    routing_info = router.route_query(query, language_hint=language_hint)
     metrics["query_routing_ms"] = (time.perf_counter() - t0) * 1000
+    strategy = routing_info.get("strategy", {})
 
-    # 1.5 Chitchat guard
+    # Chitchat Guardrail
     if routing_info["intent"] == "Chitchat":
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
-        response = {
+        res = {
             "status": "answered",
             "grounded": True,
-            "answer": "Hello! I'm your multilingual RAG assistant. Ask me a question about the dataset and I'll find the answer for you! 🙏",
+            "refused": False,
+            "confidence": "HIGH",
+            "answer": "Hello! I'm your multilingual voice RAG assistant. Ask me anything about the knowledge base! 🙏",
             "sources": [],
             "routing": routing_info,
-            "retrieval_confidence": "N/A",
             "context_sufficient": True,
-            "grounding": {"status": "SKIP", "reason": "Chitchat query — no retrieval needed."},
+            "verification": {
+                "question_relevant": True,
+                "answers_question": True,
+                "supported_by_context": True,
+                "supported": True,
+                "verifier_confidence": 1.0,
+                "confidence": 1.0,
+                "reason": "Chitchat query.",
+                "unsupported_claims": []
+            },
+            "retrieval": {"top_score": 1.0},
             "latency_metrics": metrics
         }
         if debug:
-            response["debug"] = {"stage": "chitchat"}
-        return response
+            res["debug"] = {"generation_executed": False, "chitchat": True}
+        return res
 
-    # 2. Hybrid Retrieval & Reranking
-    retrieval_res = retriever.retrieve(query, routing_info["strategy"])
-    retrieval_metrics = retrieval_res["latency_ms"]
-    confidence = retrieval_res["confidence"]
-
-    # 3. Context Sufficiency Check (Answerability)
-    t0 = time.perf_counter()
-    from pipeline.context_gate import is_context_sufficient
-    context_val = is_context_sufficient(query, retrieval_res["results"], embedder)
-    
-    # Check debug flag
-    rag_debug = os.environ.get("RAG_DEBUG", "false").lower() == "true"
-    debug_payload = None
-
-    if rag_debug:
-        debug_payload = {
-            "query": query,
-            "detected_language": routing_info.get("language"),
-            "intent": routing_info.get("intent"),
-            "dense_top_score": retrieval_res["results"][0].get('dense_score') if retrieval_res["results"] else None,
-            "sparse_top_score": retrieval_res["results"][0].get('sparse_score') if retrieval_res["results"] else None,
-            "rrf_score": "high" if confidence == "HIGH" else "low",
-            "supporting_chunks": context_val.supporting_chunks,
-            "semantic_similarity": context_val.max_similarity,
-            "keyword_overlap": context_val.keyword_overlap,
-            "context_sufficient": context_val.sufficient,
-            "generation_executed": False,
-            "grounding_result": None,
-            "final_decision": None
+    # 3. STAGE 1: Hybrid Retrieval
+    try:
+        retrieval_res = retriever.retrieve(query, strategy)
+    except Exception as e:
+        print(f"Error during retrieval: {e}")
+        metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
+        return {
+            "status": "error",
+            "message": "The knowledge search service is temporarily unavailable. Please try again.",
+            "latency_metrics": metrics,
         }
+    retrieval_metrics = retrieval_res["latency_ms"]
+    top_dense_score = retrieval_res["results"][0].get("dense_score", 0.0) if retrieval_res["results"] else 0.0
 
+    # 4. STAGE 2: Relevance Scoring & Soft Gating
+    t0 = time.perf_counter()
+    context_val = is_context_sufficient(query, retrieval_res["results"], embedder)
     metrics["answerability_ms"] = (time.perf_counter() - t0) * 1000
 
     if not context_val.sufficient:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
-        response = {
+        debug_info["generation_executed"] = False
+        res = {
             "status": "refused",
             "grounded": False,
-            "answer": "I couldn't find enough information in my knowledge base to answer that reliably.",
+            "refused": True,
+            "confidence": "LOW",
+            "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
-            "retrieval_confidence": confidence,
             "context_sufficient": False,
             "refusal_reason": "insufficient_context",
+            "reason": context_val.reason,
+            "verification": {
+                "question_relevant": False,
+                "answers_question": False,
+                "supported_by_context": False,
+                "supported": False,
+                "verifier_confidence": 0.0,
+                "confidence": 0.0,
+                "reason": context_val.reason,
+                "unsupported_claims": ["Context insufficient for query intent."]
+            },
+            "retrieval": {
+                "top_score": round(float(top_dense_score), 3)
+            },
             "latency_metrics": {**metrics, **retrieval_metrics}
         }
-        if rag_debug:
-            debug_payload["final_decision"] = "REFUSED"
-            response["debug"] = debug_payload
-        return response
+        if debug:
+            res["debug"] = debug_info
+        return res
 
-    # 4. LLM Generation
+    # 5. Context Assembly
     t0 = time.perf_counter()
-    answer = generator.generate_answer(query, retrieval_res["results"])
+    context_text = "\n".join(r["payload"].get("text", "") for r in retrieval_res["results"])
+    metrics["context_ms"] = (time.perf_counter() - t0) * 1000
+    metrics["context_chars"] = len(context_text)
+    metrics["context_estimated_tokens"] = max(1, len(context_text) // 4) if context_text else 0
+
+    # 6. STAGE 3: Answer Generation
+    t0 = time.perf_counter()
+    candidate_answer = generator.generate_answer(query, retrieval_res["results"])
     metrics["generation_ms"] = (time.perf_counter() - t0) * 1000
+    metrics["output_estimated_tokens"] = max(1, len(candidate_answer) // 4) if candidate_answer else 0
+    debug_info["generation_executed"] = True
     
-    if rag_debug:
-        debug_payload["generation_executed"] = True
-        
-    if "INSUFFICIENT_CONTEXT" in answer:
+    if "INSUFFICIENT_CONTEXT" in candidate_answer:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
-        response = {
+        res = {
             "status": "refused",
             "grounded": False,
-            "answer": "I found related information, but not enough reliable evidence to answer your question.",
+            "refused": True,
+            "confidence": "LOW",
+            "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
-            "retrieval_confidence": confidence,
             "context_sufficient": False,
             "refusal_reason": "insufficient_context_after_generation",
+            "reason": "Generator detected insufficient context.",
+            "verification": {
+                "question_relevant": False,
+                "answers_question": False,
+                "supported_by_context": False,
+                "supported": False,
+                "verifier_confidence": 0.0,
+                "confidence": 0.0,
+                "reason": "Generator explicitly detected insufficient context.",
+                "unsupported_claims": ["Missing factual basis in context."]
+            },
+            "retrieval": {
+                "top_score": round(float(top_dense_score), 3)
+            },
             "latency_metrics": {**metrics, **retrieval_metrics}
         }
-        if rag_debug:
-            debug_payload["final_decision"] = "REFUSED"
-            response["debug"] = debug_payload
-        return response
+        if debug:
+            res["debug"] = debug_info
+        return res
 
-    # 5. Lightweight Grounding
+    # 7. Grounding & Semantic Verification
     t0 = time.perf_counter()
-    grounding_status, grounding_reason = grounder.validate(answer, retrieval_res["results"], llm_client=generator.provider)
-    metrics["grounding_ms"] = (time.perf_counter() - t0) * 1000
+    verification_res = grounder.verify_answer(
+        question=query,
+        candidate_answer=candidate_answer,
+        retrieved_chunks=retrieval_res["results"],
+        gemini_provider=generator.provider
+    )
+    metrics["verification_ms"] = (time.perf_counter() - t0) * 1000
 
-    if rag_debug:
-        debug_payload["grounding_result"] = grounding_status
+    # 8. Calibrated Acceptance Policy:
+    is_valid = (
+        verification_res.question_relevant
+        and verification_res.answers_question
+        and verification_res.supported_by_context
+        and (verification_res.confidence >= grounder.min_confidence or context_val.relevance_score >= 0.50)
+    )
 
-    if grounding_status == "FAIL":
+    final_conf = calculate_final_confidence(
+        question_relevant=verification_res.question_relevant,
+        answers_question=verification_res.answers_question,
+        supported_by_context=verification_res.supported_by_context,
+        verifier_confidence=verification_res.confidence,
+        grounded=is_valid,
+        relevance_score=context_val.relevance_score,
+        retrieval_score=top_dense_score
+    )
+
+    if not is_valid:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
-        response = {
+        res = {
             "status": "refused",
             "grounded": False,
-            "answer": "I found relevant information, but I couldn't verify that the generated answer is fully supported by it.",
+            "refused": True,
+            "confidence": "LOW",
+            "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
-            "retrieval_confidence": confidence,
             "context_sufficient": True,
-            "refusal_reason": "grounding_failed",
+            "refusal_reason": "grounding_verification_failed",
+            "reason": verification_res.reason,
+            "verification": {
+                "question_relevant": verification_res.question_relevant,
+                "answers_question": verification_res.answers_question,
+                "supported_by_context": verification_res.supported_by_context,
+                "supported": False,
+                "verifier_confidence": verification_res.confidence,
+                "confidence": verification_res.confidence,
+                "reason": verification_res.reason,
+                "unsupported_claims": verification_res.unsupported_claims
+            },
+            "retrieval": {
+                "top_score": round(float(top_dense_score), 3)
+            },
             "latency_metrics": {**metrics, **retrieval_metrics}
         }
-        if rag_debug:
-            debug_payload["final_decision"] = "REFUSED"
-            response["debug"] = debug_payload
-        return response
+        if debug:
+            res["debug"] = debug_info
+        return res
 
-    metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
-
-    # Format sources
+    # 9. Format Traceable Sources
+    t0 = time.perf_counter()
     sources = []
     for r in retrieval_res["results"]:
         sources.append({
@@ -264,25 +471,39 @@ def process_rag_pipeline(query: str, debug: bool = False):
             "language": r["payload"].get("language", "en"),
             "strategy": r["payload"].get("chunk_strategy", "unknown"),
             "document_id": r["payload"].get("document_id", ""),
-            "text": r["payload"]["text"]
+            "text": r["payload"].get("text", "")
         })
+    metrics["response_processing_ms"] = (time.perf_counter() - t0) * 1000
+    metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
 
-    response = {
+    res = {
         "status": "answered",
         "grounded": True,
-        "answer": answer,
+        "refused": False,
+        "confidence": final_conf,
+        "answer": candidate_answer,
         "sources": sources,
         "routing": routing_info,
-        "retrieval_confidence": confidence,
         "context_sufficient": True,
+        "verification": {
+            "question_relevant": verification_res.question_relevant,
+            "answers_question": verification_res.answers_question,
+            "supported_by_context": verification_res.supported_by_context,
+            "supported": True,
+            "verifier_confidence": verification_res.confidence,
+            "confidence": verification_res.confidence,
+            "reason": verification_res.reason,
+            "unsupported_claims": []
+        },
+        "retrieval": {
+            "top_score": round(float(top_dense_score), 3)
+        },
         "latency_metrics": {**metrics, **retrieval_metrics}
     }
-    if rag_debug:
-        debug_payload["final_decision"] = "ANSWERED"
-        response["debug"] = debug_payload
-        
-    return response
+    if debug:
+        res["debug"] = debug_info
+    return res
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000)

@@ -1,4 +1,6 @@
 import time
+import os
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Tuple
 from pipeline.vector_store import VectorStore
 from pipeline.embeddings import EmbeddingPipeline
@@ -8,6 +10,7 @@ class RetrievalPipeline:
     def __init__(self, embedder: EmbeddingPipeline, store: VectorStore, reranker_model: str = ''):
         self.embedder = embedder
         self.store = store
+        self.final_top_k = max(1, int(os.environ.get("RAG_FINAL_TOP_K", "5")))
 
     def _reciprocal_rank_fusion(self, dense_results, sparse_results, k=60, dense_weight=1.0, sparse_weight=1.0):
         """
@@ -71,44 +74,50 @@ class RetrievalPipeline:
         
         # 1. Query Embedding
         t0 = time.perf_counter()
-        dense_q, sparse_q = self.embedder.embed_queries([query])
-        dense_vec = dense_q[0]
-        sparse_vec = sparse_q[0]
+        dense_vec, sparse_vec, embedding_cache_hit = self.embedder.embed_query(query)
         metrics["query_embedding_ms"] = (time.perf_counter() - t0) * 1000
+        metrics["query_embedding_cache_hit"] = embedding_cache_hit
         
         top_k_retrieve = strategy.get("top_k_retrieve", 10)
+        chunk_strategy = strategy.get("chunk_strategy") or strategy.get("preferred_chunk_strategy")
+        query_filter = None
+        if chunk_strategy:
+            query_filter = rest.Filter(must=[rest.FieldCondition(
+                key="chunk_strategy", match=rest.MatchValue(value=chunk_strategy)
+            )])
         
-        # 2. Dense Retrieval
-        t0 = time.perf_counter()
-        dense_results = self.store.client.query_points(
-            collection_name=self.store.collection_name,
-            query=dense_vec,
-            using="dense",
-            limit=top_k_retrieve,
-        ).points
-        metrics["dense_retrieval_ms"] = (time.perf_counter() - t0) * 1000
-        
-        # 3. Sparse Retrieval
-        t0 = time.perf_counter()
         sparse_indices = list(sparse_vec.keys())
         sparse_values = list(sparse_vec.values())
-        sparse_results = self.store.client.query_points(
-            collection_name=self.store.collection_name,
-            query=rest.SparseVector(indices=sparse_indices, values=sparse_values),
-            using="sparse",
-            limit=top_k_retrieve
-        ).points
-        metrics["sparse_retrieval_ms"] = (time.perf_counter() - t0) * 1000
+        # These searches are independent. This preserves RRF results while reducing
+        # wall time when Qdrant is remote or the local index releases the GIL.
+        def dense_search():
+            started = time.perf_counter()
+            points = self.store.client.query_points(self.store.collection_name, dense_vec, using="dense", limit=top_k_retrieve, query_filter=query_filter).points
+            return points, (time.perf_counter() - started) * 1000
+
+        def sparse_search():
+            started = time.perf_counter()
+            points = self.store.client.query_points(self.store.collection_name, rest.SparseVector(indices=sparse_indices, values=sparse_values), using="sparse", limit=top_k_retrieve, query_filter=query_filter).points
+            return points, (time.perf_counter() - started) * 1000
+
+        t0 = time.perf_counter()
+        with ThreadPoolExecutor(max_workers=2, thread_name_prefix="rag-search") as executor:
+            dense_future = executor.submit(dense_search)
+            sparse_future = executor.submit(sparse_search)
+            dense_results, metrics["dense_retrieval_ms"] = dense_future.result()
+            sparse_results, metrics["sparse_retrieval_ms"] = sparse_future.result()
+        metrics["vector_search_ms"] = (time.perf_counter() - t0) * 1000
         
         # 4. Score Fusion (RRF)
         t0 = time.perf_counter()
         dense_w = strategy.get("dense_weight", 1.0)
         sparse_w = strategy.get("sparse_weight", 1.0)
         fused = self._reciprocal_rank_fusion(dense_results, sparse_results, dense_weight=dense_w, sparse_weight=sparse_w)
-        final_results = fused[:5] # Return top 5
+        final_results = fused[:strategy.get("final_top_k", self.final_top_k)]
         for r in final_results:
             r['rerank_score'] = r['dense_score'] # for compatibility with frontend/downstream
         metrics["rrf_fusion_ms"] = (time.perf_counter() - t0) * 1000
+        metrics["reranking_ms"] = 0.0  # no cross-encoder is configured in the serving path
         
         # 6. Context Assembly & Confidence
         t0 = time.perf_counter()
@@ -116,7 +125,10 @@ class RetrievalPipeline:
         metrics["context_assembly_ms"] = (time.perf_counter() - t0) * 1000
         
         # Calculate total retrieval pipeline latency
-        metrics["total_retrieval_ms"] = sum(metrics.values())
+        metrics["total_retrieval_ms"] = (
+            metrics["query_embedding_ms"] + metrics["vector_search_ms"] +
+            metrics["rrf_fusion_ms"] + metrics["context_assembly_ms"]
+        )
         
         return {
             "results": final_results,

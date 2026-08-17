@@ -1,97 +1,55 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import GoaMapBackground from "../components/GoaMapBackground";
+import VoiceRecorder, { PipelineStage } from "../components/VoiceRecorder";
+import PipelineVisualizer from "../components/PipelineVisualizer";
+import AnswerCard, { AnswerData } from "../components/AnswerCard";
+import TelemetryPanel from "../components/TelemetryPanel";
 import "../globals.css";
-
-const Strands = dynamic(() => import("../components/Strands"), { ssr: false });
-
-// Interface for API Response matching FastAPI
-interface RAGResponse {
-  status: string;
-  query: string;
-  answer?: string;
-  message?: string;
-  sources?: any[];
-  routing?: {
-    language: string;
-    intent: string;
-    complexity: string;
-    strategy?: any;
-  };
-  retrieval_confidence?: string;
-  grounded?: boolean;
-  grounding?: {
-    status: string;
-    reason?: string;
-  };
-  context_sufficient?: boolean;
-  refusal_reason?: string;
-  latency_metrics?: Record<string, number>;
-}
-
-// Toast notification types
-interface Toast {
-  id: string;
-  type: "error" | "warning" | "success" | "info";
-  message: string;
-  dismissing?: boolean;
-}
-
-// Intent icon/color map
-const INTENT_ICONS: Record<string, string> = {
-  "Chitchat": "💬",
-  "Factual": "🔍",
-  "Entity-heavy": "🏷️",
-  "Comparative": "⚖️",
-  "Multi-hop": "🔗",
-};
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+interface VoiceMetadata {
+  transcriptText?: string;
+  sttProvider?: string;
+  sttLanguage?: string;
+  sttFallbackUsed?: boolean;
+  sttLatencyMs?: number;
+}
+
 export default function RAGPage() {
+  const [stage, setStage] = useState<PipelineStage>("IDLE");
   const [isRecording, setIsRecording] = useState(false);
-  const [messages, setMessages] = useState<{role: "user" | "agent", content: string | RAGResponse}[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [inputMode, setInputMode] = useState<"voice" | "text">("voice");
-  const [textQuery, setTextQuery] = useState("");
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [answerData, setAnswerData] = useState<AnswerData | null>(null);
+  const [latencyMetrics, setLatencyMetrics] = useState<Record<string, number> | undefined>();
+  const [textInput, setTextInput] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
-  const chatEndRef = useRef<HTMLDivElement>(null);
   const currentRequestIdRef = useRef<number>(0);
+  const requestIdCounter = useRef<number>(0);
 
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isProcessing]);
-
-  // --- Toast System ---
-  const addToast = useCallback((type: Toast["type"], message: string) => {
-    const id = Date.now().toString() + Math.random().toString(36).slice(2);
-    setToasts(prev => [...prev, { id, type, message }]);
-    // Auto-dismiss after 5 seconds
-    setTimeout(() => {
-      setToasts(prev => prev.map(t => t.id === id ? { ...t, dismissing: true } : t));
-      setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== id));
-      }, 300);
-    }, 5000);
-  }, []);
-
-  const toastIcons: Record<string, string> = {
-    error: "✕",
-    warning: "⚠",
-    success: "✓",
-    info: "ℹ",
-  };
-
-  // --- Voice Recording ---
+  // --- Voice Recording Lifecycle ---
   const startRecording = async () => {
+    setErrorMessage(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      
+      let mimeType = 'audio/webm';
+      if (typeof MediaRecorder !== 'undefined' && !MediaRecorder.isTypeSupported(mimeType)) {
+        if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+          mimeType = 'audio/ogg';
+        }
+      }
+
+      const options = MediaRecorder.isTypeSupported(mimeType) ? { mimeType } : undefined;
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -102,585 +60,475 @@ export default function RAGPage() {
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: "audio/wav" });
-        await sendAudio(audioBlob);
+        const actualMime = mediaRecorder.mimeType || mimeType;
+        const audioBlob = new Blob(chunksRef.current, { type: actualMime });
+        stream.getTracks().forEach((track) => track.stop());
+        await processAudio(audioBlob, actualMime);
       };
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
-      addToast("error", "Microphone access is required for voice input. Please allow microphone permissions.");
+      setStage("LISTENING");
+    } catch (err: unknown) {
+      console.error("Microphone error:", err);
+      setErrorMessage("Microphone access is required. Please allow microphone permissions.");
+      setStage("ERROR");
     }
   };
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
       setIsRecording(false);
+      setStage("PROCESSING");
     }
   };
 
-  const sendAudio = async (audioBlob: Blob) => {
-    setIsProcessing(true);
-    
-    const requestId = Date.now();
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
+      setIsRecording(false);
+      setStage("IDLE");
+    }
+  };
+
+  // --- Voice Transcription & RAG Execution ---
+  const processAudio = async (audioBlob: Blob, mimeType: string) => {
+    const requestId = ++requestIdCounter.current;
     currentRequestIdRef.current = requestId;
-    
-    // Clear previous chat, set single-turn placeholder
-    setMessages([{ role: "user", content: "🎤 ..." }]);
-    
+    setStage("TRANSCRIBING");
+
     const formData = new FormData();
-    formData.append("audio", audioBlob, "recording.wav");
+    const ext = mimeType.includes("mp4") ? "m4a" : mimeType.includes("ogg") ? "ogg" : "webm";
+    formData.append("audio", audioBlob, `recording.${ext}`);
 
     try {
-      const response = await fetch(`${API_BASE}/api/voice_ask`, {
+      const response = await fetch(`${API_BASE}/api/transcribe`, {
         method: "POST",
         body: formData,
       });
-      
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      
+
+      if (currentRequestIdRef.current !== requestId) return;
+
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`);
+        throw new Error(`Server returned HTTP ${response.status}`);
       }
-      
-      const data: RAGResponse = await response.json();
-      
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      
-      setMessages([
-        { role: "user", content: data.query || "Could not transcribe." },
-        { role: "agent", content: data }
-      ]);
-      
-    } catch (error: any) {
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      console.error("API Error:", error);
-      const isNetworkError = error.message?.includes("fetch") || error.message?.includes("network") || error.name === "TypeError";
-      
-      if (isNetworkError) {
-        addToast("error", "Network disconnected. Please check your connection and try again.");
-      } else {
-        addToast("error", `Server error: ${error.message || "Unknown error"}`);
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setErrorMessage(data.error || "Could not transcribe audio.");
+        setStage("ERROR");
+        return;
       }
-      
-      setMessages([]); // Remove the placeholder on error
-    } finally {
-      if (currentRequestIdRef.current === requestId) {
-        setIsProcessing(false);
-      }
+
+      const transcript = data.text;
+      const sttProvider = data.provider || "elevenlabs";
+      const sttLanguage = data.language || "auto";
+      const sttFallbackUsed = !!data.fallback_used;
+
+      setStage("RETRIEVING");
+
+      // Execute RAG Pipeline with the transcribed query
+      await executeRAGQuery(transcript, {
+        transcriptText: transcript,
+        sttProvider,
+        sttLanguage,
+        sttFallbackUsed,
+        sttLatencyMs: data.latency_ms,
+      });
+
+    } catch (err: unknown) {
+      if (currentRequestIdRef.current !== requestId) return;
+      console.error("Transcription error:", err);
+      setErrorMessage("Network error connecting to transcription service. Please ensure backend is running.");
+      setStage("ERROR");
     }
   };
 
-  const sendTextQuery = async () => {
-    const query = textQuery.trim();
-    if (!query || isProcessing) return;
-    
-    setIsProcessing(true);
-    setTextQuery("");
-    
-    const requestId = Date.now();
+  // --- RAG Query Execution ---
+  const executeRAGQuery = async (queryText: string, voiceMetadata?: VoiceMetadata) => {
+    const requestId = ++requestIdCounter.current;
     currentRequestIdRef.current = requestId;
-    
-    // Clear previous chat, set single-turn query
-    setMessages([{ role: "user", content: query }]);
+
+    if (!voiceMetadata) {
+      setStage("RETRIEVING");
+    }
 
     try {
+      setTimeout(() => {
+        if (currentRequestIdRef.current === requestId && stage !== "ERROR") {
+          setStage("GENERATING");
+        }
+      }, 400);
+
       const response = await fetch(`${API_BASE}/api/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: queryText }),
       });
-      
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      
+
+      if (currentRequestIdRef.current !== requestId) return;
+
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`);
+        throw new Error(`Server returned HTTP ${response.status}`);
       }
-      
-      const data: RAGResponse = await response.json();
-      
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      
-      setMessages([
-        { role: "user", content: query },
-        { role: "agent", content: data }
-      ]);
-      
-    } catch (error: any) {
-      if (currentRequestIdRef.current !== requestId) return; // Ignore stale
-      console.error("API Error:", error);
-      const isNetworkError = error.message?.includes("fetch") || error.message?.includes("network") || error.name === "TypeError";
-      
-      if (isNetworkError) {
-        addToast("error", "Network disconnected. Please check your connection and try again.");
-      } else {
-        addToast("error", `Server error: ${error.message || "Unknown error"}`);
-      }
-      
-      setMessages([{ role: "user", content: query }, { 
-        role: "agent", 
-        content: { status: "error", query, message: "Failed to connect to backend API." } 
-      }]);
-    } finally {
-      if (currentRequestIdRef.current === requestId) {
-        setIsProcessing(false);
-      }
+
+      const ragResponse = await response.json();
+
+      const combinedMetrics = {
+        ...(ragResponse.latency_metrics || {}),
+        stt_ms: voiceMetadata?.sttLatencyMs || ragResponse.latency_metrics?.stt_ms,
+      };
+      setLatencyMetrics(combinedMetrics);
+
+      setAnswerData({
+        query: queryText,
+        transcriptText: voiceMetadata?.transcriptText || queryText,
+        sttProvider: voiceMetadata?.sttProvider,
+        sttLanguage: voiceMetadata?.sttLanguage || ragResponse.routing?.language,
+        sttFallbackUsed: voiceMetadata?.sttFallbackUsed,
+        answer: ragResponse.answer || ragResponse.message,
+        grounded: ragResponse.grounded,
+        contextSufficient: ragResponse.context_sufficient,
+        refusalReason: ragResponse.refusal_reason,
+        sources: ragResponse.sources || [],
+        retrievalConfidence: ragResponse.retrieval_confidence,
+      });
+
+      setStage("ANSWER");
+    } catch (err: unknown) {
+      if (currentRequestIdRef.current !== requestId) return;
+      console.error("RAG error:", err);
+      setErrorMessage("Could not retrieve answer. Please try again.");
+      setStage("ERROR");
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendTextQuery();
-    }
+  const handleTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!textInput.trim() || ["LISTENING", "PROCESSING", "TRANSCRIBING", "RETRIEVING", "GENERATING"].includes(stage)) return;
+    const q = textInput.trim();
+    setTextInput("");
+    executeRAGQuery(q);
   };
 
-  // --- Render Agent Message ---
-  const renderAgentMessage = (data: RAGResponse) => {
-    if (data.status === "error") {
-      return (
-        <div className="message agent" style={{ borderColor: 'var(--error-color)' }}>
-          <p>{data.message}</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="message agent glass-container" style={{ padding: '24px' }}>
-        {/* Intent Badge Row */}
-        {data.routing && (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
-            <span className={`intent-badge ${data.routing.intent}`}>
-              <span className="intent-icon">{INTENT_ICONS[data.routing.intent] || "📋"}</span>
-              {data.routing.intent}
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              {data.routing.language} • {data.routing.complexity}
-            </span>
-          </div>
-        )}
-
-        {data.status === "answered" ? (
-          <div style={{ marginBottom: '20px' }}>
-            <p style={{ fontSize: '1.1rem' }}>{data.answer}</p>
-          </div>
-        ) : (
-          <div style={{ marginBottom: '20px', color: 'var(--warning-color)' }}>
-            <p>{data.answer || data.message}</p>
-          </div>
-        )}
-
-        {/* Refusal / Grounding Status Bar */}
-        {data.status === "answered" && data.grounded ? (
-           <div className="answerability-bar sufficient">
-             <span className="answerability-icon">🟢</span>
-             <span><strong>GROUNDED</strong> | {data.retrieval_confidence} CONFIDENCE</span>
-           </div>
-        ) : data.status === "refused" ? (
-           <div className="answerability-bar insufficient">
-             <span className="answerability-icon">🟡</span>
-             <span><strong>INSUFFICIENT CONTEXT</strong> | {data.retrieval_confidence || "LOW"} CONFIDENCE</span>
-           </div>
-        ) : null}
-        
-        {/* Detailed Metrics Dashboard */}
-        <div className="metrics-grid">
-          {data.latency_metrics?.total_e2e_ms && (
-            <div className="metric-card" style={{ gridColumn: 'span 2', background: 'rgba(59, 130, 246, 0.15)', borderColor: 'rgba(59, 130, 246, 0.3)', border: '1px solid' }}>
-              <span className="metric-value">{data.latency_metrics.total_e2e_ms.toFixed(1)}ms</span>
-              <span className="metric-label">VOICE → ANSWER (Total)</span>
-            </div>
-          )}
-
-          {data.latency_metrics?.total_retrieval_ms !== undefined ? (
-            <div className="metric-card" style={{ gridColumn: 'span 2', background: 'rgba(139, 92, 246, 0.15)', borderColor: 'rgba(139, 92, 246, 0.3)', border: '1px solid' }}>
-              <span className="metric-value">{data.latency_metrics.total_retrieval_ms.toFixed(1)}ms</span>
-              <span className="metric-label">RAG RETRIEVAL (Core)</span>
-            </div>
-          ) : (
-            <div className="metric-card" style={{ gridColumn: 'span 2', background: 'rgba(139, 92, 246, 0.15)', borderColor: 'rgba(139, 92, 246, 0.3)', border: '1px solid' }}>
-               <span className="metric-value">
-                 {((data.latency_metrics?.query_embedding_ms || 0) + (data.latency_metrics?.dense_retrieval_ms || 0) + (data.latency_metrics?.sparse_retrieval_ms || 0) + (data.latency_metrics?.rrf_fusion_ms || 0)).toFixed(1)}ms
-               </span>
-               <span className="metric-label">RAG RETRIEVAL (Core)</span>
-            </div>
-          )}
-          
-          {data.latency_metrics?.stt_ms && (
-             <div className="metric-card">
-               <span className="metric-value">{data.latency_metrics.stt_ms.toFixed(1)}ms</span>
-               <span className="metric-label">STT</span>
-             </div>
-          )}
-          
-          {data.latency_metrics?.query_routing_ms && (
-             <div className="metric-card">
-               <span className="metric-value">{data.latency_metrics.query_routing_ms.toFixed(1)}ms</span>
-               <span className="metric-label">Router</span>
-             </div>
-          )}
-
-          {data.latency_metrics?.query_embedding_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.query_embedding_ms.toFixed(1)}ms</span>
-              <span className="metric-label">Embed</span>
-            </div>
-          )}
-
-          {data.latency_metrics?.dense_retrieval_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.dense_retrieval_ms.toFixed(1)}ms</span>
-              <span className="metric-label">Dense</span>
-            </div>
-          )}
-
-          {data.latency_metrics?.sparse_retrieval_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.sparse_retrieval_ms.toFixed(1)}ms</span>
-              <span className="metric-label">Sparse</span>
-            </div>
-          )}
-
-          {data.latency_metrics?.rrf_fusion_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.rrf_fusion_ms.toFixed(1)}ms</span>
-              <span className="metric-label">RRF</span>
-            </div>
-          )}
-          
-          {data.latency_metrics?.generation_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.generation_ms.toFixed(1)}ms</span>
-              <span className="metric-label">LLM Gen</span>
-            </div>
-          )}
-          
-          {data.latency_metrics?.grounding_ms !== undefined && (
-            <div className="metric-card">
-              <span className="metric-value">{data.latency_metrics.grounding_ms.toFixed(1)}ms</span>
-              <span className="metric-label">Grounding</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Routing & Guardrails Display */}
-        <div className="metrics-grid" style={{ marginTop: '12px', paddingTop: '12px' }}>
-          {data.routing && (
-            <div className="metric-card">
-              <span className="metric-value" style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                {data.routing.language}
-              </span>
-              <span className="metric-label">Detected Lang</span>
-            </div>
-          )}
-          
-          {data.routing && (
-            <div className="metric-card">
-              <span className={`intent-badge ${data.routing.intent}`} style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
-                {INTENT_ICONS[data.routing.intent] || ""} {data.routing.intent}
-              </span>
-              <span className="metric-label">Intent</span>
-            </div>
-          )}
-
-          {data.retrieval_confidence && (
-            <div className="metric-card">
-              <span className={`badge ${data.retrieval_confidence}`}>
-                {data.retrieval_confidence}
-              </span>
-              <span className="metric-label">Confidence</span>
-            </div>
-          )}
-
-          {data.grounding && (
-            <div className="metric-card">
-              <span className={`badge ${data.grounding.status}`}>
-                {data.grounding.status}
-              </span>
-              <span className="metric-label">Grounding</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Source Citations */}
-        {data.sources && data.sources.length > 0 && (
-          <div style={{ marginTop: '20px', borderTop: '1px solid var(--surface-border)', paddingTop: '16px' }}>
-            <h4 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>
-              Sources Retrieved
-            </h4>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {data.sources.slice(0, 3).map((src, i) => (
-                <div key={i} style={{ 
-                  background: 'rgba(255,255,255,0.05)', 
-                  padding: '6px 12px', 
-                  borderRadius: '16px',
-                  fontSize: '0.8rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span style={{ color: 'var(--accent-color)' }}>★ {src.relevance}</span>
-                  <span>{src.strategy}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  const quickPrompts = [
+    { label: "What is the capital of India?", lang: "EN" },
+    { label: "Who leads India?", lang: "EN" },
+    { label: "भारत की राजधानी क्या है?", lang: "HI" },
+    { label: "महाराष्ट्राची राजधानी कोणती आहे?", lang: "MR" },
+  ];
 
   return (
-    <main className="app-container">
-      {/* Top Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <Link 
-          href="/" 
+    <div style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "var(--bg-primary)" }}>
+      {/* 1. Subtle Digital Goa Map Background Layer */}
+      <GoaMapBackground />
+
+      {/* 2. Floating Glass Navigation Bar */}
+      <header
+        style={{
+          position: "sticky",
+          top: "16px",
+          zIndex: 30,
+          maxWidth: "1080px",
+          width: "calc(100% - 32px)",
+          margin: "0 auto",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "rgba(13, 17, 24, 0.85)",
+          borderRadius: "9999px",
+          padding: "10px 22px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04)",
+        }}
+      >
+        <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#FFE600',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            background: 'rgba(6, 26, 18, 0.8)',
-            border: '1px solid rgba(255, 230, 0, 0.4)',
-            padding: '8px 16px',
-            borderRadius: '9999px',
-            transition: 'all 0.2s ease',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
           }}
-          className="back-home-link"
         >
-          <span>←</span> Back to HH Goa Home
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ 
-            background: 'rgba(255, 19, 125, 0.2)', 
-            color: '#FF137D', 
-            border: '1px solid rgba(255, 19, 125, 0.4)', 
-            padding: '4px 12px', 
-            borderRadius: '9999px', 
-            fontSize: '0.75rem', 
-            fontWeight: 700,
-            letterSpacing: '0.05em' 
-          }}>
-            LIVE RAG PIPELINE
-          </span>
-        </div>
-      </div>
-
-      <div className="header">
-        <h1 className="gradient-text">HH Goa 2026</h1>
-        <p>Voice-Enabled Multilingual RAG</p>
-      </div>
-      
-      {/* Benchmark Banner */}
-      <div className="benchmark-banner">
-        <div>
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>Production Pipeline Evaluated</h3>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Verified 100-query Hindi IndicMSMARCO evaluation (Benchmark-Subset Results).<br/>
-            Configuration: <strong>Hybrid RRF (BGE-M3 + BM25)</strong>
-          </p>
-        </div>
-        <div className="benchmark-stats">
-          <div className="bench-stat">
-            <span className="bench-val">80.0%</span>
-            <span className="bench-label">Recall@10</span>
-          </div>
-          <div className="bench-stat">
-            <span className="bench-val">50.4ms</span>
-            <span className="bench-label">Retrieval P50</span>
-          </div>
-          <div className="bench-stat">
-            <span className="bench-val" style={{ color: 'var(--warning-color)'}}>54.9ms</span>
-            <span className="bench-label">Retrieval P70</span>
-          </div>
-          <div className="bench-stat">
-            <span className="bench-val" style={{ color: 'var(--error-color)'}}>65.4ms</span>
-            <span className="bench-label">Retrieval P100</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="glass-container" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column' }}>
-        
-        {/* Chat Area */}
-        <div className="chat-window" style={{ flexGrow: 1, paddingBottom: '100px' }}>
-          {messages.length === 0 ? (
-            <div style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '40px' }}>
-              <p>Tap the microphone or type a question below.</p>
-              <p style={{ fontSize: '0.85rem', marginTop: '8px' }}>E.g., &quot;What is the capital of India?&quot; or &quot;भारत की राजधानी क्या है?&quot;</p>
-            </div>
-          ) : (
-            messages.map((msg, idx) => (
-              msg.role === "user" ? (
-                <div key={idx} className="message user">
-                  {typeof msg.content === 'string' ? msg.content : "..."}
-                </div>
-              ) : (
-                <div key={idx} style={{ width: '100%' }}>
-                  {renderAgentMessage(msg.content as RAGResponse)}
-                </div>
-              )
-            ))
-          )}
-          
-          {isProcessing && (
-            <div className="message agent" style={{ alignSelf: 'flex-start', padding: '12px 20px', display: 'flex', gap: '8px', alignItems: 'center', width: 'fit-content' }}>
-              <div className="spinner" style={{ width: '16px', height: '16px', border: '2px solid var(--accent-color)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Processing pipeline...</span>
-            </div>
-          )}
-          <div ref={chatEndRef} />
-        </div>
-
-        {/* Floating Controls */}
-        <div style={{ 
-          position: 'fixed', 
-          bottom: '30px', 
-          left: '50%', 
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-          width: '100%',
-          maxWidth: '700px',
-          padding: '0 20px',
-        }}>
-          {/* Mode Switcher */}
-          <div className="mode-switcher" style={{ maxWidth: '240px', margin: '0 auto 12px auto' }}>
-            <button 
-              className={`mode-btn ${inputMode === 'voice' ? 'active' : ''}`} 
-              onClick={() => setInputMode('voice')}
+          {/* Brand Logo & Return Link */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Link
+              href="/"
+              className="btn-secondary"
+              style={{
+                padding: "6px 12px",
+                fontSize: "0.78rem",
+                textDecoration: "none",
+                gap: "5px",
+              }}
             >
-              🎤 Voice
-            </button>
-            <button 
-              className={`mode-btn ${inputMode === 'text' ? 'active' : ''}`} 
-              onClick={() => setInputMode('text')}
-            >
-              ⌨️ Text
-            </button>
-          </div>
+              ← Home
+            </Link>
 
-          {inputMode === "voice" ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              {/* Strands animation backdrop while recording */}
-              <div style={{
-                position: 'relative',
-                width: '280px',
-                height: '120px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '280px',
-                  height: '280px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  opacity: isRecording ? 1 : 0,
-                  transition: 'opacity 0.4s ease',
-                  pointerEvents: 'none',
-                  zIndex: 0
-                }}>
-                  {isRecording && (
-                    <Strands
-                      colors={["#8B5CF6", "#3B82F6", "#06B6D4"]}
-                      count={4}
-                      speed={0.8}
-                      amplitude={1.2}
-                      waviness={1.2}
-                      thickness={0.8}
-                      glow={3.0}
-                      taper={2}
-                      spread={1.2}
-                      intensity={0.8}
-                      saturation={1.8}
-                      opacity={1}
-                      scale={1.5}
-                      glass={false}
-                      style={{}}
-                    />
-                  )}
-                </div>
-
-                <div className={`mic-btn-wrapper ${isRecording ? 'recording' : ''}`} style={{ position: 'relative', zIndex: 2, margin: 0 }}>
-                  {isRecording && <div className="ripple"></div>}
-                  <button 
-                    className={`mic-btn ${isRecording ? 'recording' : ''}`}
-                    onMouseDown={startRecording}
-                    onMouseUp={stopRecording}
-                    onTouchStart={startRecording}
-                    onTouchEnd={stopRecording}
-                    disabled={isProcessing}
-                  >
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                      <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {isRecording ? "Release to Send" : "Hold to Speak"}
-              </div>
-            </div>
-          ) : (
-            <div className="text-input-container">
-              <input 
-                className="text-input"
-                type="text"
-                placeholder="Type your question... (Hindi, Marathi, or English)"
-                value={textQuery}
-                onChange={(e) => setTextQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isProcessing}
-                id="text-query-input"
-              />
-              <button 
-                className="send-btn" 
-                onClick={sendTextQuery}
-                disabled={isProcessing || !textQuery.trim()}
-                id="send-query-btn"
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, rgba(0, 168, 120, 0.25) 0%, rgba(22, 138, 173, 0.2) 100%)",
+                  border: "1px solid rgba(0, 168, 120, 0.4)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16C784" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20M17 5v14M7 9v6M22 10v4M2 11v2" />
                 </svg>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#F5F7FA" }}>
+                    Voice RAG Goa
+                  </span>
+                  <span className="badge badge-node" style={{ fontSize: "0.62rem", padding: "1px 6px" }}>
+                    15.60° N • VAGATOR
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Languages & Live Status */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <div className="badge badge-lang" style={{ gap: "8px", padding: "5px 12px" }}>
+              <span style={{ color: "var(--tropical-green)", fontWeight: 700 }}>EN</span> • <span>हिन्दी</span> • <span>मराठी</span> • <span>कोंकणी</span>
+            </div>
+            <span className="badge badge-live">
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#16C784", animation: "pulseDot 1.5s infinite" }} />
+              Live AI
+            </span>
+          </div>
+        </div>
+      </header>
+
+      {/* 3. Main Viewport Content */}
+      <main
+        style={{
+          position: "relative",
+          zIndex: 10,
+          flex: 1,
+          maxWidth: "880px",
+          width: "100%",
+          margin: "0 auto",
+          padding: "36px 20px 60px 20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "28px",
+        }}
+      >
+        {/* Hero Section */}
+        <section style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ display: "inline-flex", justifyContent: "center" }}>
+            <span
+              style={{
+                fontSize: "0.72rem",
+                fontWeight: 800,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--tropical-green)",
+                background: "rgba(0, 168, 120, 0.1)",
+                border: "1px solid rgba(0, 168, 120, 0.3)",
+                padding: "4px 14px",
+                borderRadius: "9999px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <span>🌴</span> Hacker House Goa 2026 • Task 2
+            </span>
+          </div>
+
+          <h1
+            className="font-display gradient-title"
+            style={{
+              fontSize: "clamp(2.3rem, 5.5vw, 3.6rem)",
+              lineHeight: 1.12,
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Voice-Enabled <span className="gradient-goa-accent">RAG</span>
+          </h1>
+
+          <p style={{ fontSize: "1.05rem", color: "var(--text-secondary)", maxWidth: "580px", margin: "0 auto", lineHeight: 1.6 }}>
+            Speak your question in English, Hindi, Marathi, or Konkani. Retrieve accurate knowledge with calibrated ground truth verification.
+          </p>
+        </section>
+
+        {/* Centerpiece Microphone Voice Interaction Panel */}
+        <section className="glass-panel-elevated" style={{ padding: "32px 24px 28px 24px" }}>
+          <VoiceRecorder
+            stage={stage}
+            isRecording={isRecording}
+            onStartRecording={startRecording}
+            onStopRecording={stopRecording}
+            onCancelRecording={cancelRecording}
+            errorMessage={errorMessage}
+          />
+
+          {/* Quick Search Input Form */}
+          <form
+            onSubmit={handleTextSubmit}
+            style={{
+              marginTop: "22px",
+              maxWidth: "620px",
+              margin: "22px auto 0 auto",
+              display: "flex",
+              gap: "8px",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Or type a question (English, हिन्दी, मराठी, कोंकणी)..."
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              style={{
+                flex: 1,
+                background: "rgba(8, 10, 15, 0.75)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                color: "#F5F7FA",
+                fontSize: "0.95rem",
+                outline: "none",
+                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--goa-green)";
+                e.target.style.boxShadow = "0 0 14px rgba(0, 168, 120, 0.25)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            <button
+              type="submit"
+              disabled={!textInput.trim()}
+              className="btn-primary"
+              style={{
+                opacity: textInput.trim() ? 1 : 0.45,
+                cursor: textInput.trim() ? "pointer" : "default",
+                padding: "0 22px",
+                borderRadius: "12px",
+              }}
+            >
+              Ask
+            </button>
+          </form>
+
+          {/* Quick 1-Click Suggestion Chips */}
+          <div
+            style={{
+              marginTop: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              gap: "8px",
+            }}
+          >
+            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 600 }}>Try:</span>
+            {quickPrompts.map((p, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setTextInput(p.label);
+                  executeRAGQuery(p.label);
+                }}
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "9999px",
+                  padding: "4px 10px",
+                  color: "var(--text-secondary)",
+                  fontSize: "0.76rem",
+                  cursor: "pointer",
+                  transition: "all 0.18s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--goa-green)";
+                  e.currentTarget.style.color = "var(--text-primary)";
+                  e.currentTarget.style.background = "rgba(0, 168, 120, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                }}
+              >
+                {p.label}
               </button>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        </section>
 
-      </div>
+        {/* Real-time Pipeline Visualizer */}
+        <PipelineVisualizer
+          currentStage={stage}
+          latencies={{
+            stt_ms: latencyMetrics?.stt_ms,
+            retrieval_ms: (latencyMetrics?.dense_retrieval_ms || 0) + (latencyMetrics?.sparse_retrieval_ms || 0) + (latencyMetrics?.rrf_fusion_ms || 0),
+            generation_ms: latencyMetrics?.generation_ms,
+            total_ms: latencyMetrics?.total_e2e_ms,
+          }}
+        />
 
-      {/* Toast Notifications */}
-      {toasts.length > 0 && (
-        <div className="toast-container">
-          {toasts.map(toast => (
-            <div key={toast.id} className={`toast ${toast.type} ${toast.dismissing ? 'dismissing' : ''}`}>
-              <span className="toast-icon">{toastIcons[toast.type]}</span>
-              <span className="toast-message">{toast.message}</span>
-            </div>
-          ))}
+        {/* Answer Experience & Grounded Passages */}
+        {answerData && (
+          <AnswerCard
+            data={answerData}
+            onEditQuery={(editedQ) => executeRAGQuery(editedQ)}
+          />
+        )}
+
+        {/* Performance & Real Telemetry Panel */}
+        <TelemetryPanel metrics={latencyMetrics} />
+      </main>
+
+      {/* 4. Minimal Goa Nightlife Footer */}
+      <footer
+        style={{
+          borderTop: "1px solid var(--border-subtle)",
+          padding: "24px 20px",
+          textAlign: "center",
+          color: "var(--text-muted)",
+          fontSize: "0.82rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "8px",
+          background: "rgba(8, 10, 15, 0.8)",
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Image
+            src="/horizonlogo.png"
+            alt="Horizon Labs Logo"
+            width={100}
+            height={32}
+            style={{ objectFit: "contain", opacity: 0.8 }}
+          />
         </div>
-      )}
-      
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .back-home-link:hover {
-          background: rgba(255, 230, 0, 0.15) !important;
-          border-color: #FFE600 !important;
-          transform: translateX(-3px);
-        }
-      `}} />
-    </main>
+        <p>Built with ⚡ by Horizon Labs • Hacker House Goa 2026 • Vagator Node [15.60° N, 73.74° E]</p>
+      </footer>
+    </div>
   );
 }

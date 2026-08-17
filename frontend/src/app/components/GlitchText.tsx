@@ -22,9 +22,9 @@ export default function GlitchText({
 }: GlitchTextProps) {
   const textContent = typeof children === "string" ? children : React.Children.toArray(children).join("");
 
-  const inlineStyle: React.CSSProperties = {
+  const inlineStyle: React.CSSProperties & Record<string, string | number> = {
     ...style,
-    ["--glitch-speed" as any]: speed,
+    "--glitch-speed": speed,
   };
 
   const textClasses = [

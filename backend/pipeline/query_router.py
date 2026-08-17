@@ -187,11 +187,16 @@ class QueryRouter:
         else:
             return "Complex"
             
-    def route_query(self, query: str) -> Dict[str, Any]:
+    def route_query(self, query: str, language_hint: str = None) -> Dict[str, Any]:
         """
         Main entry point for routing logic.
         """
-        lang = self.detect_language(query)
+        # Speech-to-text already performs acoustic language identification. Preserve
+        # that signal instead of reclassifying a code-switched transcript by script.
+        language_names = {"en-IN": "English", "hi-IN": "Hindi", "mr-IN": "Marathi", "kok-IN": "Konkani"}
+        lang = language_names.get(language_hint) if language_hint else None
+        if not lang:
+            lang = self.detect_language(query)
         intent = self.detect_intent(query)
         complexity = self.detect_complexity(query)
         

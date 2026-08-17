@@ -8,21 +8,25 @@ def fetch_msmarco_xi_dataset(max_records=100):
     Since the HF server may fail (e.g., ArrowNotImplementedError for this dataset),
     this function falls back to the local mock dataset on failure.
     """
-    url = "https://datasets-server.huggingface.co/first-rows?dataset=ai4bharat%2FMSMARCO-XI&config=default&split=train"
-    
-    print(f"Fetching dataset from {url} ...")
+    print(f"Fetching dataset ai4bharat/MSMARCO-XI ('hi' split) using datasets library...")
     try:
-        response = requests.get(url, timeout=15)
-        if response.status_code == 200:
-            data = response.json()
-            rows = [r["row"] for r in data.get("rows", [])]
-            if rows:
-                print(f"Successfully fetched {len(rows)} rows from HF datasets-server.")
-                return rows[:max_records]
-        else:
-            print(f"HF datasets-server returned {response.status_code}: {response.text}")
+        from datasets import load_dataset
+        # Load the default training data (contains Hindi and other languages)
+        dataset = load_dataset("ai4bharat/MSMARCO-XI", "default", split="train", streaming=True)
+        
+        # Take the first `max_records`
+        records = []
+        for i, example in enumerate(dataset):
+            if i >= max_records:
+                break
+            # Convert HuggingFace dataset example dict to a standard dict
+            records.append(dict(example))
+            
+        if records:
+            print(f"Successfully fetched {len(records)} records from HuggingFace.")
+            return records
     except Exception as e:
-        print(f"Error fetching from HF datasets-server: {e}")
+        print(f"Error fetching from HuggingFace datasets: {e}")
         
     print("Falling back to local mock dataset...")
     # Fallback to local mock dataset
