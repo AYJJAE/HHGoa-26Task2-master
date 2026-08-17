@@ -13,7 +13,12 @@ from .sarvam_client import TranscriptionResult, ALLOWED_CONTENT_TYPES
 
 class ElevenLabsClient:
     def __init__(self):
-        self.api_key = os.environ.get("ELEVENLABS_API_KEY", "")
+        self.api_key = (
+            os.environ.get("ELEVENLABS_API_KEY")
+            or os.environ.get("ELEVEN_LABS_API_KEY")
+            or os.environ.get("XI_API_KEY")
+            or ""
+        ).strip()
         self.base_url = os.environ.get("ELEVENLABS_STT_BASE_URL", "https://api.elevenlabs.io/v1").rstrip("/")
         self.model = os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v2")
         self.timeout_seconds = float(os.environ.get("ELEVENLABS_STT_TIMEOUT_SECONDS", "15"))
@@ -30,9 +35,6 @@ class ElevenLabsClient:
         adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=10, pool_maxsize=10)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
-        
-        if not self.api_key:
-            print("INFO: ELEVENLABS_API_KEY not set. Voice transcription will route to fallback.")
 
     @staticmethod
     def _clean_text(text: object) -> str:
@@ -56,15 +58,21 @@ class ElevenLabsClient:
         language_hint: Optional[str] = None,
     ) -> TranscriptionResult:
         """Call ElevenLabs Scribe v2 for transcription."""
+        t0 = time.perf_counter()
+        
         if not audio_bytes:
-            return TranscriptionResult(False, error="No audio was provided.")
+            return TranscriptionResult(False, error="No audio was provided.", provider="elevenlabs", latency_ms=0.0)
         if len(audio_bytes) > self.max_audio_bytes:
-            return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.")
+            return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.", provider="elevenlabs", latency_ms=0.0)
         if not self.api_key:
-            return TranscriptionResult(False, error="Voice transcription is not configured for ElevenLabs.")
+            print("[STT:ElevenLabs] ELEVENLABS_API_KEY configured: false")
+            return TranscriptionResult(False, error="Voice transcription is not configured for ElevenLabs.", provider="elevenlabs", latency_ms=0.0)
 
-        raw_mime = content_type or mimetypes.guess_type(filename)[0] or "audio/webm"
+        raw_mime = content_type or mimetypes.guess_type(filename or "")[0] or "audio/webm"
         mime_type = self._normalize_mime_type(raw_mime)
+        clean_filename = filename or "recording.webm"
+        if not clean_filename.endswith((".webm", ".wav", ".mp3", ".ogg", ".m4a", ".mp4", ".flac")):
+            clean_filename = "recording.webm"
 
         data = {
             "model_id": self.model,
@@ -74,7 +82,7 @@ class ElevenLabsClient:
             lang = language_hint.split('-')[0].lower()
             data["language_code"] = lang
 
-        files = {"file": (filename or "audio.webm", io.BytesIO(audio_bytes), mime_type)}
+        files = {"file": (clean_filename, io.BytesIO(audio_bytes), mime_type)}
         headers = {"xi-api-key": self.api_key}
         
         try:
@@ -85,32 +93,43 @@ class ElevenLabsClient:
                 data=data,
                 timeout=(3.0, self.timeout_seconds),
             )
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
             
             if response.status_code == 200:
                 result = response.json()
                 text = self._clean_text(result.get("text"))
                 if not text:
-                    return TranscriptionResult(False, error="No speech was detected.")
+                    print(f"[STT:ElevenLabs] Succeeded in {elapsed_ms:.1f}ms but no speech text returned.")
+                    return TranscriptionResult(False, error="No speech was detected.", provider="elevenlabs", latency_ms=elapsed_ms)
                 detected_lang = result.get("language_code") or result.get("language")
+                safe_snippet = text[:40].encode("ascii", "backslashreplace").decode("ascii")
+                print(f"[STT:ElevenLabs] Transcription succeeded in {elapsed_ms:.1f}ms (lang={detected_lang}): '{safe_snippet}...'")
                 return TranscriptionResult(
                     True,
                     text=text,
                     language=detected_lang,
                     language_probability=result.get("language_probability"),
+                    provider="elevenlabs",
+                    latency_ms=elapsed_ms,
                 )
             
             if response.status_code == 429:
                 message = "The transcription service is busy. Please try again shortly."
             elif response.status_code in (400, 422):
                 message = "The audio could not be processed."
-            elif response.status_code == 401:
+            elif response.status_code in (401, 403):
                 message = "ElevenLabs API key is invalid or unauthorized."
             else:
                 message = f"ElevenLabs API returned HTTP {response.status_code}"
             
-            return TranscriptionResult(False, error=message)
+            print(f"[STT:ElevenLabs] HTTP {response.status_code} in {elapsed_ms:.1f}ms. Message: {message}")
+            return TranscriptionResult(False, error=message, provider="elevenlabs", latency_ms=elapsed_ms)
             
         except requests.Timeout:
-            return TranscriptionResult(False, error="Transcription timed out. Please try a shorter recording.")
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            print(f"[STT:ElevenLabs] Timeout after {elapsed_ms:.1f}ms")
+            return TranscriptionResult(False, error="Transcription timed out. Please try a shorter recording.", provider="elevenlabs", latency_ms=elapsed_ms)
         except Exception as exc:
-            return TranscriptionResult(False, error=f"ElevenLabs request failed: {type(exc).__name__}")
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            print(f"[STT:ElevenLabs] Request failed in {elapsed_ms:.1f}ms: {type(exc).__name__}")
+            return TranscriptionResult(False, error=f"ElevenLabs request failed: {type(exc).__name__}", provider="elevenlabs", latency_ms=elapsed_ms)

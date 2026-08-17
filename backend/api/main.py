@@ -56,6 +56,18 @@ async def lifespan(app_instance: FastAPI):
         if path:
             print(f"ROUTE: {path} -> {methods}")
     print("=================================")
+    
+    el_configured = bool(getattr(stt_client.primary, "api_key", False))
+    sv_configured = bool(getattr(stt_client.fallback, "api_key", False))
+    gemini_configured = bool(generator and generator.provider and generator.provider.model)
+    
+    print("=== STT & AI PROVIDER CONFIGURATION ===")
+    print(f"ElevenLabs STT configured (Primary)  : {el_configured}")
+    print(f"Sarvam STT configured (Fallback)     : {sv_configured}")
+    print(f"Gemini LLM / Verifier configured      : {gemini_configured}")
+    print("=======================================")
+    if not el_configured and not sv_configured:
+        print("WARNING: Neither ELEVENLABS_API_KEY nor SARVAM_API_KEY is configured in environment variables.")
     yield
 
 app = FastAPI(title="HH Goa 2026 Voice RAG API", lifespan=lifespan)
@@ -120,15 +132,24 @@ def health():
 def health_ready():
     """Detailed readiness check for external dependencies."""
     gemini_status = "active" if (generator and generator.provider.model) else "extractive_fallback"
-    stt_status = "active" if (stt_client.primary.api_key or stt_client.fallback.api_key) else "unconfigured"
+    el_configured = bool(getattr(stt_client.primary, "api_key", False))
+    sv_configured = bool(getattr(stt_client.fallback, "api_key", False))
+    
+    if el_configured and sv_configured:
+        stt_status = "ready"
+    elif el_configured or sv_configured:
+        stt_status = "degraded"
+    else:
+        stt_status = "unconfigured"
+
     return {
         "status": "ready",
         "services": {
             "gemini": gemini_status,
             "stt": {
-                "primary": "elevenlabs" if stt_client.primary.api_key else "not_configured",
-                "fallback": "sarvam" if stt_client.fallback.api_key else "not_configured",
-                "status": stt_status
+                "primary": "ready" if el_configured else "not_configured",
+                "fallback": "ready" if sv_configured else "not_configured",
+                "status": stt_status,
             },
             "vector_store": "ready" if store else "offline"
         }

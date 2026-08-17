@@ -3,6 +3,7 @@ import io
 import mimetypes
 import os
 import re
+import time
 from dataclasses import dataclass
 from typing import Optional
 import requests
@@ -37,7 +38,11 @@ class TranscriptionResult:
 
 class SarvamClient:
     def __init__(self):
-        self.api_key = os.environ.get("SARVAM_API_KEY", "")
+        self.api_key = (
+            os.environ.get("SARVAM_API_KEY")
+            or os.environ.get("SARVAM_AI_API_KEY")
+            or ""
+        ).strip()
         self.base_url = os.environ.get("SARVAM_STT_BASE_URL", "https://api.sarvam.ai").rstrip("/")
         self.model = os.environ.get("SARVAM_STT_MODEL", "saaras:v3")
         self.mode = os.environ.get("SARVAM_STT_MODE", "codemix")
@@ -55,9 +60,6 @@ class SarvamClient:
         adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=10, pool_maxsize=10)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
-        
-        if not self.api_key:
-            print("WARNING: SARVAM_API_KEY not set. Voice transcription fallback will be unavailable.")
 
     @staticmethod
     def _clean_text(text: object) -> str:
@@ -75,24 +77,29 @@ class SarvamClient:
         language_hint: Optional[str] = None,
     ) -> TranscriptionResult:
         """Call Sarvam Saaras v3 once with auto-detection or a validated hint."""
+        t0 = time.perf_counter()
+        
         if not audio_bytes:
-            return TranscriptionResult(False, error="No audio was provided.")
+            return TranscriptionResult(False, error="No audio was provided.", provider="sarvam", fallback_used=True, latency_ms=0.0)
         if len(audio_bytes) > self.max_audio_bytes:
-            return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.")
+            return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.", provider="sarvam", fallback_used=True, latency_ms=0.0)
         if not self.api_key:
-            return TranscriptionResult(False, error="Voice transcription is not configured for Sarvam.")
+            print("[STT:Sarvam] SARVAM_API_KEY configured: false")
+            return TranscriptionResult(False, error="Voice transcription is not configured for Sarvam.", provider="sarvam", fallback_used=True, latency_ms=0.0)
 
-        mime_type = content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
+        mime_type = content_type or mimetypes.guess_type(filename or "")[0] or "application/octet-stream"
         base_mime = mime_type.split(";")[0].strip().lower()
         if base_mime not in ALLOWED_CONTENT_TYPES and mime_type not in ALLOWED_CONTENT_TYPES:
-            return TranscriptionResult(False, error="Unsupported audio format.")
+            return TranscriptionResult(False, error="Unsupported audio format.", provider="sarvam", fallback_used=True, latency_ms=0.0)
+
+        clean_filename = filename or "recording.webm"
 
         data = {
             "model": self.model,
             "mode": self.mode,
             "language_code": self.normalize_language_hint(language_hint),
         }
-        files = {"file": (filename or "audio.webm", io.BytesIO(audio_bytes), base_mime)}
+        files = {"file": (clean_filename, io.BytesIO(audio_bytes), base_mime)}
         headers = {"api-subscription-key": self.api_key}
         
         try:
@@ -103,34 +110,49 @@ class SarvamClient:
                 data=data,
                 timeout=(3.0, self.timeout_seconds),
             )
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
             
             if response.status_code == 200:
                 result = response.json()
                 text = self._clean_text(result.get("transcript"))
                 if not text:
-                    return TranscriptionResult(False, error="No speech was detected.")
+                    print(f"[STT:Sarvam] Succeeded in {elapsed_ms:.1f}ms but no speech text returned.")
+                    return TranscriptionResult(False, error="No speech was detected.", provider="sarvam", fallback_used=True, latency_ms=elapsed_ms)
                 probability = result.get("language_probability")
                 try:
                     probability = float(probability) if probability is not None else None
                 except (TypeError, ValueError):
                     probability = None
+                detected_lang = result.get("language_code")
+                safe_snippet = text[:40].encode("ascii", "backslashreplace").decode("ascii")
+                print(f"[STT:Sarvam] Fallback transcription succeeded in {elapsed_ms:.1f}ms (lang={detected_lang}): '{safe_snippet}...'")
                 return TranscriptionResult(
                     True,
                     text=text,
-                    language=result.get("language_code"),
+                    language=detected_lang,
                     language_probability=probability,
+                    provider="sarvam",
+                    fallback_used=True,
+                    latency_ms=elapsed_ms,
                 )
             
             if response.status_code == 429:
                 message = "The transcription service is busy. Please try again shortly."
             elif response.status_code in (400, 422):
                 message = "The audio could not be processed. Please use a short recording with audible speech."
+            elif response.status_code in (401, 403):
+                message = "Sarvam API key is invalid or unauthorized."
             else:
                 message = f"Sarvam API returned HTTP {response.status_code}"
                 
-            return TranscriptionResult(False, error=message)
+            print(f"[STT:Sarvam] HTTP {response.status_code} in {elapsed_ms:.1f}ms. Message: {message}")
+            return TranscriptionResult(False, error=message, provider="sarvam", fallback_used=True, latency_ms=elapsed_ms)
             
         except requests.Timeout:
-            return TranscriptionResult(False, error="Transcription timed out. Please try a shorter recording.")
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            print(f"[STT:Sarvam] Timeout after {elapsed_ms:.1f}ms")
+            return TranscriptionResult(False, error="Transcription timed out. Please try a shorter recording.", provider="sarvam", fallback_used=True, latency_ms=elapsed_ms)
         except Exception as exc:
-            return TranscriptionResult(False, error=f"Sarvam request failed: {type(exc).__name__}")
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            print(f"[STT:Sarvam] Request failed in {elapsed_ms:.1f}ms: {type(exc).__name__}")
+            return TranscriptionResult(False, error=f"Sarvam request failed: {type(exc).__name__}", provider="sarvam", fallback_used=True, latency_ms=elapsed_ms)
