@@ -10,7 +10,8 @@ import AnswerCard, { AnswerData } from "../components/AnswerCard";
 import TelemetryPanel from "../components/TelemetryPanel";
 import "../globals.css";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// @ts-ignore
+const API_BASE = (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL) || process.env.NEXT_PUBLIC_API_URL || process.env.VITE_API_BASE_URL || "";
 
 interface VoiceMetadata {
   transcriptText?: string;
@@ -106,7 +107,19 @@ export default function RAGPage() {
     formData.append("audio", audioBlob, `recording.${ext}`);
 
     try {
-      const response = await fetch(`${API_BASE}/api/transcribe`, {
+      setTimeout(() => {
+        if (currentRequestIdRef.current === requestId && stage !== "ERROR") {
+          setStage("RETRIEVING");
+        }
+      }, 500);
+
+      setTimeout(() => {
+        if (currentRequestIdRef.current === requestId && stage !== "ERROR") {
+          setStage("GENERATING");
+        }
+      }, 1000);
+
+      const response = await fetch(`${API_BASE}/api/voice_ask`, {
         method: "POST",
         body: formData,
       });
@@ -119,32 +132,36 @@ export default function RAGPage() {
 
       const data = await response.json();
 
-      if (!data.success) {
-        setErrorMessage(data.error || "Could not transcribe audio.");
+      if (data.status === "error" || (data.transcription && !data.transcription.success)) {
+        setErrorMessage(data.transcription?.error || data.message || "Could not transcribe audio.");
         setStage("ERROR");
         return;
       }
 
-      const transcript = data.text;
-      const sttProvider = data.provider || "elevenlabs";
-      const sttLanguage = data.language || "auto";
-      const sttFallbackUsed = !!data.fallback_used;
+      const transcription = data.transcription || {};
+      const transcript = transcription.text || data.query || "";
 
-      setStage("RETRIEVING");
+      setLatencyMetrics(data.latency_metrics);
 
-      // Execute RAG Pipeline with the transcribed query
-      await executeRAGQuery(transcript, {
+      setAnswerData({
+        query: transcript,
         transcriptText: transcript,
-        sttProvider,
-        sttLanguage,
-        sttFallbackUsed,
-        sttLatencyMs: data.latency_ms,
+        sttProvider: transcription.provider,
+        sttLanguage: transcription.language || data.routing?.language,
+        sttFallbackUsed: transcription.fallback_used,
+        answer: data.answer || data.message,
+        grounded: data.grounded,
+        contextSufficient: data.context_sufficient,
+        refusalReason: data.refusal_reason,
+        sources: data.sources || [],
+        retrievalConfidence: data.confidence || data.retrieval_confidence,
       });
 
+      setStage("ANSWER");
     } catch (err: unknown) {
       if (currentRequestIdRef.current !== requestId) return;
-      console.error("Transcription error:", err);
-      setErrorMessage("Network error connecting to transcription service. Please ensure backend is running.");
+      console.error("Voice ask error:", err);
+      setErrorMessage("Network error connecting to voice service. Please ensure backend is running.");
       setStage("ERROR");
     }
   };
