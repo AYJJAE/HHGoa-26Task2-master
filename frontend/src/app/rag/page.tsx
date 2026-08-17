@@ -10,8 +10,17 @@ import AnswerCard, { AnswerData } from "../components/AnswerCard";
 import TelemetryPanel from "../components/TelemetryPanel";
 import "../globals.css";
 
-// @ts-ignore
-const API_BASE = (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL) || process.env.NEXT_PUBLIC_API_URL || process.env.VITE_API_BASE_URL || "";
+/**
+ * Safely resolves the API Base URL from Vite or Next.js environment variables.
+ * Trailing slashes are stripped to avoid double-slash path issues.
+ */
+function getApiBaseUrl(): string {
+  // @ts-ignore
+  const viteEnv = typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL;
+  const nextEnv = process.env.VITE_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
+  const raw = viteEnv || nextEnv || "";
+  return String(raw).trim().replace(/\/+$/, "");
+}
 
 interface VoiceMetadata {
   transcriptText?: string;
@@ -106,6 +115,10 @@ export default function RAGPage() {
     const ext = mimeType.includes("mp4") ? "m4a" : mimeType.includes("ogg") ? "ogg" : "webm";
     formData.append("audio", audioBlob, `recording.${ext}`);
 
+    const apiBase = getApiBaseUrl();
+    const requestUrl = `${apiBase}/api/voice_ask`;
+    console.log(`[API Request] Voice Ask URL: ${requestUrl} | API_BASE configured: ${Boolean(apiBase)}`);
+
     try {
       setTimeout(() => {
         if (currentRequestIdRef.current === requestId && stage !== "ERROR") {
@@ -119,7 +132,7 @@ export default function RAGPage() {
         }
       }, 1000);
 
-      const response = await fetch(`${API_BASE}/api/voice_ask`, {
+      const response = await fetch(requestUrl, {
         method: "POST",
         body: formData,
       });
@@ -175,6 +188,10 @@ export default function RAGPage() {
       setStage("RETRIEVING");
     }
 
+    const apiBase = getApiBaseUrl();
+    const requestUrl = `${apiBase}/api/ask`;
+    console.log(`[API Request] Text Ask URL: ${requestUrl} | API_BASE configured: ${Boolean(apiBase)}`);
+
     try {
       setTimeout(() => {
         if (currentRequestIdRef.current === requestId && stage !== "ERROR") {
@@ -182,7 +199,7 @@ export default function RAGPage() {
         }
       }, 400);
 
-      const response = await fetch(`${API_BASE}/api/ask`, {
+      const response = await fetch(requestUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: queryText }),
