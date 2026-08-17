@@ -2,14 +2,15 @@ import os
 import sys
 import time
 import requests
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List, Dict, Any, Optional
 
 @dataclass
 class SearchResponse:
     total_ms: float
     embed_ms: float
     search_ms: float
-    results: list = None
+    results: List[Any] = field(default_factory=list)
 
 def search(query: str, top_k: int = 5) -> SearchResponse:
     """Execute search against local server retrieval endpoint."""

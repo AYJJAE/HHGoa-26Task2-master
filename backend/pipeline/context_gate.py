@@ -12,7 +12,7 @@ while cleanly filtering out true off-topic, contradictory, or unsupported passag
 
 import os
 import re
-from typing import List, Dict, Tuple, Optional, Set
+from typing import List, Dict, Tuple, Optional, Set, Any
 from pydantic import BaseModel
 
 try:
@@ -184,7 +184,7 @@ def _check_semantic_conflict(query: str, chunks: List[Dict[str, Any]]) -> Tuple[
     return False, ""
 
 
-def calculate_relevance_score(query: str, retrieved_chunks: List[Dict[str, any]]) -> Tuple[float, float, float, int]:
+def calculate_relevance_score(query: str, retrieved_chunks: List[Dict[str, Any]]) -> Tuple[float, float, float, int]:
     """Calculates multi-signal relevance across collective Top-K context.
     
     Returns (relevance_score, max_sim, collective_overlap, supporting_chunks).
@@ -255,8 +255,8 @@ def calculate_relevance_score(query: str, retrieved_chunks: List[Dict[str, any]]
 
 def is_context_sufficient(
     query: str,
-    retrieved_chunks: List[Dict[str, any]],
-    embedder: any = None,
+    retrieved_chunks: List[Dict[str, Any]],
+    embedder: Any = None,
     language: str = "en"
 ) -> ContextValidation:
     """Soft calibrated gating: determines whether retrieved context provides sufficient signal to proceed."""
