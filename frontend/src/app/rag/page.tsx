@@ -12,14 +12,20 @@ import "../globals.css";
 
 /**
  * Safely resolves the API Base URL from Vite or Next.js environment variables.
- * Trailing slashes are stripped to avoid double-slash path issues.
+ * Trailing slashes are stripped and https:// protocol is enforced for remote hosts.
  */
 function getApiBaseUrl(): string {
   // @ts-ignore
   const viteEnv = typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_BASE_URL;
   const nextEnv = process.env.VITE_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
-  const raw = viteEnv || nextEnv || "";
-  return String(raw).trim().replace(/\/+$/, "");
+  let raw = String(viteEnv || nextEnv || "").trim().replace(/\/+$/, "");
+
+  if (raw && !raw.startsWith("http://") && !raw.startsWith("https://") && !raw.startsWith("/")) {
+    const protocol = raw.includes("localhost") || raw.includes("127.0.0.1") ? "http://" : "https://";
+    raw = `${protocol}${raw}`;
+  }
+
+  return raw;
 }
 
 interface VoiceMetadata {

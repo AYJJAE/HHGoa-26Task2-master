@@ -45,8 +45,20 @@ from pipeline.grounding import GroundingValidator
 from pipeline.context_gate import is_context_sufficient
 from .sarvam_client import TranscriptionResult
 from .stt_service import STTService
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="HH Goa 2026 Voice RAG API")
+@asynccontextmanager
+async def lifespan(app_instance: FastAPI):
+    print("=== REGISTERED FASTAPI ROUTES ===")
+    for route in app_instance.routes:
+        methods = getattr(route, "methods", None)
+        path = getattr(route, "path", None)
+        if path:
+            print(f"ROUTE: {path} -> {methods}")
+    print("=================================")
+    yield
+
+app = FastAPI(title="HH Goa 2026 Voice RAG API", lifespan=lifespan)
 
 # --- Rate Limiting Registration ---
 if RATE_LIMITING_AVAILABLE:
