@@ -38,11 +38,11 @@ class TranscriptionResult:
 
 class SarvamClient:
     def __init__(self):
-        self.api_key = (
+        self._initial_api_key = (
             os.environ.get("SARVAM_API_KEY")
             or os.environ.get("SARVAM_AI_API_KEY")
             or ""
-        ).strip()
+        ).strip().strip("\"'")
         self.base_url = os.environ.get("SARVAM_STT_BASE_URL", "https://api.sarvam.ai").rstrip("/")
         self.model = os.environ.get("SARVAM_STT_MODEL", "saaras:v3")
         self.mode = os.environ.get("SARVAM_STT_MODE", "codemix")
@@ -60,6 +60,19 @@ class SarvamClient:
         adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=10, pool_maxsize=10)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
+
+    @property
+    def api_key(self) -> str:
+        return (
+            os.environ.get("SARVAM_API_KEY")
+            or os.environ.get("SARVAM_AI_API_KEY")
+            or self._initial_api_key
+            or ""
+        ).strip().strip("\"'")
+
+    @api_key.setter
+    def api_key(self, value: str):
+        self._initial_api_key = value
 
     @staticmethod
     def _clean_text(text: object) -> str:
@@ -83,8 +96,10 @@ class SarvamClient:
             return TranscriptionResult(False, error="No audio was provided.", provider="sarvam", fallback_used=True, latency_ms=0.0)
         if len(audio_bytes) > self.max_audio_bytes:
             return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.", provider="sarvam", fallback_used=True, latency_ms=0.0)
-        if not self.api_key:
-            print("[STT:Sarvam] SARVAM_API_KEY configured: false")
+            
+        key = self.api_key
+        if not key:
+            print("[STT:Sarvam] Sarvam configured: false")
             return TranscriptionResult(False, error="Voice transcription is not configured for Sarvam.", provider="sarvam", fallback_used=True, latency_ms=0.0)
 
         mime_type = content_type or mimetypes.guess_type(filename or "")[0] or "application/octet-stream"
@@ -100,7 +115,7 @@ class SarvamClient:
             "language_code": self.normalize_language_hint(language_hint),
         }
         files = {"file": (clean_filename, io.BytesIO(audio_bytes), base_mime)}
-        headers = {"api-subscription-key": self.api_key}
+        headers = {"api-subscription-key": key}
         
         try:
             response = self.session.post(

@@ -222,9 +222,13 @@ async def voice_ask(
 ):
     """End-to-end voice question answering."""
     audio_bytes = await audio.read()
+    filename = audio.filename or "recording.webm"
+    content_type = audio.content_type or "audio/webm"
+    
+    print(f"[VOICE] request received | filename={filename} | content_type={content_type} | audio_size={len(audio_bytes)} bytes")
     
     transcription = await asyncio.to_thread(
-        stt_client.transcribe_audio, audio_bytes, audio.filename, audio.content_type, language
+        stt_client.transcribe_audio, audio_bytes, filename, content_type, language
     )
     
     if isinstance(transcription, tuple):
@@ -232,22 +236,28 @@ async def voice_ask(
         transcription = TranscriptionResult(success=success, text=text if success else "", error=None if success else text)
     
     if not transcription.success:
+        print(f"[VOICE] STT failed | error='{transcription.error}' | provider={transcription.provider} | latency={transcription.latency_ms:.1f}ms")
         return {
             "status": "error",
             "message": "We couldn't transcribe that audio. Please try again.",
             "transcription": {
                 "success": False,
-                "error": transcription.error,
+                "error": transcription.error or "Speech transcription unavailable.",
                 "provider": transcription.provider,
                 "fallback_used": getattr(transcription, 'fallback_used', False)
             },
-            "latency_metrics": {"stt_ms": transcription.latency_ms, "transcription_total_ms": transcription.latency_ms},
+            "latency_metrics": {
+                "stt_ms": transcription.latency_ms,
+                "transcription_total_ms": transcription.latency_ms
+            },
         }
         
+    safe_snippet = (transcription.text or "")[:40].encode("ascii", "backslashreplace").decode("ascii")
+    print(f"[VOICE] STT succeeded | provider={transcription.provider} | latency={transcription.latency_ms:.1f}ms | text='{safe_snippet}...'")
     response = await asyncio.to_thread(process_rag_pipeline, transcription.text, debug, transcription.language)
     response["latency_metrics"]["stt_ms"] = transcription.latency_ms
     response["latency_metrics"]["transcription_total_ms"] = transcription.latency_ms
-    response["latency_metrics"]["total_e2e_ms"] = response["latency_metrics"]["total_e2e_ms"] + transcription.latency_ms
+    response["latency_metrics"]["total_e2e_ms"] = response["latency_metrics"].get("total_e2e_ms", 0.0) + transcription.latency_ms
     response["transcription"] = {
         "success": True,
         "text": transcription.text,

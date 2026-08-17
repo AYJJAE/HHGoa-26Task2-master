@@ -13,14 +13,14 @@ from .sarvam_client import TranscriptionResult, ALLOWED_CONTENT_TYPES
 
 class ElevenLabsClient:
     def __init__(self):
-        self.api_key = (
+        self._initial_api_key = (
             os.environ.get("ELEVENLABS_API_KEY")
             or os.environ.get("ELEVEN_LABS_API_KEY")
             or os.environ.get("XI_API_KEY")
             or ""
-        ).strip()
+        ).strip().strip("\"'")
         self.base_url = os.environ.get("ELEVENLABS_STT_BASE_URL", "https://api.elevenlabs.io/v1").rstrip("/")
-        self.model = os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v2")
+        self.model = os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v1")
         self.timeout_seconds = float(os.environ.get("ELEVENLABS_STT_TIMEOUT_SECONDS", "15"))
         self.max_audio_bytes = int(os.environ.get("ELEVENLABS_STT_MAX_AUDIO_BYTES", str(25 * 1024 * 1024)))
         
@@ -35,6 +35,20 @@ class ElevenLabsClient:
         adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=10, pool_maxsize=10)
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
+
+    @property
+    def api_key(self) -> str:
+        return (
+            os.environ.get("ELEVENLABS_API_KEY")
+            or os.environ.get("ELEVEN_LABS_API_KEY")
+            or os.environ.get("XI_API_KEY")
+            or self._initial_api_key
+            or ""
+        ).strip().strip("\"'")
+
+    @api_key.setter
+    def api_key(self, value: str):
+        self._initial_api_key = value
 
     @staticmethod
     def _clean_text(text: object) -> str:
@@ -57,21 +71,23 @@ class ElevenLabsClient:
         content_type: Optional[str] = None,
         language_hint: Optional[str] = None,
     ) -> TranscriptionResult:
-        """Call ElevenLabs Scribe v2 for transcription."""
+        """Call ElevenLabs Scribe v1/v2 for transcription."""
         t0 = time.perf_counter()
         
         if not audio_bytes:
             return TranscriptionResult(False, error="No audio was provided.", provider="elevenlabs", latency_ms=0.0)
         if len(audio_bytes) > self.max_audio_bytes:
             return TranscriptionResult(False, error="Audio file is too large. Please submit a shorter recording.", provider="elevenlabs", latency_ms=0.0)
-        if not self.api_key:
-            print("[STT:ElevenLabs] ELEVENLABS_API_KEY configured: false")
+            
+        key = self.api_key
+        if not key:
+            print("[STT:ElevenLabs] ElevenLabs configured: false")
             return TranscriptionResult(False, error="Voice transcription is not configured for ElevenLabs.", provider="elevenlabs", latency_ms=0.0)
 
         raw_mime = content_type or mimetypes.guess_type(filename or "")[0] or "audio/webm"
         mime_type = self._normalize_mime_type(raw_mime)
         clean_filename = filename or "recording.webm"
-        if not clean_filename.endswith((".webm", ".wav", ".mp3", ".ogg", ".m4a", ".mp4", ".flac")):
+        if not any(clean_filename.endswith(ext) for ext in (".webm", ".wav", ".mp3", ".ogg", ".m4a", ".mp4", ".flac", ".aac")):
             clean_filename = "recording.webm"
 
         data = {
@@ -83,7 +99,7 @@ class ElevenLabsClient:
             data["language_code"] = lang
 
         files = {"file": (clean_filename, io.BytesIO(audio_bytes), mime_type)}
-        headers = {"xi-api-key": self.api_key}
+        headers = {"xi-api-key": key}
         
         try:
             response = self.session.post(

@@ -21,32 +21,39 @@ class STTService:
         language_hint: Optional[str] = None,
     ) -> TranscriptionResult:
         """
-        Executes primary transcription with ElevenLabs Scribe v2.
+        Executes primary transcription with ElevenLabs Scribe.
         Fails over to Sarvam Saaras v3 immediately if ElevenLabs fails or is not configured.
         """
         total_t0 = time.perf_counter()
         
+        el_key_present = bool(self.primary.api_key)
+        sv_key_present = bool(self.fallback.api_key)
+        print(f"[STT] ElevenLabs configured: {el_key_present}")
+        print(f"[STT] Sarvam configured: {sv_key_present}")
+        
         # 1. PRIMARY PROVIDER: ElevenLabs
-        print("[STT Pipeline] Attempting Primary STT: ElevenLabs Scribe v2...")
+        print("[STT] attempting ElevenLabs")
         original_timeout = self.primary.timeout_seconds
         self.primary.timeout_seconds = self.primary_timeout_ms / 1000.0
         
         try:
+            print("[STT] ELEVENLABS REQUEST START")
             primary_res = self.primary.transcribe_audio(
                 audio_bytes=audio_bytes,
                 filename=filename,
                 content_type=content_type,
                 language_hint=language_hint
             )
+            print("[STT] ELEVENLABS REQUEST END")
         except Exception as e:
-            print(f"[STT Pipeline] Primary STT (ElevenLabs) unhandled error: {type(e).__name__}")
+            print(f"[STT] ELEVENLABS EXCEPTION: {type(e).__name__} - {e}")
             primary_res = TranscriptionResult(success=False, error=str(e), provider="elevenlabs")
         finally:
             self.primary.timeout_seconds = original_timeout
 
         if primary_res.success and primary_res.text:
             total_latency = (time.perf_counter() - total_t0) * 1000.0
-            print(f"[STT Pipeline] ElevenLabs succeeded in {primary_res.latency_ms:.1f}ms (total STT: {total_latency:.1f}ms).")
+            print(f"[STT] ELEVENLABS SUCCESS | latency={primary_res.latency_ms:.1f}ms (total={total_latency:.1f}ms)")
             return TranscriptionResult(
                 success=True,
                 text=primary_res.text,
@@ -55,27 +62,30 @@ class STTService:
                 error=None,
                 provider="elevenlabs",
                 fallback_used=False,
-                latency_ms=total_latency,
+                latency_ms=primary_res.latency_ms,
             )
             
-        print(f"[STT Pipeline] Primary STT (ElevenLabs) failed: '{primary_res.error}'. Attempting Fallback STT: Sarvam Saaras v3...")
+        print(f"[STT] ELEVENLABS FAILED | error_type='{primary_res.error}' | latency={primary_res.latency_ms:.1f}ms")
+        print("[STT] falling back to SARVAM")
         
         # 2. FALLBACK PROVIDER: Sarvam
         try:
+            print("[STT] SARVAM REQUEST START")
             fallback_res = self.fallback.transcribe_audio(
                 audio_bytes=audio_bytes,
                 filename=filename,
                 content_type=content_type,
                 language_hint=language_hint
             )
+            print("[STT] SARVAM REQUEST END")
         except Exception as e:
-            print(f"[STT Pipeline] Fallback STT (Sarvam) unhandled error: {type(e).__name__}")
+            print(f"[STT] SARVAM EXCEPTION: {type(e).__name__} - {e}")
             fallback_res = TranscriptionResult(success=False, error=str(e), provider="sarvam", fallback_used=True)
             
         total_latency = (time.perf_counter() - total_t0) * 1000.0
         
         if fallback_res.success and fallback_res.text:
-            print(f"[STT Pipeline] Sarvam fallback succeeded in {fallback_res.latency_ms:.1f}ms (total STT: {total_latency:.1f}ms).")
+            print(f"[STT] SARVAM SUCCESS | latency={fallback_res.latency_ms:.1f}ms (total={total_latency:.1f}ms)")
             return TranscriptionResult(
                 success=True,
                 text=fallback_res.text,
@@ -84,11 +94,12 @@ class STTService:
                 error=None,
                 provider="sarvam",
                 fallback_used=True,
-                latency_ms=total_latency,
+                latency_ms=fallback_res.latency_ms,
             )
             
         # 3. BOTH PROVIDERS FAILED
-        print(f"[STT Pipeline] Both ElevenLabs and Sarvam failed. Total STT latency: {total_latency:.1f}ms.")
+        print(f"[STT] SARVAM FAILED | error_type='{fallback_res.error}' | latency={fallback_res.latency_ms:.1f}ms")
+        print(f"[STT] Both ElevenLabs and Sarvam failed. Total STT elapsed: {total_latency:.1f}ms.")
         return TranscriptionResult(
             success=False,
             error=fallback_res.error or primary_res.error or "Speech transcription unavailable.",
