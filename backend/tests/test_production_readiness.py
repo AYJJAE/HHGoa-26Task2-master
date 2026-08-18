@@ -7,11 +7,12 @@ import sys
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api.main import app
-from api.main import stt_client
+from api.main import resources
 
 client = TestClient(app)
 
 def run_tests():
+    resources.initialize()
     print("=== PRODUCTION READINESS STT TEST ===")
     
     with open(os.path.join(os.path.dirname(__file__), "..", "test.wav"), "rb") as f:
@@ -20,8 +21,8 @@ def run_tests():
     empty_audio = b""
     
     # Store original keys to restore later
-    original_el_key = stt_client.primary.api_key
-    original_sv_key = stt_client.fallback.api_key
+    original_el_key = resources.stt_client.primary.api_key
+    original_sv_key = resources.stt_client.fallback.api_key
     
     def print_result(case_name, res, expected_provider, expected_fallback):
         print(f"\n--- {case_name} ---")
@@ -61,8 +62,8 @@ def run_tests():
     try:
         # CASE A: ElevenLabs Returns Valid non-empty transcription
         # Since our test.wav has speech, we just need to ensure ElevenLabs has the correct key and we request 'en'
-        stt_client.primary.api_key = original_el_key
-        stt_client.fallback.api_key = original_sv_key
+        resources.stt_client.primary.api_key = original_el_key
+        resources.stt_client.fallback.api_key = original_sv_key
         
         # Test all languages
         for lang in ["en", "hi", "mr", "kok"]:
@@ -84,8 +85,8 @@ def run_tests():
         def mock_error(*args, **kwargs):
             raise Exception("Simulated network failure")
             
-        original_el_transcribe = stt_client.primary.transcribe_audio
-        stt_client.primary.transcribe_audio = mock_error
+        original_el_transcribe = resources.stt_client.primary.transcribe_audio
+        resources.stt_client.primary.transcribe_audio = mock_error
         
         res = client.post(
             "/api/voice_ask",
@@ -97,22 +98,22 @@ def run_tests():
 
         # CASE C: ElevenLabs returns HTTP 200 but empty/no-speech transcription
         # We can simulate this by mocking _clean_text to return empty string for this test.
-        stt_client.primary.transcribe_audio = original_el_transcribe
-        original_clean = stt_client.primary._clean_text
-        stt_client.primary._clean_text = lambda x: ""
+        resources.stt_client.primary.transcribe_audio = original_el_transcribe
+        original_clean = resources.stt_client.primary._clean_text
+        resources.stt_client.primary._clean_text = lambda x: ""
         res = client.post(
             "/api/voice_ask",
             data={"language": "en"},
             files={"audio": ("test.webm", valid_audio, "audio/webm;codecs=opus")}
         )
         print_result("CASE C: ElevenLabs Empty Text -> Sarvam fallback", res, "sarvam", True)
-        stt_client.primary._clean_text = original_clean
+        resources.stt_client.primary._clean_text = original_clean
 
 
         # CASE D: Both providers fail
-        original_sv_transcribe = stt_client.fallback.transcribe_audio
-        stt_client.primary.transcribe_audio = mock_error
-        stt_client.fallback.transcribe_audio = mock_error
+        original_sv_transcribe = resources.stt_client.fallback.transcribe_audio
+        resources.stt_client.primary.transcribe_audio = mock_error
+        resources.stt_client.fallback.transcribe_audio = mock_error
         res = client.post(
             "/api/voice_ask",
             data={"language": "en"},
@@ -122,9 +123,9 @@ def run_tests():
 
     finally:
         if 'original_el_transcribe' in locals():
-            stt_client.primary.transcribe_audio = original_el_transcribe
+            resources.stt_client.primary.transcribe_audio = original_el_transcribe
         if 'original_sv_transcribe' in locals():
-            stt_client.fallback.transcribe_audio = original_sv_transcribe
+            resources.stt_client.fallback.transcribe_audio = original_sv_transcribe
 
 if __name__ == "__main__":
     run_tests()

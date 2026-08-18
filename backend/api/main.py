@@ -49,44 +49,97 @@ from contextlib import asynccontextmanager
 
 from qdrant_client.http import models as rest
 
+import threading
+import traceback
+
+class RAGResources:
+    def __init__(self):
+        self.router = None
+        self.generator = None
+        self.grounder = None
+        self.stt_client = None
+        self.embedder = None
+        self.store = None
+        self.retriever = None
+        self.ready = False
+        self.error = None
+
+    def initialize(self):
+        try:
+            print("[RAG] Initializing QueryRouter...")
+            self.router = QueryRouter()
+            
+            print("[RAG] Initializing GenerationPipeline...")
+            self.generator = GenerationPipeline(provider_name="gemini")
+            
+            print("[RAG] Initializing GroundingValidator...")
+            self.grounder = GroundingValidator()
+            
+            print("[RAG] Initializing STTService...")
+            self.stt_client = STTService()
+            
+            print("[RAG] Initializing EmbeddingPipeline...")
+            self.embedder = EmbeddingPipeline()
+            
+            print("[RAG] Initializing VectorStore...")
+            self.store = VectorStore(collection_name="msmarco_xi", dense_dim=self.embedder.dense_dim)
+            
+            print("[RAG] Initializing RetrievalPipeline...")
+            self.retriever = RetrievalPipeline(self.embedder, self.store)
+            
+            print("Pipelines, Verifier, and STT Failover Service initialized successfully.")
+            
+            count = self.store.client.count(self.store.collection_name).count
+            print(f"Collection '{self.store.collection_name}' has {count} vectors.")
+            if count == 0:
+                print("Index is empty. Ingesting dataset ONCE for production memory...")
+                from pipeline.ingestion import ingest_dataset
+                ingest_dataset(mode="mock", max_records=100)
+                count = self.store.client.count(self.store.collection_name).count
+                print(f"Ingestion complete. Collection now has {count} vectors.")
+            
+            self.ready = True
+            print("[RAG] RAG initialization complete")
+            
+        except Exception as e:
+            print(f"[RAG] Initialization failed: {e}")
+            traceback.print_exc()
+            self.error = str(e)
+            
+            # Attempt to set up fallback memory retriever if Qdrant disk failed
+            if not self.retriever:
+                print(f"Notice: Initializing fallback retrieval: {e}")
+                try:
+                    self.embedder = EmbeddingPipeline()
+                    self.store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
+                    self.retriever = RetrievalPipeline(self.embedder, self.store)
+                    self.ready = True
+                except Exception as e2:
+                    print(f"Error initializing fallback retriever: {e2}")
+
+resources = RAGResources()
+
 @asynccontextmanager
 async def lifespan(app_instance: FastAPI):
-    print("=== REGISTERED FASTAPI ROUTES ===")
+    print("[STARTUP] HH Goa Voice RAG API starting")
+    print(f"[STARTUP] Python version: {sys.version.split()[0]}")
+    port = os.getenv("PORT", "8080")
+    print(f"[STARTUP] PORT: {port}")
+    print("[STARTUP] Binding: 0.0.0.0")
+
+    print("[ROUTES]")
     for route in app_instance.routes:
         methods = getattr(route, "methods", None)
         path = getattr(route, "path", None)
         if path:
-            print(f"ROUTE: {path} -> {methods}")
-    print("=================================")
-    
-    el_configured = bool(getattr(stt_client.primary, "api_key", False))
-    sv_configured = bool(getattr(stt_client.fallback, "api_key", False))
-    gemini_configured = bool(generator and generator.provider and generator.provider.model)
-    
-    print("=== STT & AI PROVIDER CONFIGURATION ===")
-    print(f"ElevenLabs STT configured (Primary)  : {el_configured}")
-    print(f"Sarvam STT configured (Fallback)     : {sv_configured}")
-    print(f"Gemini LLM / Verifier configured      : {gemini_configured}")
-    print("=======================================")
-    if not el_configured and not sv_configured:
-        print("WARNING: Neither ELEVENLABS_API_KEY nor SARVAM_API_KEY is configured in environment variables.")
+            methods_str = ",".join(methods) if methods else "GET"
+            print(f"{methods_str}  {path}")
+            
+    print("[STARTUP] FastAPI application loaded")
+    print("[STARTUP] Health endpoint available")
+    print("[STARTUP] RAG resources will initialize lazily in background")
 
-    print("=== QDRANT VECTOR STORE INITIALIZATION ===")
-    if store:
-        try:
-            count_result = store.client.count(store.collection_name)
-            count = count_result.count
-            print(f"Collection '{store.collection_name}' has {count} vectors.")
-            if count == 0:
-                print("Index is empty. Ingesting dataset ONCE for production memory...")
-                from pipeline.ingestion import ingest_dataset
-                # Run deterministic ingestion in same thread before app takes traffic
-                await asyncio.to_thread(ingest_dataset, mode="mock", max_records=100)
-                count = store.client.count(store.collection_name).count
-                print(f"Ingestion complete. Collection now has {count} vectors.")
-        except Exception as e:
-            print(f"Failed to check or initialize Qdrant: {e}")
-    print("==========================================")
+    threading.Thread(target=resources.initialize, daemon=True).start()
     yield
 
 app = FastAPI(title="HH Goa 2026 Voice RAG API", lifespan=lifespan)
@@ -111,29 +164,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Initialize Singletons Once in Memory ---
-router = QueryRouter()
-generator = GenerationPipeline(provider_name="gemini")
-grounder = GroundingValidator()
-stt_client = STTService()
-
-try:
-    embedder = EmbeddingPipeline()
-    store = VectorStore(collection_name="msmarco_xi", dense_dim=embedder.dense_dim)
-    retriever = RetrievalPipeline(embedder, store)
-    print("Pipelines, Verifier, and STT Failover Service initialized successfully.")
-except Exception as e:
-    print(f"Notice: Initializing fallback retrieval: {e}")
-    try:
-        embedder = EmbeddingPipeline()
-        store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
-        retriever = RetrievalPipeline(embedder, store)
-    except Exception as e2:
-        print(f"Error initializing retriever: {e2}")
-        embedder = None
-        store = None
-        retriever = None
-
 class QueryRequest(BaseModel):
     query: str
 
@@ -152,9 +182,14 @@ def health():
 @app.get("/health/ready")
 def health_ready():
     """Detailed readiness check for external dependencies."""
-    gemini_status = "active" if (generator and generator.provider.model) else "extractive_fallback"
-    el_configured = bool(getattr(stt_client.primary, "api_key", False))
-    sv_configured = bool(getattr(stt_client.fallback, "api_key", False))
+    if not resources.ready:
+        if resources.error:
+            return JSONResponse(status_code=503, content={"status": "error", "message": resources.error})
+        return JSONResponse(status_code=503, content={"status": "initializing"})
+
+    gemini_status = "active" if (resources.generator and resources.generator.provider.model) else "extractive_fallback"
+    el_configured = bool(getattr(resources.stt_client.primary, "api_key", False)) if resources.stt_client else False
+    sv_configured = bool(getattr(resources.stt_client.fallback, "api_key", False)) if resources.stt_client else False
     
     if el_configured and sv_configured:
         stt_status = "ready"
@@ -172,20 +207,23 @@ def health_ready():
                 "fallback": "ready" if sv_configured else "not_configured",
                 "status": stt_status,
             },
-            "vector_store": "ready" if store else "offline"
+            "vector_store": "ready" if resources.store else "offline"
         }
     }
 
 @app.get("/health/retrieval")
 def health_retrieval():
     """Diagnostic endpoint for retrieval index status."""
+    if not resources.ready:
+        return JSONResponse(status_code=503, content={"status": "initializing"})
+        
     try:
-        count = store.client.count(store.collection_name).count if store else 0
-        embedding_model = embedder.model_name if embedder else "unknown"
-        dense_dim = embedder.dense_dim if embedder else 0
+        count = resources.store.client.count(resources.store.collection_name).count if resources.store else 0
+        embedding_model = resources.embedder.model_name if resources.embedder else "unknown"
+        dense_dim = resources.embedder.dense_dim if resources.embedder else 0
         
         # safely access path if not in memory
-        index_path = getattr(store.client, "_client", None)
+        index_path = getattr(resources.store.client, "_client", None) if resources.store else None
         path_str = getattr(index_path, "_path", "in_memory") if index_path else "in_memory"
         
         return {
@@ -193,8 +231,8 @@ def health_retrieval():
             "vector_count": count,
             "embedding_dimension": dense_dim,
             "embedding_model": embedding_model,
-            "top_k": retriever.final_top_k if retriever else 0,
-            "grounding_threshold": grounder.min_confidence if grounder else 0,
+            "top_k": resources.retriever.final_top_k if resources.retriever else 0,
+            "grounding_threshold": resources.grounder.min_confidence if resources.grounder else 0,
             "dataset_loaded": count > 0,
             "chunk_count": count,
             "index_path": str(path_str)
@@ -205,10 +243,13 @@ def health_retrieval():
 @app.post("/api/retrieve")
 async def retrieve_only(payload: RetrieveRequest):
     """Direct retrieval endpoint for low-latency benchmarking and indexing checks."""
+    if not resources.ready:
+        raise HTTPException(status_code=503, detail="Service is initializing")
+        
     t0 = time.perf_counter()
-    routing_info = router.route_query(payload.query)
+    routing_info = resources.router.route_query(payload.query)
     strategy = {**routing_info.get("strategy", {}), "final_top_k": payload.top_k or 5}
-    retrieval_res = await asyncio.to_thread(retriever.retrieve, payload.query, strategy)
+    retrieval_res = await asyncio.to_thread(resources.retriever.retrieve, payload.query, strategy)
     total_ms = (time.perf_counter() - t0) * 1000.0
     return {
         "query": payload.query,
@@ -231,10 +272,13 @@ async def transcribe_audio(
     language: str = Form("auto"),
 ):
     """Voice transcription endpoint with ElevenLabs primary and Sarvam fallback."""
+    if not resources.ready:
+        return {"success": False, "error": "Service is initializing. Please try again in a few seconds."}
+        
     audio_bytes = await audio.read()
     
     transcription = await asyncio.to_thread(
-        stt_client.transcribe_audio, audio_bytes, audio.filename, audio.content_type, language
+        resources.stt_client.transcribe_audio, audio_bytes, audio.filename, audio.content_type, language
     )
     
     if isinstance(transcription, tuple):
@@ -268,6 +312,9 @@ async def voice_ask(
     debug: bool = Form(False)
 ):
     """End-to-end voice question answering."""
+    if not resources.ready:
+        return {"status": "error", "message": "Service is initializing. Please try again in a few seconds."}
+        
     audio_bytes = await audio.read()
     filename = audio.filename or "recording.webm"
     content_type = audio.content_type or "audio/webm"
@@ -276,15 +323,15 @@ async def voice_ask(
     print(f"[STT-PROD] AUDIO_SIZE={len(audio_bytes)}")
     print(f"[STT-PROD] AUDIO_CONTENT_TYPE={content_type}")
     
-    el_key_present = bool(stt_client.primary.api_key)
-    sv_key_present = bool(stt_client.fallback.api_key)
+    el_key_present = bool(resources.stt_client.primary.api_key)
+    sv_key_present = bool(resources.stt_client.fallback.api_key)
     print(f"[STT-PROD] ELEVENLABS_KEY_CONFIGURED={el_key_present}")
     print(f"[STT-PROD] SARVAM_KEY_CONFIGURED={sv_key_present}")
-    print(f"[STT-PROD] ELEVENLABS_KEY_LENGTH={len(stt_client.primary.api_key) if el_key_present else 0}")
-    print(f"[STT-PROD] SARVAM_KEY_LENGTH={len(stt_client.fallback.api_key) if sv_key_present else 0}")
+    print(f"[STT-PROD] ELEVENLABS_KEY_LENGTH={len(resources.stt_client.primary.api_key) if el_key_present else 0}")
+    print(f"[STT-PROD] SARVAM_KEY_LENGTH={len(resources.stt_client.fallback.api_key) if sv_key_present else 0}")
     
     transcription = await asyncio.to_thread(
-        stt_client.transcribe_audio, audio_bytes, filename, content_type, language
+        resources.stt_client.transcribe_audio, audio_bytes, filename, content_type, language
     )
     
     if isinstance(transcription, tuple):
@@ -370,7 +417,10 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 2. Query Processing & Routing
     t0 = time.perf_counter()
-    routing_info = router.route_query(query, language_hint=language_hint)
+    if not resources.ready:
+        return {"status": "error", "message": "Service is still initializing, please try again."}
+        
+    routing_info = resources.router.route_query(query, language_hint=language_hint)
     metrics["query_routing_ms"] = (time.perf_counter() - t0) * 1000
     strategy = routing_info.get("strategy", {})
 
@@ -405,11 +455,11 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 3. STAGE 1: Hybrid Retrieval
     print(f"[RETRIEVAL] query={query}")
-    print(f"[RETRIEVAL] embedding_dimension={embedder.dense_dim if embedder else 0}")
-    print(f"[RETRIEVAL] top_k={strategy.get('final_top_k', retriever.final_top_k if retriever else 0)}")
+    print(f"[RETRIEVAL] embedding_dimension={resources.embedder.dense_dim if resources.embedder else 0}")
+    print(f"[RETRIEVAL] top_k={strategy.get('final_top_k', resources.retriever.final_top_k if resources.retriever else 0)}")
     try:
-        retrieval_res = retriever.retrieve(query, strategy)
-        vec_count = store.client.count(store.collection_name).count if store else 0
+        retrieval_res = resources.retriever.retrieve(query, strategy)
+        vec_count = resources.store.client.count(resources.store.collection_name).count if resources.store else 0
         print(f"[RETRIEVAL] index_vectors={vec_count}")
         print(f"[RETRIEVAL] scores={[r.get('dense_score', 0) for r in retrieval_res['results']]}")
         print(f"[RETRIEVAL] returned_chunks={len(retrieval_res['results'])}")
@@ -426,10 +476,10 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 4. STAGE 2: Relevance Scoring & Soft Gating
     t0 = time.perf_counter()
-    context_val = is_context_sufficient(query, retrieval_res["results"], embedder)
+    context_val = is_context_sufficient(query, retrieval_res["results"], resources.embedder)
     metrics["answerability_ms"] = (time.perf_counter() - t0) * 1000
 
-    print(f"[GROUNDING] threshold={grounder.min_confidence if grounder else 0}")
+    print(f"[GROUNDING] threshold={resources.grounder.min_confidence if resources.grounder else 0}")
     print(f"[GROUNDING] context_sufficient={context_val.sufficient}")
 
     if not context_val.sufficient:
@@ -474,7 +524,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 6. STAGE 3: Answer Generation
     t0 = time.perf_counter()
-    candidate_answer = generator.generate_answer(query, retrieval_res["results"])
+    candidate_answer = resources.generator.generate_answer(query, retrieval_res["results"])
     metrics["generation_ms"] = (time.perf_counter() - t0) * 1000
     metrics["output_estimated_tokens"] = max(1, len(candidate_answer) // 4) if candidate_answer else 0
     debug_info["generation_executed"] = True
@@ -513,11 +563,11 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 7. Grounding & Semantic Verification
     t0 = time.perf_counter()
-    verification_res = grounder.verify_answer(
+    verification_res = resources.grounder.verify_answer(
         question=query,
         candidate_answer=candidate_answer,
         retrieved_chunks=retrieval_res["results"],
-        gemini_provider=generator.provider
+        gemini_provider=resources.generator.provider
     )
     metrics["verification_ms"] = (time.perf_counter() - t0) * 1000
 
@@ -526,7 +576,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         verification_res.question_relevant
         and verification_res.answers_question
         and verification_res.supported_by_context
-        and (verification_res.confidence >= grounder.min_confidence or context_val.relevance_score >= 0.50)
+        and (verification_res.confidence >= resources.grounder.min_confidence or context_val.relevance_score >= 0.50)
     )
 
     final_conf = calculate_final_confidence(
@@ -615,4 +665,5 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("api.main:app", host="0.0.0.0", port=port)

@@ -5,7 +5,11 @@ import sys
 # Ensure backend root is in Python path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from api.main import process_rag_pipeline
+from api.main import process_rag_pipeline, resources
+
+# Force synchronous initialization for tests
+if not resources.ready:
+    resources.initialize()
 
 def test_rag_pipeline_unrelated_query():
     """Test 2 & Test 6: Completely unrelated question or unsupported question."""
@@ -31,10 +35,6 @@ def test_rag_pipeline_prompt_injection():
 
 def test_rag_pipeline_supported_query():
     """Test 1: Supported question."""
-    # A generic query that we know is well-represented in the IndcMSMARCO index
-    # (Assuming "What is Goa?" or similar returns hits in a general dataset)
-    # We will just test a very generic query that might hit SOMETHING, or use a mock if necessary.
-    # To avoid flakiness with actual LLM calls in CI, this just asserts the structure of a real call.
     query = "What is the capital of India?"
     response = process_rag_pipeline(query, debug=True)
     
@@ -43,13 +43,8 @@ def test_rag_pipeline_supported_query():
         assert response["context_sufficient"] is True
         assert "latency_metrics" in response
     else:
-        # If it happens to be refused because of strict thresholds on a small sample index
         assert response["status"] == "refused"
         assert response["context_sufficient"] is False
-
-# To test hallucination (Test 5), we would ideally mock the LLM generator here.
-# Since we are doing integration tests against live components for this specific task,
-# we rely on the above structural assertions.
 
 from fastapi.testclient import TestClient
 from api.main import app
@@ -58,11 +53,10 @@ client = TestClient(app)
 
 def test_stt_failure_isolation():
     """Test STT failure immediately aborts without invoking LLM."""
-    from api.main import stt_client
-    original_transcribe = stt_client.transcribe_audio
+    original_transcribe = resources.stt_client.transcribe_audio
     
     # Mock to fail
-    stt_client.transcribe_audio = lambda *args: (False, "Could not transcribe audio due to API error.")
+    resources.stt_client.transcribe_audio = lambda *args: (False, "Could not transcribe audio due to API error.")
     
     response = client.post("/api/voice_ask", files={"audio": ("dummy.wav", b"dummy")})
     assert response.status_code == 200
@@ -73,7 +67,7 @@ def test_stt_failure_isolation():
     assert "sources" not in data
     
     # Restore mock
-    stt_client.transcribe_audio = original_transcribe
+    resources.stt_client.transcribe_audio = original_transcribe
 
 def test_stateless_isolation():
     """Test two consecutive questions are completely isolated (backend statelessness)."""
