@@ -101,6 +101,7 @@ class ElevenLabsClient:
         files = {"file": (clean_filename, io.BytesIO(audio_bytes), mime_type)}
         headers = {"xi-api-key": key}
         
+        t0 = time.perf_counter()
         try:
             response = self.session.post(
                 f"{self.base_url}/speech-to-text",

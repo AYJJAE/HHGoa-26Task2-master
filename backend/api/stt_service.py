@@ -46,8 +46,10 @@ class STTService:
             )
             print("[STT] ELEVENLABS REQUEST END")
         except Exception as e:
-            print(f"[STT] ELEVENLABS EXCEPTION: {type(e).__name__} - {e}")
-            primary_res = TranscriptionResult(success=False, error=str(e), provider="elevenlabs")
+            import traceback
+            print(f"[STT] ELEVENLABS EXCEPTION: {type(e).__name__} - {e}\n{traceback.format_exc()}")
+            safe_msg = str(e) if str(e) else type(e).__name__
+            primary_res = TranscriptionResult(success=False, error=safe_msg, provider="elevenlabs")
         finally:
             self.primary.timeout_seconds = original_timeout
 
@@ -79,8 +81,10 @@ class STTService:
             )
             print("[STT] SARVAM REQUEST END")
         except Exception as e:
-            print(f"[STT] SARVAM EXCEPTION: {type(e).__name__} - {e}")
-            fallback_res = TranscriptionResult(success=False, error=str(e), provider="sarvam", fallback_used=True)
+            import traceback
+            print(f"[STT] SARVAM EXCEPTION: {type(e).__name__} - {e}\n{traceback.format_exc()}")
+            safe_msg = str(e) if str(e) else type(e).__name__
+            fallback_res = TranscriptionResult(success=False, error=safe_msg, provider="sarvam", fallback_used=True)
             
         total_latency = (time.perf_counter() - total_t0) * 1000.0
         

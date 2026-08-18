@@ -117,6 +117,7 @@ class SarvamClient:
         files = {"file": (clean_filename, io.BytesIO(audio_bytes), base_mime)}
         headers = {"api-subscription-key": key}
         
+        t0 = time.perf_counter()
         try:
             response = self.session.post(
                 f"{self.base_url}/speech-to-text",
