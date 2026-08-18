@@ -47,6 +47,8 @@ from .sarvam_client import TranscriptionResult
 from .stt_service import STTService
 from contextlib import asynccontextmanager
 
+from qdrant_client.http import models as rest
+
 @asynccontextmanager
 async def lifespan(app_instance: FastAPI):
     print("=== REGISTERED FASTAPI ROUTES ===")
@@ -68,6 +70,23 @@ async def lifespan(app_instance: FastAPI):
     print("=======================================")
     if not el_configured and not sv_configured:
         print("WARNING: Neither ELEVENLABS_API_KEY nor SARVAM_API_KEY is configured in environment variables.")
+
+    print("=== QDRANT VECTOR STORE INITIALIZATION ===")
+    if store:
+        try:
+            count_result = store.client.count(store.collection_name)
+            count = count_result.count
+            print(f"Collection '{store.collection_name}' has {count} vectors.")
+            if count == 0:
+                print("Index is empty. Ingesting dataset ONCE for production memory...")
+                from pipeline.ingestion import ingest_dataset
+                # Run deterministic ingestion in same thread before app takes traffic
+                await asyncio.to_thread(ingest_dataset, mode="mock", max_records=100)
+                count = store.client.count(store.collection_name).count
+                print(f"Ingestion complete. Collection now has {count} vectors.")
+        except Exception as e:
+            print(f"Failed to check or initialize Qdrant: {e}")
+    print("==========================================")
     yield
 
 app = FastAPI(title="HH Goa 2026 Voice RAG API", lifespan=lifespan)
@@ -156,6 +175,32 @@ def health_ready():
             "vector_store": "ready" if store else "offline"
         }
     }
+
+@app.get("/health/retrieval")
+def health_retrieval():
+    """Diagnostic endpoint for retrieval index status."""
+    try:
+        count = store.client.count(store.collection_name).count if store else 0
+        embedding_model = embedder.model_name if embedder else "unknown"
+        dense_dim = embedder.dense_dim if embedder else 0
+        
+        # safely access path if not in memory
+        index_path = getattr(store.client, "_client", None)
+        path_str = getattr(index_path, "_path", "in_memory") if index_path else "in_memory"
+        
+        return {
+            "index_loaded": count > 0,
+            "vector_count": count,
+            "embedding_dimension": dense_dim,
+            "embedding_model": embedding_model,
+            "top_k": retriever.final_top_k if retriever else 0,
+            "grounding_threshold": grounder.min_confidence if grounder else 0,
+            "dataset_loaded": count > 0,
+            "chunk_count": count,
+            "index_path": str(path_str)
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.post("/api/retrieve")
 async def retrieve_only(payload: RetrieveRequest):
@@ -359,8 +404,15 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         return res
 
     # 3. STAGE 1: Hybrid Retrieval
+    print(f"[RETRIEVAL] query={query}")
+    print(f"[RETRIEVAL] embedding_dimension={embedder.dense_dim if embedder else 0}")
+    print(f"[RETRIEVAL] top_k={strategy.get('final_top_k', retriever.final_top_k if retriever else 0)}")
     try:
         retrieval_res = retriever.retrieve(query, strategy)
+        vec_count = store.client.count(store.collection_name).count if store else 0
+        print(f"[RETRIEVAL] index_vectors={vec_count}")
+        print(f"[RETRIEVAL] scores={[r.get('dense_score', 0) for r in retrieval_res['results']]}")
+        print(f"[RETRIEVAL] returned_chunks={len(retrieval_res['results'])}")
     except Exception as e:
         print(f"Error during retrieval: {e}")
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
@@ -376,6 +428,9 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     t0 = time.perf_counter()
     context_val = is_context_sufficient(query, retrieval_res["results"], embedder)
     metrics["answerability_ms"] = (time.perf_counter() - t0) * 1000
+
+    print(f"[GROUNDING] threshold={grounder.min_confidence if grounder else 0}")
+    print(f"[GROUNDING] context_sufficient={context_val.sufficient}")
 
     if not context_val.sufficient:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000

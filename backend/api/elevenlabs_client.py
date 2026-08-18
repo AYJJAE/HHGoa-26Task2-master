@@ -20,7 +20,7 @@ class ElevenLabsClient:
             or ""
         ).strip().strip("\"'")
         self.base_url = os.environ.get("ELEVENLABS_STT_BASE_URL", "https://api.elevenlabs.io/v1").rstrip("/")
-        self.model = os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v1")
+        self.model = os.environ.get("ELEVENLABS_STT_MODEL", "scribe_v2")
         self.timeout_seconds = float(os.environ.get("ELEVENLABS_STT_TIMEOUT_SECONDS", "15"))
         self.max_audio_bytes = int(os.environ.get("ELEVENLABS_STT_MAX_AUDIO_BYTES", str(25 * 1024 * 1024)))
         

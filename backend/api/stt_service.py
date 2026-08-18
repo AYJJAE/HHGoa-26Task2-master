@@ -98,10 +98,15 @@ class STTService:
             )
             
         print(f"[STT-PROD] SARVAM_FAILURE error={fallback_res.error}")
+        
+        combined_error = fallback_res.error
+        if primary_res and not primary_res.success:
+            combined_error = f"Primary (ElevenLabs) failed: {primary_res.error} | Fallback (Sarvam) failed: {fallback_res.error}"
+            
         return TranscriptionResult(
             success=False,
             text="",
-            error=fallback_res.error,
+            error=combined_error,
             provider=None,
             fallback_used=True,
             latency_ms=fallback_res.latency_ms
