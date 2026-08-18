@@ -135,6 +135,7 @@ async def lifespan(app_instance: FastAPI):
             methods_str = ",".join(methods) if methods else "GET"
             print(f"{methods_str}  {path}")
             
+    print(f"[CORS] Allowed origins: {ALLOWED_ORIGINS}")
     print("[STARTUP] FastAPI application loaded")
     print("[STARTUP] Health endpoint available")
     print("[STARTUP] RAG resources will initialize lazily in background")
@@ -150,18 +151,20 @@ if RATE_LIMITING_AVAILABLE:
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # --- CORS Configuration ---
-allowed_origins_str = os.environ.get("ALLOWED_ORIGINS", "*")
-if allowed_origins_str == "*":
-    allowed_origins = ["*"]
-else:
-    allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
+DEFAULT_ALLOWED_ORIGINS = "https://task2-horizonlabs.vercel.app,http://localhost:3000,http://localhost:3001,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", DEFAULT_ALLOWED_ORIGINS).split(",")
+    if origin.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 class QueryRequest(BaseModel):
