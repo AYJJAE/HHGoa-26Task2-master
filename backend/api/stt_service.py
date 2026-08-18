@@ -32,19 +32,17 @@ class STTService:
         print(f"[STT] Sarvam configured: {sv_key_present}")
         
         # 1. PRIMARY PROVIDER: ElevenLabs
-        print("[STT] attempting ElevenLabs")
+        print("[STT-PROD] ELEVENLABS_START")
         original_timeout = self.primary.timeout_seconds
         self.primary.timeout_seconds = self.primary_timeout_ms / 1000.0
         
         try:
-            print("[STT] ELEVENLABS REQUEST START")
             primary_res = self.primary.transcribe_audio(
                 audio_bytes=audio_bytes,
                 filename=filename,
                 content_type=content_type,
                 language_hint=language_hint
             )
-            print("[STT] ELEVENLABS REQUEST END")
         except Exception as e:
             import traceback
             print(f"[STT] ELEVENLABS EXCEPTION: {type(e).__name__} - {e}\n{traceback.format_exc()}")
@@ -55,7 +53,7 @@ class STTService:
 
         if primary_res.success and primary_res.text:
             total_latency = (time.perf_counter() - total_t0) * 1000.0
-            print(f"[STT] ELEVENLABS SUCCESS | latency={primary_res.latency_ms:.1f}ms (total={total_latency:.1f}ms)")
+            print(f"[STT-PROD] ELEVENLABS_SUCCESS text_length={len(primary_res.text)}")
             return TranscriptionResult(
                 success=True,
                 text=primary_res.text,
@@ -67,19 +65,17 @@ class STTService:
                 latency_ms=primary_res.latency_ms,
             )
             
-        print(f"[STT] ELEVENLABS FAILED | error_type='{primary_res.error}' | latency={primary_res.latency_ms:.1f}ms")
-        print("[STT] falling back to SARVAM")
+        print(f"[STT-PROD] ELEVENLABS_FAILURE error={primary_res.error}")
+        print("[STT-PROD] SARVAM_START")
         
         # 2. FALLBACK PROVIDER: Sarvam
         try:
-            print("[STT] SARVAM REQUEST START")
             fallback_res = self.fallback.transcribe_audio(
                 audio_bytes=audio_bytes,
                 filename=filename,
                 content_type=content_type,
                 language_hint=language_hint
             )
-            print("[STT] SARVAM REQUEST END")
         except Exception as e:
             import traceback
             print(f"[STT] SARVAM EXCEPTION: {type(e).__name__} - {e}\n{traceback.format_exc()}")
@@ -89,7 +85,7 @@ class STTService:
         total_latency = (time.perf_counter() - total_t0) * 1000.0
         
         if fallback_res.success and fallback_res.text:
-            print(f"[STT] SARVAM SUCCESS | latency={fallback_res.latency_ms:.1f}ms (total={total_latency:.1f}ms)")
+            print(f"[STT-PROD] SARVAM_SUCCESS text_length={len(fallback_res.text)}")
             return TranscriptionResult(
                 success=True,
                 text=fallback_res.text,
@@ -101,13 +97,12 @@ class STTService:
                 latency_ms=fallback_res.latency_ms,
             )
             
-        # 3. BOTH PROVIDERS FAILED
-        print(f"[STT] SARVAM FAILED | error_type='{fallback_res.error}' | latency={fallback_res.latency_ms:.1f}ms")
-        print(f"[STT] Both ElevenLabs and Sarvam failed. Total STT elapsed: {total_latency:.1f}ms.")
+        print(f"[STT-PROD] SARVAM_FAILURE error={fallback_res.error}")
         return TranscriptionResult(
             success=False,
-            error=fallback_res.error or primary_res.error or "Speech transcription unavailable.",
+            text="",
+            error=fallback_res.error,
             provider=None,
             fallback_used=True,
-            latency_ms=total_latency,
+            latency_ms=fallback_res.latency_ms
         )

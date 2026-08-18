@@ -118,6 +118,7 @@ class SarvamClient:
         headers = {"api-subscription-key": key}
         
         t0 = time.perf_counter()
+        print("[STT-PROD] SARVAM_HTTP_START")
         try:
             response = self.session.post(
                 f"{self.base_url}/speech-to-text",
@@ -127,6 +128,7 @@ class SarvamClient:
                 timeout=(3.0, self.timeout_seconds),
             )
             elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            print(f"[STT-PROD] SARVAM_HTTP_END status={response.status_code} latency={elapsed_ms:.1f}ms")
             
             if response.status_code == 200:
                 result = response.json()

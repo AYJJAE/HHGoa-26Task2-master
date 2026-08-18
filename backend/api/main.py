@@ -122,11 +122,13 @@ class RetrieveRequest(BaseModel):
     query: str
     top_k: Optional[int] = 5
 
+APP_BUILD_ID = "STT-FIX-2026-08-18-01"
+
 @app.get("/")
 @app.get("/health")
 def health():
     """Fast, lightweight health check endpoint."""
-    return {"status": "ok", "service": "HH Goa 2026 Voice RAG API"}
+    return {"status": "ok", "service": "HH Goa 2026 Voice RAG API", "build_id": APP_BUILD_ID}
 
 @app.get("/health/ready")
 def health_ready():
@@ -225,7 +227,16 @@ async def voice_ask(
     filename = audio.filename or "recording.webm"
     content_type = audio.content_type or "audio/webm"
     
-    print(f"[VOICE] request received | filename={filename} | content_type={content_type} | audio_size={len(audio_bytes)} bytes")
+    print(f"[STT-PROD] REQUEST_RECEIVED")
+    print(f"[STT-PROD] AUDIO_SIZE={len(audio_bytes)}")
+    print(f"[STT-PROD] AUDIO_CONTENT_TYPE={content_type}")
+    
+    el_key_present = bool(stt_client.primary.api_key)
+    sv_key_present = bool(stt_client.fallback.api_key)
+    print(f"[STT-PROD] ELEVENLABS_KEY_CONFIGURED={el_key_present}")
+    print(f"[STT-PROD] SARVAM_KEY_CONFIGURED={sv_key_present}")
+    print(f"[STT-PROD] ELEVENLABS_KEY_LENGTH={len(stt_client.primary.api_key) if el_key_present else 0}")
+    print(f"[STT-PROD] SARVAM_KEY_LENGTH={len(stt_client.fallback.api_key) if sv_key_present else 0}")
     
     transcription = await asyncio.to_thread(
         stt_client.transcribe_audio, audio_bytes, filename, content_type, language
