@@ -10,13 +10,14 @@ from pipeline.chunking import ChunkingPipeline
 from pipeline.embeddings import EmbeddingPipeline
 from pipeline.vector_store import VectorStore
 
-def ingest_dataset(mode: str = "dev", max_records: int = 100):
+def ingest_dataset(mode: str = "dev", max_records: int = 100, store=None):
     print(f"Starting ingestion in '{mode}' mode.")
     dataset = fetch_msmarco_xi_dataset(max_records)
     
     chunker = ChunkingPipeline(token_chunk_size=256, token_overlap=50)
     embedder = EmbeddingPipeline()
-    store = VectorStore(collection_name="msmarco_xi", dense_dim=embedder.dense_dim)
+    if store is None:
+        store = VectorStore(collection_name="msmarco_xi", dense_dim=embedder.dense_dim)
     
     processed = 0
     batch_size = 10 # small batch size for embedding to avoid memory spikes

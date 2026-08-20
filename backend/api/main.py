@@ -94,7 +94,7 @@ class RAGResources:
             if count == 0:
                 print("Index is empty. Ingesting dataset ONCE for production memory...")
                 from pipeline.ingestion import ingest_dataset
-                ingest_dataset(mode="mock", max_records=100)
+                ingest_dataset(mode="mock", max_records=100, store=self.store)
                 count = self.store.client.count(self.store.collection_name).count
                 print(f"Ingestion complete. Collection now has {count} vectors.")
             
