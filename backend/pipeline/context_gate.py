@@ -77,7 +77,12 @@ ENTITY_ALIASES = {
     "france": {"france", "french", "paris", "macron", "फ्रांस", "पेरिस"},
     "uk": {"uk", "united kingdom", "britain", "british", "england", "london"},
     "maharashtra": {"maharashtra", "mumbai", "bombay", "pune", "nagpur", "महाराष्ट्र", "मुंबई"},
-    "goa": {"goa", "goan", "panaji", "panjim", "margao", "vasco", "calangute", "गोवा"},
+    "goa": {
+        "goa", "goan", "panaji", "panjim", "margao", "madgaon", "vasco", "calangute", "baga", "anjuna",
+        "vagator", "arambol", "morjim", "candolim", "palolem", "agonda", "colva", "benaulim", "chapora",
+        "aguada", "fontainhas", "dudhsagar", "old goa", "bom jesus", "se cathedral", "bebinca", "vindaloo",
+        "xacuti", "feni", "cafreal", "shigmo", "sao joao", "गोवा", "गोव्यात", "गोय", "पणजी"
+    },
     "everest": {"everest", "mount everest", "himalayas", "एवरेस्ट"}
 }
 

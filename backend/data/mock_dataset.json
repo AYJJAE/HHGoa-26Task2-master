@@ -498,5 +498,355 @@
         0
       ]
     }
+  },
+  {
+    "query_id": "fact_20",
+    "target_lang": "en",
+    "query": "Best beaches in Goa?",
+    "Eng_Query": "What are the best beaches in Goa?",
+    "Answer": "The best beaches in North Goa are Anjuna, Vagator, Baga, Calangute, and Arambol, while South Goa features serene beaches like Palolem, Agonda, Colva, Benaulim, and Butterfly Beach.",
+    "Eng_Answer": "The best beaches in North Goa are Anjuna, Vagator, Baga, Calangute, and Arambol, while South Goa features serene beaches like Palolem, Agonda, Colva, Benaulim, and Butterfly Beach.",
+    "passages": {
+      "English_passages": [
+        "Goa features over 100 kilometers of coastline divided into North and South Goa. In North Goa, top beaches include Anjuna Beach (famous for flea markets and rocky shores), Vagator Beach (red cliffs and Chapora Fort view), Baga Beach and Calangute Beach (water sports, bustling shacks, and nightlife), and Arambol Beach (bohemian culture). In South Goa, the best beaches are Palolem Beach (crescent bay with calm waters), Agonda Beach (peaceful and pristine turtle nesting site), Benaulim, Colva, and Butterfly Beach (accessible by boat for dolphin watching and sunset).",
+        "Panaji is the capital city of Goa located along the Mandovi River with the historic Latin Quarter Fontainhas.",
+        "Dudhsagar Falls is a four-tiered waterfall on the Mandovi River located in the Bhagwan Mahaveer Sanctuary."
+      ],
+      "Translated_passages": [
+        "गोवा में 100 किलोमीटर से अधिक लंबा समुद्र तट है जो उत्तर और दक्षिण गोवा में विभाजित है। उत्तर गोवा में प्रमुख समुद्र तटों में अंजुना बीच, वागाटोर बीच, बागा बीच, कलंगूट बीच और अरामबोल बीच शामिल हैं। दक्षिण गोवा के सबसे बेहतरीन समुद्र तट पालोलेम बीच, अगोंडा बीच, बेनाउलिम बीच, कोलवा और बटरफ्लाई बीच हैं जो अपनी शांति और प्राकृतिक सुंदरता के लिए प्रसिद्ध हैं।",
+        "पणजी मांडवी नदी के तट पर स्थित गोवा की राजधानी है जहाँ ऐतिहासिक लैटिन क्वार्टर फॉन्टेनहास स्थित है।",
+        "दूधसागर जलप्रपात मांडवी नदी पर स्थित चार स्तरों वाला भव्य झरना है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_21",
+    "target_lang": "en",
+    "query": "Plan a 2 day Goa trip.",
+    "Eng_Query": "How to plan a 2 day Goa trip?",
+    "Answer": "A 2-day Goa itinerary: Day 1 covers North Goa (Fort Aguada, Calangute/Anjuna beaches, and Chapora Fort sunset). Day 2 covers Central & South Goa (Old Goa UNESCO churches, Panaji Latin Quarter Fontainhas, and an evening Mandovi cruise or Palolem sunset).",
+    "Eng_Answer": "A 2-day Goa itinerary: Day 1 covers North Goa (Fort Aguada, Calangute/Anjuna beaches, and Chapora Fort sunset). Day 2 covers Central & South Goa (Old Goa UNESCO churches, Panaji Latin Quarter Fontainhas, and an evening Mandovi cruise or Palolem sunset).",
+    "passages": {
+      "English_passages": [
+        "A balanced 2-day Goa itinerary includes: Day 1 explores North Goa — start morning at historic Fort Aguada and lighthouse, spend afternoon enjoying beach shacks and water sports at Calangute or Anjuna Beach, and watch the sunset from the hilltop at Chapora Fort followed by dinner in Vagator. Day 2 explores Cultural & Heritage Goa — visit UNESCO World Heritage churches in Old Goa (Basilica of Bom Jesus and Se Cathedral), explore the colorful Portuguese houses of Fontainhas Latin Quarter in Panaji, and conclude with an evening Mandovi River sunset cruise or relaxing at Miramar/Palolem Beach.",
+        "Goa has two main districts: North Goa with headquarters at Panaji, and South Goa with headquarters at Margao.",
+        "Goan Fish Curry Rice is the staple traditional lunch across both North and South Goa."
+      ],
+      "Translated_passages": [
+        "गोवा की 2 दिवसीय योजना: पहला दिन उत्तर गोवा की यात्रा करें — सुबह फोर्ट अगुआडा और लाइटहाउस देखें, दोपहर कलंगूट या अंजुना बीच पर बिताएं, और शाम को चपोरा फोर्ट से सूर्यास्त देखें। दूसरा दिन ऐतिहासिक और सांस्कृतिक गोवा के लिए — ओल्ड गोवा के यूनेस्को चर्च (बेसिलिका ऑफ बॉम जीसस और से कैथेड्रल) देखें, पणजी के फॉन्टेनहास लैटिन क्वार्टर की रंगीन गलियों में घूमें और शाम को मांडवी नदी क्रूज या पालोलेम बीच पर आनंद लें।",
+        "गोवा के दो मुख्य जिले हैं: उत्तर गोवा (मुख्यालय पणजी) और दक्षिण गोवा (मुख्यालय मडगांव)।",
+        "गोअन फिश करी राइस पूरे गोवा का मुख्य पारंपरिक भोजन है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_22",
+    "target_lang": "en",
+    "query": "What should I visit in Old Goa?",
+    "Eng_Query": "What should I visit in Old Goa?",
+    "Answer": "In Old Goa, you should visit the UNESCO World Heritage monuments: Basilica of Bom Jesus (containing the mortal remains of St. Francis Xavier), Se Cathedral (home to the Great Golden Bell), Church of St. Francis of Assisi, and the Church of St. Cajetan.",
+    "Eng_Answer": "In Old Goa, you should visit the UNESCO World Heritage monuments: Basilica of Bom Jesus (containing the mortal remains of St. Francis Xavier), Se Cathedral (home to the Great Golden Bell), Church of St. Francis of Assisi, and the Church of St. Cajetan.",
+    "passages": {
+      "English_passages": [
+        "Old Goa (Velha Goa) was the former capital of Portuguese India from the 16th to 18th centuries and is a UNESCO World Heritage Site. Key monuments to visit include: 1. Basilica of Bom Jesus, consecrated in 1605, which holds the sacred relics and mortal remains of St. Francis Xavier in a silver casket. 2. Se Cathedral (Cathedral of Saint Catherine), one of the largest churches in Asia, famous for its grand Iberian architecture and the resonant Golden Bell ('Sino de Ouro'). 3. Church of St. Francis of Assisi and the attached Archaeological Museum. 4. Church of St. Cajetan, modeled after St. Peter's Basilica in Rome.",
+        "Fontainhas in Panaji is Asia's only recognized Latin Quarter, known for heritage villas with tiled roofs.",
+        "Chapora Fort in North Goa was built by the Portuguese in 1717 and overlooks the Chapora River and Vagator Beach."
+      ],
+      "Translated_passages": [
+        "ओल्ड गोवा (वेल्हा गोवा) 16वीं से 18वीं शताब्दी तक पुर्तगाली भारत की राजधानी थी और यह एक यूनेस्को विश्व धरोहर स्थल है। यहाँ घूमने के मुख्य स्थल हैं: 1. बेसिलिका ऑफ बॉम जीसस (Basilica of Bom Jesus), जहाँ संत फ्रांसिस जेवियर के पवित्र अवशेष रखे हैं। 2. से कैथेड्रल (Se Cathedral), जो एशिया के सबसे बड़े चर्चों में से एक है और अपने प्रसिद्ध गोल्डन बेल (स्वर्ण घंटी) के लिए जाना जाता है। 3. सेंट फ्रांसिस ऑफ असीसी चर्च और पुरातत्व संग्रहालय। 4. सेंट काजेटन चर्च, जो रोम के सेंट पीटर बेसिलिका की तर्ज पर बना है।",
+        "पणजी का फॉन्टेनहास एशिया का एकमात्र मान्यता प्राप्त लैटिन क्वार्टर है जो हेरिटेज विला के लिए जाना जाता है।",
+        "उत्तर गोवा में चपोरा किला 1717 में पुर्तगालियों द्वारा बनाया गया था जो वागाटोर समुद्र तट पर स्थित है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_23",
+    "target_lang": "en",
+    "query": "What Goan food should I try?",
+    "Eng_Query": "What traditional Goan food and dishes should I try?",
+    "Answer": "Must-try Goan dishes include Goan Fish Curry Rice, Poi (traditional bread), Bebinca (layered dessert), Chicken or Pork Vindaloo, Chicken Xacuti, Cafreal, Solkadhi, Khatkhate (vegetable stew), and traditional Goan Feni.",
+    "Eng_Answer": "Must-try Goan dishes include Goan Fish Curry Rice, Poi (traditional bread), Bebinca (layered dessert), Chicken or Pork Vindaloo, Chicken Xacuti, Cafreal, Solkadhi, Khatkhate (vegetable stew), and traditional Goan Feni.",
+    "passages": {
+      "English_passages": [
+        "Goan cuisine is a blend of Saraswat Hindu traditions and 450 years of Portuguese culinary influence. Iconic dishes to try include: 1. Goan Fish Curry Rice (Humann/Kodi) prepared with fresh kingfish or pomfret, grated coconut, and tart kokum. 2. Poi (Pode), the traditional Goan crusty wheat bread baked in wood-fired earthen ovens. 3. Chicken or Pork Vindaloo, a tangy, spicy curry with vinegar and garlic. 4. Chicken Xacuti (Shakuti), cooked with roasted coconut, poppy seeds, and Kashmiri red chillies. 5. Chicken Cafreal, marinated in green chillies, coriander, and spices. 6. Bebinca, the traditional 7 to 16-layer pudding dessert made with coconut milk and egg yolks. 7. Solkadhi, a refreshing digestive drink made from kokum and coconut milk. 8. Feni, Goa's GI-tagged indigenous spirit distilled from cashew apples or coconut toddy.",
+        "Goa produces spices like black pepper, cardamom, nutmeg, and vanilla in the plantations of Ponda.",
+        "Calangute and Baga are famous for beach shacks serving fresh seafood along the coast."
+      ],
+      "Translated_passages": [
+        "गोअन खानपान कोंकणी सारस्वत परंपराओं और पुर्तगाली प्रभाव का अनूठा संगम है। प्रसिद्ध गोअन व्यंजनों में शामिल हैं: 1. गोअन फिश करी राइस (नारियल और कोकम से बनी ताज़ा मछली की कढ़ी), 2. पोई (Poi - लकड़ी के तंदूर में बेक की जाने वाली पारंपरिक गोअन ब्रेड), 3. विंदालू (Vindaloo - सिरका और लहसुन से बनी तीखी ग्रेवी), 4. शाकुती (Xacuti - भुने नारियल और मसालों से बना चिकन/मटन), 5. चिकन कफ्रियाल (Cafreal), 6. बेबिंका (Bebinca - नारियल के दूध से बनी 7 परतों वाली पारंपरिक मिठाई), 7. सोल कढ़ी (कोकम और नारियल का पाचक पेय), और 8. फेनी (Feni - काजू या नारियल से बनी पारंपरिक गोअन ड्रिंक)।",
+        "पोंडा के मसाला बागानों में काली मिर्च, इलायची, जायफल और वेनिला की खेती की जाती है।",
+        "कलंगूट और बागा बीच पर ताज़ा समुद्री भोजन परोसने वाले कई प्रसिद्ध शेक्स मौजूद हैं।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_24",
+    "target_lang": "en",
+    "query": "Best places for sunset in Goa?",
+    "Eng_Query": "Where are the best places to watch the sunset in Goa?",
+    "Answer": "The best sunset spots in Goa are Chapora Fort (overlooking Vagator Beach), Fort Aguada (lighthouse views over Arabian Sea), Cabo de Rama Fort in South Goa, Palolem Beach sunset point, and the cliffs of Vagator and Anjuna.",
+    "Eng_Answer": "The best sunset spots in Goa are Chapora Fort (overlooking Vagator Beach), Fort Aguada (lighthouse views over Arabian Sea), Cabo de Rama Fort in South Goa, Palolem Beach sunset point, and the cliffs of Vagator and Anjuna.",
+    "passages": {
+      "English_passages": [
+        "Goa offers spectacular Arabian Sea sunset viewpoints. Top locations include: 1. Chapora Fort in North Goa: Perched on a hill with panoramic 360-degree views overlooking Vagator Beach and Chapora estuary. 2. Fort Aguada: A 17th-century Portuguese fortress and lighthouse at Sinquerim offering sweeping ocean views. 3. Cabo de Rama Fort in South Goa: A secluded clifftop fort with dramatic rocky bluffs dropping into turquoise waters. 4. Palolem Beach: The southern end of the crescent bay offers golden sunset reflections with wooden boats. 5. Vagator and Anjuna Red Cliffs: Waterfront shacks and hilltop rocks providing open horizon sunset vistas.",
+        "Anjuna Flea Market takes place every Wednesday near the beachfront with live music and handicrafts.",
+        "Miramar Beach is a city beach located in Panaji close to the estuary where Mandovi River meets the Arabian Sea."
+      ],
+      "Translated_passages": [
+        "गोवा में सूर्यास्त (सनसेट) देखने के सबसे खूबसूरत स्थान हैं: 1. चपोरा किला (Chapora Fort) - वागाटोर बीच और अरब सागर का विहंगम 360-डिग्री दृश्य। 2. फोर्ट अगुआडा (Fort Aguada) - 17वीं सदी का पुर्तगाली किला और लाइटहाउस जहाँ से समुद्र का भव्य नज़ारा दिखता है। 3. काबो दे रामा किला (Cabo de Rama) - दक्षिण गोवा में चट्टानों पर स्थित शांत किला। 4. पालोलेम बीच (Palolem Beach) - दक्षिण गोवा का सुंदर अर्धचंद्राकार समुद्र तट। 5. वागाटोर और अंजुना की लाल चट्टानें जहाँ से शाम का नज़ारा बेहद मनमोहक होता है।",
+        "अंजुना फ्ली मार्केट हर बुधवार को समुद्र तट के पास हस्तशिल्प और संगीत के साथ आयोजित होता है।",
+        "मिरामार बीच पणजी शहर में स्थित समुद्र तट है जहाँ मांडवी नदी अरब सागर में मिलती है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_25",
+    "target_lang": "en",
+    "query": "Tell me about Goa's culture.",
+    "Eng_Query": "What is the culture and history of Goa?",
+    "Answer": "Goan culture is a harmonious blend of Konkani Indian traditions and Portuguese heritage, celebrated through festivals like Goa Carnival, Shigmo, and Sao Joao, music like Mando and Dhalo, and the official language Konkani.",
+    "Eng_Answer": "Goan culture is a harmonious blend of Konkani Indian traditions and Portuguese heritage, celebrated through festivals like Goa Carnival, Shigmo, and Sao Joao, music like Mando and Dhalo, and the official language Konkani.",
+    "passages": {
+      "English_passages": [
+        "Goa's unique culture ('Goenkarponn') is shaped by over 450 years of Portuguese rule from 1510 until liberation on 19 December 1961 (celebrated as Goa Liberation Day). Konkani, written in Devanagari script, is the official state language, alongside widespread use of Marathi, English, and Hindi. Key cultural celebrations include: 1. Goa Carnival: A vibrant four-day street festival before Lent with float parades led by King Momo. 2. Shigmo (Shigmotsav): The traditional Goan spring festival celebrating harvest and mythology with Ghode Modni and Fugdi folk dances. 3. Sao Joao: The monsoon feast of St. John the Baptist in June where villagers wear floral crowns ('kopels') and leap into overflowing wells. 4. Goan folk music genres include the romantic Mando, lively Dekhnni, and traditional Dhalo.",
+        "Panaji was declared the capital of Goa in 1843, replacing Old Goa after epidemic outbreaks.",
+        "Goa is India's smallest state by area (3,702 sq km) and has the highest GDP per capita among Indian states."
+      ],
+      "Translated_passages": [
+        "गोवा की अनूठी संस्कृति ('गोयेनकारपण') 450 वर्षों के पुर्तगाली शासन (1510 से 1961 मुक्ति दिवस) और कोंकणी भारतीय परंपराओं का सुंदर मिश्रण है। देवनागरी लिपि में लिखी जाने वाली कोंकणी गोवा की आधिकारिक राज्य भाषा है, साथ ही मराठी, हिंदी और अंग्रेजी भी व्यापक रूप से बोली जाती है। प्रमुख त्योहारों में गोवा कार्निवल (Goa Carnival), शिगमो (Shigmo - वसंत ऋतु का लोकनृत्य उत्सव), और साओ जाओ (Sao Joao - मॉनसून में कुओं में छलांग लगाने का अनोखा त्योहार) शामिल हैं। मांडो (Mando) और देखणी (Dekhnni) गोवा के प्रसिद्ध पारंपरिक संगीत रूप हैं।",
+        "1843 में पुरानी गोवा की जगह पणजी को गोवा की आधिकारिक राजधानी बनाया गया था।",
+        "क्षेत्रफल की दृष्टि से गोवा भारत का सबसे छोटा राज्य है (3,702 वर्ग किमी) और प्रति व्यक्ति आय में अव्वल है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_26",
+    "target_lang": "en",
+    "query": "Which places are good for families in Goa?",
+    "Eng_Query": "What are the best places to visit for families in Goa?",
+    "Answer": "Family-friendly places in Goa include Dudhsagar Waterfalls, Sahakari & Savoi Spice Plantations in Ponda, Dr. Salim Ali Bird Sanctuary on Chorao Island, Goa Science Centre & Miramar Beach in Panaji, and calm beaches like Palolem, Benaulim, and Morjim.",
+    "Eng_Answer": "Family-friendly places in Goa include Dudhsagar Waterfalls, Sahakari & Savoi Spice Plantations in Ponda, Dr. Salim Ali Bird Sanctuary on Chorao Island, Goa Science Centre & Miramar Beach in Panaji, and calm beaches like Palolem, Benaulim, and Morjim.",
+    "passages": {
+      "English_passages": [
+        "For families visiting Goa, top recommended destinations include: 1. Dudhsagar Waterfalls: A magnificent 310-meter waterfall inside Bhagwan Mahaveer Sanctuary reachable via adventurous 4x4 jungle jeep safari. 2. Spice Plantations in Ponda (such as Sahakari Spice Farm and Savoi Plantation): Guided botanical tours showing black pepper, cardamom, cinnamon, accompanied by traditional Goan lunch served on banana leaves. 3. Dr. Salim Ali Bird Sanctuary: A peaceful mangrove bird sanctuary on Chorao Island accessed by ferry from Ribandar. 4. Goa Science Centre and Planetarium in Miramar, Panaji: Interactive science exhibits and 3D astronomy shows. 5. Gentle Family Beaches: Palolem and Agonda in South Goa, and Morjim and Mandrem in North Goa have shallow gentle waters suitable for children.",
+        "Fontainhas Latin Quarter offers walking heritage tours with colorful 18th-century architecture.",
+        "Fort Aguada in Sinquerim is accessible with paved walkways and panoramic ocean viewpoints."
+      ],
+      "Translated_passages": [
+        "परिवार के साथ गोवा घूमने के लिए बेहतरीन स्थान हैं: 1. दूधसागर जलप्रपात (Dudhsagar Falls) - 310 मीटर ऊँचा जलप्रपात जहाँ जीप सफारी द्वारा पहुँचा जाता है। 2. पोंडा के स्पाइस प्लांटेशन (Sahakari व Savoi मसाला बागान) - जहाँ मसालों के पौधे, हाथी और पारंपरिक गोअन लंच का आनंद मिलता है। 3. डॉ. सलीम अली पक्षी अभयारण्य (Chorao Island) - मैंग्रोव और विदेशी पक्षियों को देखने के लिए शांत बोटिंग। 4. गोवा साइंस सेंटर और तारामंडल (मिरामार, पणजी) - बच्चों के लिए विज्ञान और खगोल विज्ञान प्रदर्शनी। 5. शांत समुद्र तट - पालोलेम, मोरजिम और बेनाउलिम जहाँ का शांत पानी बच्चों के लिए सुरक्षित है।",
+        "फॉन्टेनहास लैटिन क्वार्टर में हेरिटेज वॉक और रंगीन 18वीं सदी के मकान देखने लायक हैं।",
+        "फोर्ट अगुआडा में आसान पक्के रास्ते और अरब सागर का शानदार नज़ारा है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_27",
+    "target_lang": "en",
+    "query": "Give me a relaxed itinerary for Goa.",
+    "Eng_Query": "How to plan a relaxed and peaceful Goa itinerary?",
+    "Answer": "A relaxed Goa itinerary focuses on South Goa: stay in Agonda or Palolem, take a morning boat trip to Butterfly Beach, visit Cabo de Rama Fort, explore peaceful village walks in Divar or Chorao Islands, and enjoy uncrowded beach shacks and yoga.",
+    "Eng_Answer": "A relaxed Goa itinerary focuses on South Goa: stay in Agonda or Palolem, take a morning boat trip to Butterfly Beach, visit Cabo de Rama Fort, explore peaceful village walks in Divar or Chorao Islands, and enjoy uncrowded beach shacks and yoga.",
+    "passages": {
+      "English_passages": [
+        "A relaxed, unhurried Goa itinerary emphasizes peaceful South Goa and tranquil island villages: Day 1: Base yourself in South Goa at Agonda Beach or Palolem Beach. Spend a slow morning with beachfront yoga and breakfast at quiet shacks, take an afternoon wooden boat to Butterfly Beach and Honeymoon Island to spot dolphins, and watch the sunset from Palolem's rocky southern end. Day 2: Take a scenic coastal drive through coconut groves to Cabo de Rama Fort, visit Cola Beach with its freshwater lagoon, and dine on fresh grilled fish by candlelit shacks. Day 3: Head to Central Goa for a peaceful morning ferry ride to Divar Island or Chorao Island to explore quiet Portuguese villages, ancestral mansions, and lush paddy fields with zero traffic.",
+        "North Goa beaches like Baga and Calangute are more crowded with commercial water sports and clubs.",
+        "Goa's monsoon season from June to September transforms the countryside into lush green landscapes with active waterfalls."
+      ],
+      "Translated_passages": [
+        "एक शांत और तनावमुक्त (रिलैक्स्ड) गोवा यात्रा योजना: दिन 1: दक्षिण गोवा के अगोंडा या पालोलेम बीच पर ठहरें। सुबह समुद्र किनारे योग करें, दोपहर को बटरफ्लाई बीच के लिए नाव की सवारी करें और शाम को शांत सूर्यास्त देखें। दिन 2: काबो दे रामा किले की खूबसूरत ड्राइव करें, कोला बीच (Cola Beach) के प्राकृतिक मीठे पानी के लैगून का आनंद लें और शांत शेक्स पर भोजन करें। दिन 3: देवर द्वीप (Divar Island) या चोराव द्वीप के लिए शांत नौका यात्रा करें, बिना ट्रैफिक के पुराने पुर्तगाली गांवों और हरे-भरे धान के खेतों में घूमें।",
+        "उत्तर गोवा के बागा और कलंगूट समुद्र तट अधिक भीड़भाड़ और नाइटलाइफ वाले हैं।",
+        "जून से सितंबर तक गोवा का मानसून का मौसम पूरे राज्य को हरे-भरे नज़ारों और झरनों से सराबोर कर देता है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_28",
+    "target_lang": "en",
+    "query": "Best places to explore in South Goa?",
+    "Eng_Query": "What are the best places to visit and explore in South Goa?",
+    "Answer": "Top places to explore in South Goa include Palolem Beach, Agonda Beach, Cabo de Rama Fort, Cotigao Wildlife Sanctuary, Cola Beach freshwater lagoon, Chandor heritage mansions (Menezes Braganza House), and Netravali bubbling lake.",
+    "Eng_Answer": "Top places to explore in South Goa include Palolem Beach, Agonda Beach, Cabo de Rama Fort, Cotigao Wildlife Sanctuary, Cola Beach freshwater lagoon, Chandor heritage mansions (Menezes Braganza House), and Netravali bubbling lake.",
+    "passages": {
+      "English_passages": [
+        "South Goa is known for its pristine beaches, dense forests, and historic colonial estates. Top attractions include: 1. Palolem Beach: A crescent-shaped beach fringed with coconut palms and colorful wooden beach huts. 2. Agonda Beach: A 3-kilometer wide, tranquil beach famous for Olive Ridley turtle nesting and peace. 3. Cabo de Rama Fort: An ancient clifftop fortress in Canacona offering dramatic ocean vistas. 4. Cola Beach: A hidden gem featuring a natural emerald freshwater lagoon meeting the sea. 5. Chandor Heritage Mansions: Menezes Braganza House (built in the 17th century with 24 windows and antique ballroom) and Fernandes House. 6. Cotigao Wildlife Sanctuary: Dense evergreen forest with a 25-meter treetop watchtower overlooking a watering hole. 7. Netravali Bubble Lake (Budbudyanchi Tali): An ancient sacred pond where continuous methane/carbon bubbles rise to the surface.",
+        "Margao (Madgaon) is the commercial hub and cultural capital of South Goa, known for the Holy Spirit Church.",
+        "Vasco da Gama is Goa's largest port city located on the Mormugao peninsula near Dabolim Airport."
+      ],
+      "Translated_passages": [
+        "दक्षिण गोवा घूमने के मुख्य और खूबसूरत स्थान हैं: 1. पालोलेम बीच (Palolem Beach) - नारियल के पेड़ों से घिरा अर्धचंद्राकार समुद्र तट। 2. अगोंडा बीच (Agonda Beach) - 3 किमी लंबा शांत बीच और ओलिव रिडले कछुओं का प्रजनन स्थल। 3. काबो दे रामा किला (Cabo de Rama Fort) - समुद्र के ऊपर चट्टान पर स्थित प्राचीन किला। 4. कोला बीच (Cola Beach) - जहाँ मीठे पानी का लैगून समुद्र से मिलता है। 5. चांदोल हेरिटेज हवेली (Menezes Braganza House) - 17वीं सदी का विशाल पुर्तगाली महल। 6. कोटिगाओ वन्यजीव अभयारण्य (Cotigao Sanctuary) - 25 मीटर ऊँचे ट्री-टॉप वॉचटॉवर वाला घना जंगल। 7. नेत्रावली बबल लेक - जहाँ पानी से लगातार बुलबुले उठते हैं।",
+        "मडगांव (Margao) दक्षिण गोवा का वाणिज्यिक और सांस्कृतिक केंद्र है।",
+        "वास्को डी गामा गोवा का सबसे बड़ा बंदरगाह शहर है जो डाबोलिम हवाई अड्डे के पास स्थित है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_29",
+    "target_lang": "en",
+    "query": "What can I do near Panjim?",
+    "Eng_Query": "What are the best things to do in and around Panjim (Panaji)?",
+    "Answer": "In and around Panjim, you can explore Fontainhas (the Latin Quarter), visit the Church of Our Lady of the Immaculate Conception, take a Mandovi River sunset cruise, stroll along Miramar Beach, visit Dona Paula viewpoint, and tour the Goa State Museum.",
+    "Eng_Answer": "In and around Panjim, you can explore Fontainhas (the Latin Quarter), visit the Church of Our Lady of the Immaculate Conception, take a Mandovi River sunset cruise, stroll along Miramar Beach, visit Dona Paula viewpoint, and tour the Goa State Museum.",
+    "passages": {
+      "English_passages": [
+        "Panjim (Panaji) is the state capital of Goa, located on the banks of the Mandovi River. Key activities and sights include: 1. Fontainhas Latin Quarter: Wander narrow cobblestone alleys lined with vibrant yellow, blue, and terracotta Portuguese colonial homes, heritage bakeries (like Confeitaria 31 de Janeiro), and art galleries. 2. Church of Our Lady of the Immaculate Conception: Landmark 16th-century baroque white church featuring double zigzagging staircases on the main town square. 3. Mandovi River Cruise: Evening catamaran cruises offering Goan folk dance performances (Dekhnni, Fugdi) and sunset river views. 4. Miramar Beach & Dona Paula Viewpoint: A coastal promenade leading to the iconic Dona Paula jetty overlooking Mormugao harbour. 5. Goa State Museum & Adil Shah Palace: The oldest surviving colonial building in Panaji, showcasing historical Goan sculptures and art.",
+        "Old Goa is located approximately 10 kilometers east of Panaji along the Mandovi River expressway.",
+        "Reis Magos Fort sits across the Mandovi river directly opposite Panaji, accessible via a short bridge drive."
+      ],
+      "Translated_passages": [
+        "पणजी (Panjim) में और उसके आसपास करने के लिए प्रमुख गतिविधियाँ: 1. फॉन्टेनहास लैटिन क्वार्टर में घूमें - चमकीले पीले, नीले पुर्तगाली विला, पुरानी बेकरियाँ और कला दीर्घाएँ। 2. अवर लेडी ऑफ इमैक्युलेट कन्सेप्शन चर्च - शहर के मुख्य चौक पर 16वीं सदी का प्रसिद्ध सफेद चर्च जिसकी सीढ़ियाँ ज़िग-ज़ैग आकार की हैं। 3. मांडवी नदी पर सनसेट क्रूज - शाम को पारंपरिक गोअन लोकनृत्य और संगीत का आनंद। 4. मिरामार बीच और डोना पाउला व्यूप्वाइंट - जहां से मोरमुगाओ बंदरगाह और समुद्र का मनोरम दृश्य दिखता है। 5. आदिल शाह पैलेस और गोवा राज्य संग्रहालय - पणजी की सबसे पुरानी इमारत और ऐतिहासिक कलाकृतियाँ।",
+        "ओल्ड गोवा पणजी से लगभग 10 किलोमीटर पूर्व में मांडवी नदी के किनारे स्थित है।",
+        "रीस मैगोस किला पणजी के ठीक सामने मांडवी नदी के पार स्थित है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_30",
+    "target_lang": "en",
+    "query": "Plan my Goa trip for 1, 3, or 5 days.",
+    "Eng_Query": "How to plan a 1 day, 3 day, or 5 day Goa trip?",
+    "Answer": "For 1 day: focus on Panaji Latin Quarter & Old Goa UNESCO churches. For 3 days: Day 1 North Goa beaches & Chapora, Day 2 Old Goa & Panaji, Day 3 South Goa Palolem & Cabo de Rama. For 5 days: add Dudhsagar Falls, Ponda Spice Plantations, and local markets.",
+    "Eng_Answer": "For 1 day: focus on Panaji Latin Quarter & Old Goa UNESCO churches. For 3 days: Day 1 North Goa beaches & Chapora, Day 2 Old Goa & Panaji, Day 3 South Goa Palolem & Cabo de Rama. For 5 days: add Dudhsagar Falls, Ponda Spice Plantations, and local markets.",
+    "passages": {
+      "English_passages": [
+        "Goa trip itineraries based on trip duration: 1. 1-Day Express Itinerary: Morning in Old Goa visiting Basilica of Bom Jesus and Se Cathedral; afternoon exploring Fontainhas Latin Quarter in Panaji; evening sunset at Miramar Beach or a Mandovi River cruise. 2. 3-Day Classic Itinerary: Day 1 (North Goa) - Fort Aguada, Calangute/Anjuna beach, and Chapora Fort sunset. Day 2 (Heritage & Culture) - Old Goa churches, Panaji Latin Quarter, and Goan thali lunch. Day 3 (South Goa) - Relaxing at Palolem Beach, boat trip to Butterfly Beach, and Cabo de Rama Fort. 3. 5-Day Complete Itinerary: Days 1-3 as above; Day 4 (Nature & Adventure) - 4x4 Jeep Safari to Dudhsagar Waterfalls and Sahakari Spice Farm lunch in Ponda; Day 5 (Leisure & Shopping) - Anjuna or Arpora Saturday Night Market, beach hopping in Morjim/Arambol, and sunset at Vagator.",
+        "Rental scooters and cars are available across North and South Goa with valid driving licenses.",
+        "The peak tourist season in Goa runs from November to February with pleasant temperatures between 20°C and 32°C."
+      ],
+      "Translated_passages": [
+        "गोवा ट्रिप की अवधि के अनुसार योजना: 1. 1 दिन का प्लान: सुबह ओल्ड गोवा के ऐतिहासिक चर्च (बॉब जीसस बेसिलिका), दोपहर पणजी का फॉन्टेनहास लैटिन क्वार्टर, और शाम को मिरामार बीच या मांडवी क्रूज। 2. 3 दिन का क्लासिक प्लान: पहला दिन उत्तर गोवा (अगुआडा किला, अंजुना बीच, चपोरा सनसेट), दूसरा दिन ओल्ड गोवा चर्च और पणजी हेरिटेज, तीसरा दिन दक्षिण गोवा (पालोलेम बीच, बटरफ्लाई बीच बोटिंग, काबो दे रामा)। 3. 5 दिन का सम्पूर्ण प्लान: पहले 3 दिन उपरोक्त अनुसार, चौथा दिन दूधसागर जलप्रपात जीप सफारी और पोंडा मसाला बागान, पाँचवाँ दिन मोरजिम बीच, अंजुना नाइट मार्केट और वागाटोर सनसेट।",
+        "गोवा में वैध ड्राइविंग लाइसेंस के साथ रेंटल स्कूटर और कार आसानी से उपलब्ध हैं।",
+        "गोवा में पर्यटन का सबसे अच्छा समय नवंबर से फरवरी का होता है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_31",
+    "target_lang": "en",
+    "query": "How to get around and transport in Goa?",
+    "Eng_Query": "What are the transport options and how to get around in Goa?",
+    "Answer": "Transport options in Goa include self-drive rental scooters and cars (yellow-black plates), GoaMiles app-based taxis, Kadamba State Transport buses connecting major towns, and free government passenger ferries across rivers.",
+    "Eng_Answer": "Transport options in Goa include self-drive rental scooters and cars (yellow-black plates), GoaMiles app-based taxis, Kadamba State Transport buses connecting major towns, and free government passenger ferries across rivers.",
+    "passages": {
+      "English_passages": [
+        "Getting around Goa is convenient through several transport options: 1. Rental Scooters and Motorcycles: The most popular way to explore Goa, available for daily rental across towns and beaches (identifiable by black license plates with yellow lettering). 2. Self-Drive Cars: Hatchbacks, sedans, and SUVs rented on commercial self-drive permits. 3. GoaMiles Taxi App: The official state-backed app-based cab booking service offering fixed government-approved rates across Goa. 4. Private Taxis and Auto-Rickshaws: Available at designated stands (pilots/motorcycle taxis are also unique to Goa for solo short trips). 5. Kadamba Transport Corporation (KTC) Buses: Affordable state buses connecting major hubs like Panaji, Margao, Mapusa, Vasco, and Ponda. 6. Government River Ferries: Free passenger ferries operated by the River Navigation Department (such as Betim-Panaji and Ribandar-Chorao).",
+        "Goa has two operational commercial airports: Dabolim International Airport (GOI) in South Goa and Manohar International Airport (MOPA/GOX) in North Goa.",
+        "Madgaon Junction and Thivim are the two main railway stations connecting Goa to Mumbai, Bangalore, and Delhi."
+      ],
+      "Translated_passages": [
+        "गोवा में घूमने और परिवहन के साधन: 1. रेंटल स्कूटर और बाइक: गोवा घूमने का सबसे लोकप्रिय और किफायती तरीका (काली नंबर प्लेट पर पीले अक्षरों वाली अधिकृत गाड़ियाँ)। 2. सेल्फ-ड्राइव रेंटल कार: दिन के किराये पर उपलब्ध कारें। 3. गोवामाइल्स (GoaMiles) टैक्सी ऐप: सरकार द्वारा स्वीकृत आधिकारिक कैब बुकिंग ऐप जो निश्चित दरों पर चलती है। 4. मोटरसाइकिल पायलट (पायलट टैक्सी): अकेले यात्रियों के लिए गोवा की अनूठी टू-व्हीलर टैक्सी सेवा। 5. कदंब सरकारी बसें (KTC): पणजी, मडगांव, म्हापसा और वास्को के बीच चलने वाली बसें। 6. सरकारी रिवर फेरी: मांडवी और जुआरी नदियों पर यात्रियों के लिए निःशुल्क नाव/फेरी सेवा।",
+        "गोवा में दो अंतरराष्ट्रीय हवाई अड्डे हैं: दक्षिण गोवा में डाबोलिम (GOI) और उत्तर गोवा में मनोहर अंतरराष्ट्रीय हवाई अड्डा मोपा (GOX)।",
+        "मडगांव जंक्शन और थिविम गोवा के दो प्रमुख रेलवे स्टेशन हैं।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_32",
+    "target_lang": "kok",
+    "query": "गोवा राज्याची राजधानी कोणती?",
+    "Eng_Query": "What is the capital of the state of Goa?",
+    "Answer": "गोवा राज्याची राजधानी पणजी (Panaji) ही आसा, जी मांडवी न्हंयेच्या देगेर वसलेली आसा.",
+    "Eng_Answer": "The capital of Goa is Panaji (Panjim), located on the banks of the Mandovi River.",
+    "passages": {
+      "English_passages": [
+        "Panaji (also known as Panjim in English and Pangim in Portuguese) is the capital of the Indian state of Goa. It is situated on the left bank of the Mandovi River in the North Goa district. Panaji became the official capital of Portuguese India in 1843. It is famous for its church of Our Lady of the Immaculate Conception and the heritage Latin Quarter of Fontainhas.",
+        "Margao is the commercial capital and the largest city in the South Goa district.",
+        "Vasco da Gama is the largest port city in Goa."
+      ],
+      "Translated_passages": [
+        "गोवा राज्याची राजधानी पणजी (Panaji) ही आसा, जी मांडवी न्हंयेच्या देगेर वसलेली आसा. उत्तर गोवा जिल्ह्यांतली पणजी ही 1843 सालांत पुर्तगेज गोयाची अधिकृत राजधानी जाली. पणजी शारांत अवर लेडी ऑफ इमॅक्युलेट कन्सेप्शन चर्च आनी फॉन्टेनहास हें लॅटिन क्वार्टर आसा.",
+        "मडगांव हे दक्षिण गोवा जिल्ह्यांतलें मुखेल वेपारी शार आसा.",
+        "वास्को दा गामा हें गोयांतलें सगळ्यांत व्हड बंदर शार आसा."
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "query_id": "fact_33",
+    "target_lang": "en",
+    "query": "What are the main beaches in North Goa?",
+    "Eng_Query": "What are the main beaches in North Goa?",
+    "Answer": "The main beaches in North Goa are Anjuna Beach, Vagator Beach, Baga Beach, Calangute Beach, Candolim Beach, Morjim Beach, and Arambol Beach.",
+    "Eng_Answer": "The main beaches in North Goa are Anjuna Beach, Vagator Beach, Baga Beach, Calangute Beach, Candolim Beach, Morjim Beach, and Arambol Beach.",
+    "passages": {
+      "English_passages": [
+        "The main beaches in North Goa include: 1. Calangute and Baga Beaches: Known as the busiest beaches with water sports (parasailing, jet skiing, banana rides), lively beach shacks, and nightlife. 2. Anjuna Beach: Famous for its Wednesday flea market, rocky coastline, and beach cafes. 3. Vagator Beach: Located below dramatic red laterite cliffs and Chapora Fort. 4. Candolim Beach: A long sandy stretch with beach resorts and water activities. 5. Morjim and Mandrem Beaches: Quieter northern beaches famous as Olive Ridley turtle nesting habitats and tranquil shores. 6. Arambol Beach: Known for its freshwater cliff lake, drum circles, and bohemian atmosphere.",
+        "South Goa beaches like Palolem, Agonda, and Colva are known for peace, white sands, and calm waters.",
+        "Fort Aguada in Sinquerim overlooks the Arabian Sea at the southern tip of North Goa's beach stretch."
+      ],
+      "Translated_passages": [
+        "उत्तर गोवा के प्रमुख समुद्र तटों में कलंगूट बीच, बागा बीच, अंजुना बीच, वागाटोर बीच, कैंडोलिम बीच, मोरजिम बीच और अरामबोल बीच शामिल हैं। कलंगूट और बागा वाटर स्पोर्ट्स और नाइटलाइफ के लिए प्रसिद्ध हैं, अंजुना अपने बुधवार के फ्ली मार्केट के लिए, वागाटोर चपोरा किले और लाल चट्टानों के लिए, और मोरजिम व अरामबोल अपने शांत वातावरण के लिए जाने जाते हैं।",
+        "दक्षिण गोवा के पालोलेम, अगोंडा और कोलवा बीच अपनी शांति और सफेद रेत के लिए जाने जाते हैं।",
+        "फोर्ट अगुआडा उत्तर गोवा के समुद्र तट के दक्षिणी छोर पर अरब सागर के तट पर स्थित है।"
+      ],
+      "is_selected": [
+        1,
+        0,
+        0
+      ]
+    }
   }
 ]

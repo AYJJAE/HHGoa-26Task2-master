@@ -2,7 +2,7 @@ import os
 import re
 import json
 import time
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
 STOPWORDS = {
@@ -36,7 +36,7 @@ class GeminiProvider(LLMProvider):
         self.max_context_chars = max(256, int(os.environ.get("RAG_MAX_CONTEXT_CHARS", "12000")))
         self.max_output_tokens = max(32, int(os.environ.get("RAG_MAX_OUTPUT_TOKENS", "512")))
         self.answerability_use_llm = os.environ.get("RAG_ANSWERABILITY_USE_LLM", "false").lower() == "true"
-        self.model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model_name = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
         
         if self.api_key:
             try:
@@ -84,7 +84,7 @@ Question:
 """
         try:
             from google import genai
-            for model_candidate in [self.model_name, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+            for model_candidate in [self.model_name, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-2.5-flash"]:
                 try:
                     response = self.client.models.generate_content(
                         model=model_candidate,
@@ -101,15 +101,25 @@ Question:
         except Exception as e:
             return {"answerable": False, "confidence": 0.0, "reason": f"Error: {e}"}
         
-    def generate(self, query: str, context: List[str]) -> str:
+    def generate(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None) -> str:
         if self.model and self.client:
-            return self._generate_with_gemini(query, context)
+            return self._generate_with_gemini(query, context, history=history)
         else:
             return self._extractive_answer(query, context)
     
-    def _generate_with_gemini(self, query: str, context: List[str]) -> str:
+    def _generate_with_gemini(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None) -> str:
         """Call real Gemini API for grounded answer generation with multi-model fallback."""
         context_block = "\n---\n".join(context)[:self.max_context_chars]
+        
+        history_block = ""
+        if history:
+            recent_turns = []
+            for h in history[-4:]:
+                role = "User" if h.get("role") == "user" else "Assistant"
+                recent_turns.append(f"{role}: {h.get('content', '')}")
+            if recent_turns:
+                history_block = "Previous Conversation History:\n" + "\n".join(recent_turns) + "\n\n"
+
         prompt = f"""You are a strictly grounded RAG answer generator.
 
 CRITICAL RULES:
@@ -123,13 +133,13 @@ INSUFFICIENT_CONTEXT
 Context:
 {context_block}
 
-Question: {query}
+{history_block}Question: {query}
 
 Answer:"""
 
         try:
             from google import genai
-            for model_candidate in [self.model_name, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+            for model_candidate in [self.model_name, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-2.5-flash"]:
                 try:
                     response = self.client.models.generate_content(
                         model=model_candidate,
@@ -153,7 +163,7 @@ Answer:"""
         return {w.strip() for w in cleaned.split() if w.strip() and w.strip() not in STOPWORDS and len(w.strip()) > 1}
 
     def _extractive_answer(self, query: str, context: List[str]) -> str:
-        """Fallback: return the most relevant passage or sentence directly as the answer."""
+        """Fallback: return the most relevant passage or complete sentences directly as the answer."""
         if not context:
             return "INSUFFICIENT_CONTEXT"
         
@@ -162,24 +172,22 @@ Answer:"""
             return context[0].strip() if context else "INSUFFICIENT_CONTEXT"
 
         best_score = -1.0
-        best_sentence = ""
+        best_passage = ""
         
         for passage in context:
-            sentences = re.split(r'[.!?।]\s*', passage)
-            for s in sentences:
-                s_words = self._tokenize_words(s)
-                if not s_words:
-                    continue
-                overlap = query_words.intersection(s_words)
-                score = len(overlap) / len(query_words) if query_words else 0
-                if score > best_score:
-                    best_score = score
-                    best_sentence = s.strip()
+            p_words = self._tokenize_words(passage)
+            if not p_words:
+                continue
+            overlap = query_words.intersection(p_words)
+            score = len(overlap) / len(query_words) if query_words else 0
+            if score > best_score:
+                best_score = score
+                best_passage = passage.strip()
         
-        if best_score < 0.30 or not best_sentence:
-            return "INSUFFICIENT_CONTEXT"
+        if best_score < 0.20 or not best_passage:
+            return context[0].strip() if context else "INSUFFICIENT_CONTEXT"
             
-        return best_sentence
+        return best_passage
 
 class GenerationPipeline:
     def __init__(self, provider_name: str = "gemini"):
@@ -204,6 +212,7 @@ class GenerationPipeline:
         context = self._extract_texts(context_results)
         return self.provider.check_answerability(query, context)
 
-    def generate_answer(self, query: str, context_results: List[Any]) -> str:
+    def generate_answer(self, query: str, context_results: List[Any], history: Optional[List[Dict[str, str]]] = None) -> str:
         context = self._extract_texts(context_results)
-        return self.provider.generate(query, context)
+        return self.provider.generate(query, context, history=history)
+

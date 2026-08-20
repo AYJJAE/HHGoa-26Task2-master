@@ -169,6 +169,7 @@ app.add_middleware(
 
 class QueryRequest(BaseModel):
     query: str
+    history: Optional[List[Dict[str, str]]] = None
 
 class RetrieveRequest(BaseModel):
     query: str
@@ -265,7 +266,7 @@ async def retrieve_only(payload: RetrieveRequest):
 @limiter.limit("60/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
 async def ask_question(payload: QueryRequest, request: Request):
     """Process question through the full RAG and Gemini Verification pipeline."""
-    return await asyncio.to_thread(process_rag_pipeline, payload.query)
+    return await asyncio.to_thread(process_rag_pipeline, payload.query, False, None, payload.history)
 
 @app.post("/api/transcribe")
 @limiter.limit("40/minute") if RATE_LIMITING_AVAILABLE else lambda f: f
@@ -312,7 +313,8 @@ async def voice_ask(
     request: Request,
     audio: UploadFile = File(...),
     language: str = Form("auto"),
-    debug: bool = Form(False)
+    debug: bool = Form(False),
+    history: Optional[str] = Form(None)
 ):
     """End-to-end voice question answering."""
     if not resources.ready:
@@ -360,7 +362,15 @@ async def voice_ask(
         
     safe_snippet = (transcription.text or "")[:40].encode("ascii", "backslashreplace").decode("ascii")
     print(f"[VOICE] STT succeeded | provider={transcription.provider} | latency={transcription.latency_ms:.1f}ms | text='{safe_snippet}...'")
-    response = await asyncio.to_thread(process_rag_pipeline, transcription.text, debug, transcription.language)
+    
+    parsed_history = None
+    if history:
+        try:
+            parsed_history = json.loads(history)
+        except Exception:
+            parsed_history = None
+
+    response = await asyncio.to_thread(process_rag_pipeline, transcription.text, debug, transcription.language, parsed_history)
     response["latency_metrics"]["stt_ms"] = transcription.latency_ms
     response["latency_metrics"]["transcription_total_ms"] = transcription.latency_ms
     response["latency_metrics"]["total_e2e_ms"] = response["latency_metrics"].get("total_e2e_ms", 0.0) + transcription.latency_ms
@@ -399,7 +409,52 @@ def calculate_final_confidence(
     else:
         return "LOW"
 
-def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = None):
+def classify_goa_category(query: str) -> str:
+    q = query.lower()
+    if any(w in q for w in ["itinerary", "plan", "day 1", "day 2", "day 3", "2 day", "3 day", "5 day", "trip", "tour", "योजना", "दौरा", "प्लॅन", "ट्रिप"]):
+        return "Itinerary"
+    if any(w in q for w in ["family", "families", "children", "kids", "parents", "elderly", "परिवार", "कुटुंब"]):
+        return "Family"
+    if any(w in q for w in ["beach", "beaches", "sea", "coast", "shore", "sand", "ocean", "बीच", "समुद्र तट", "दर्यावेळ", "किनारा"]):
+        return "Beaches"
+    if any(w in q for w in ["food", "dish", "eat", "curry", "fish curry", "poi", "bebinca", "vindaloo", "xacuti", "feni", "drink", "cuisine", "taste", "खाना", "व्यंजन", "जेवण", "खाद्य"]):
+        return "Food"
+    if any(w in q for w in ["church", "basilica", "cathedral", "heritage", "history", "portuguese", "monument", "fort", "aguada", "chapora", "cabo de rama", "old goa", "चर्च", "किला", "इतिहास", "वारसा", "किल्ले"]):
+        return "Heritage"
+    if any(w in q for w in ["carnival", "shigmo", "sao joao", "culture", "tradition", "festival", "dance", "mando", "folk", "संस्कृती", "त्योहार", "उत्सव", "परंपरा"]):
+        return "Culture"
+    if any(w in q for w in ["waterfall", "dudhsagar", "bird", "salim ali", "spice", "plantation", "wildlife", "sanctuary", "forest", "nature", "झरना", "पक्षी", "मसाला"]):
+        return "Nature"
+    if any(w in q for w in ["water sports", "scuba", "diving", "parasailing", "trek", "jeep safari", "adventure", "साहस", "सफारी"]):
+        return "Adventure"
+    if any(w in q for w in ["club", "party", "nightlife", "pub", "bar", "night market", "नाईट"]):
+        return "Nightlife"
+    if any(w in q for w in ["budget", "cheap", "affordable", "cost", "free", "बजट", "कमी खर्च"]):
+        return "Budget"
+    if any(w in q for w in ["transport", "scooter", "bike", "car", "taxi", "cab", "goamiles", "bus", "ferry", "train", "airport", "travel", "reach", "गाड़ी", "किराया", "वाहतूक"]):
+        return "Transport"
+    if any(w in q for w in ["goa", "panaji", "panjim", "margao", "गोवा", "गोव्यात", "गोय"]):
+        return "General Goa"
+    return "General"
+
+def expand_query_with_history(query: str, history: Optional[List[Dict[str, str]]] = None) -> str:
+    if not history:
+        return query
+    q_lower = query.lower().strip()
+    follow_up_cues = ["which one", "which of", "what about", "how about", "where is it", "how to reach", "how to go", "tell me more", "how much", "why is it", "is it", "are they", "there", "these", "those", "that", "it", "यापैकी", "त्यातले", "उनमें से", "वहाँ"]
+    is_follow_up = any(cue in q_lower for cue in follow_up_cues) or (len(query.split()) <= 4 and not any(w in q_lower for w in ["capital", "who", "when", "what is", "where is", "largest"]))
+    
+    if is_follow_up:
+        last_user_query = ""
+        for turn in reversed(history):
+            if turn.get("role") == "user":
+                last_user_query = turn.get("content", "")
+                break
+        if last_user_query:
+            return f"{last_user_query} {query}"
+    return query
+
+def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = None, history: Optional[List[Dict[str, str]]] = None):
     """Calibrated Three-Stage RAG Pipeline:
     STAGE 1: FAISS / Qdrant Hybrid Retrieval
     STAGE 2: Evidence Relevance Scoring & Soft Gating
@@ -417,6 +472,8 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "latency_metrics": {"total_e2e_ms": (time.perf_counter() - t_start) * 1000},
         }
     query = query.strip()
+    category = classify_goa_category(query)
+    retrieval_query = expand_query_with_history(query, history)
 
     # 2. Query Processing & Routing
     t0 = time.perf_counter()
@@ -435,7 +492,8 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "grounded": True,
             "refused": False,
             "confidence": "HIGH",
-            "answer": "Hello! I'm your multilingual voice RAG assistant. Ask me anything about the knowledge base! 🙏",
+            "category": category,
+            "answer": "Hello! I'm your multilingual voice RAG assistant. Ask me anything about Goa or the knowledge base! 🙏",
             "sources": [],
             "routing": routing_info,
             "context_sufficient": True,
@@ -457,11 +515,11 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         return res
 
     # 3. STAGE 1: Hybrid Retrieval
-    print(f"[RETRIEVAL] query={query}")
+    print(f"[RETRIEVAL] query={retrieval_query}")
     print(f"[RETRIEVAL] embedding_dimension={resources.embedder.dense_dim if resources.embedder else 0}")
     print(f"[RETRIEVAL] top_k={strategy.get('final_top_k', resources.retriever.final_top_k if resources.retriever else 0)}")
     try:
-        retrieval_res = resources.retriever.retrieve(query, strategy)
+        retrieval_res = resources.retriever.retrieve(retrieval_query, strategy)
         vec_count = resources.store.client.count(resources.store.collection_name).count if resources.store else 0
         print(f"[RETRIEVAL] index_vectors={vec_count}")
         print(f"[RETRIEVAL] scores={[r.get('dense_score', 0) for r in retrieval_res['results']]}")
@@ -479,7 +537,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 4. STAGE 2: Relevance Scoring & Soft Gating
     t0 = time.perf_counter()
-    context_val = is_context_sufficient(query, retrieval_res["results"], resources.embedder)
+    context_val = is_context_sufficient(retrieval_query, retrieval_res["results"], resources.embedder)
     metrics["answerability_ms"] = (time.perf_counter() - t0) * 1000
 
     print(f"[GROUNDING] threshold={resources.grounder.min_confidence if resources.grounder else 0}")
@@ -493,6 +551,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "grounded": False,
             "refused": True,
             "confidence": "LOW",
+            "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
@@ -527,7 +586,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 6. STAGE 3: Answer Generation
     t0 = time.perf_counter()
-    candidate_answer = resources.generator.generate_answer(query, retrieval_res["results"])
+    candidate_answer = resources.generator.generate_answer(query, retrieval_res["results"], history=history)
     metrics["generation_ms"] = (time.perf_counter() - t0) * 1000
     metrics["output_estimated_tokens"] = max(1, len(candidate_answer) // 4) if candidate_answer else 0
     debug_info["generation_executed"] = True
@@ -539,6 +598,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "grounded": False,
             "refused": True,
             "confidence": "LOW",
+            "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
@@ -567,7 +627,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     # 7. Grounding & Semantic Verification
     t0 = time.perf_counter()
     verification_res = resources.grounder.verify_answer(
-        question=query,
+        question=retrieval_query,
         candidate_answer=candidate_answer,
         retrieved_chunks=retrieval_res["results"],
         gemini_provider=resources.generator.provider
@@ -599,6 +659,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "grounded": False,
             "refused": True,
             "confidence": "LOW",
+            "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
             "sources": [],
             "routing": routing_info,
@@ -643,6 +704,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         "grounded": True,
         "refused": False,
         "confidence": final_conf,
+        "category": category,
         "answer": candidate_answer,
         "sources": sources,
         "routing": routing_info,
