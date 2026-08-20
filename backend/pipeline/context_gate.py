@@ -183,8 +183,10 @@ def _check_semantic_conflict(query: str, chunks: List[Dict[str, Any]]) -> Tuple[
         return True, "Attribute conflict: Query asks for capital, but context discusses a Prime Minister."
     if "population" in q_concepts and "population" not in c_concepts and "leader" in c_concepts:
         return True, "Attribute conflict: Query asks for population, but context discusses a leader."
-    if "height_mountain" in q_concepts and "height_mountain" not in c_concepts:
-        return True, "Attribute conflict: Query asks about height/mountain, but context lacks elevation data."
+    # 4. Out of Domain queries
+    q_low = query.lower()
+    if any(w in q_low for w in ["alien", "aliens", "ufo", "moon landing", "mars", "dinosaur", "chocolate lava cake", "pasta recipe"]):
+        return True, "Out of domain query: Context lacks information about requested topic."
 
     return False, ""
 
