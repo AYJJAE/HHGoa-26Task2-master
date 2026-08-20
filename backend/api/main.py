@@ -119,6 +119,23 @@ class RAGResources:
 
 resources = RAGResources()
 
+REQUIRED_ORIGINS = [
+    "https://task2-horizonlabs.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+]
+
+env_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+ALLOWED_ORIGINS = list(dict.fromkeys(REQUIRED_ORIGINS + env_origins))
+
 @asynccontextmanager
 async def lifespan(app_instance: FastAPI):
     print("[STARTUP] HH Goa Voice RAG API starting")
@@ -126,6 +143,10 @@ async def lifespan(app_instance: FastAPI):
     port = os.getenv("PORT", "8080")
     print(f"[STARTUP] PORT: {port}")
     print("[STARTUP] Binding: 0.0.0.0")
+
+    print("[CORS] Production origins loaded:")
+    for o in ALLOWED_ORIGINS:
+        print(f"  - {o}")
 
     print("[ROUTES]")
     for route in app_instance.routes:
@@ -135,7 +156,6 @@ async def lifespan(app_instance: FastAPI):
             methods_str = ",".join(methods) if methods else "GET"
             print(f"{methods_str}  {path}")
             
-    print(f"[CORS] Allowed origins: {ALLOWED_ORIGINS}")
     print("[STARTUP] FastAPI application loaded")
     print("[STARTUP] Health endpoint available")
     print("[STARTUP] RAG resources will initialize lazily in background")
@@ -151,20 +171,12 @@ if RATE_LIMITING_AVAILABLE:
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # --- CORS Configuration ---
-DEFAULT_ALLOWED_ORIGINS = "https://task2-horizonlabs.vercel.app,http://localhost:3000,http://localhost:3001,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
-ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv("ALLOWED_ORIGINS", DEFAULT_ALLOWED_ORIGINS).split(",")
-    if origin.strip()
-]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 class QueryRequest(BaseModel):
@@ -515,7 +527,8 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         return res
 
     # 3. STAGE 1: Hybrid Retrieval
-    print(f"[RETRIEVAL] query={retrieval_query}")
+    safe_q = retrieval_query.encode("ascii", "backslashreplace").decode("ascii")
+    print(f"[RETRIEVAL] query={safe_q}")
     print(f"[RETRIEVAL] embedding_dimension={resources.embedder.dense_dim if resources.embedder else 0}")
     print(f"[RETRIEVAL] top_k={strategy.get('final_top_k', resources.retriever.final_top_k if resources.retriever else 0)}")
     try:

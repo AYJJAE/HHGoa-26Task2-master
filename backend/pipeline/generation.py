@@ -185,7 +185,7 @@ Answer:"""
                 best_passage = passage.strip()
         
         if best_score < 0.20 or not best_passage:
-            return context[0].strip() if context else "INSUFFICIENT_CONTEXT"
+            return "INSUFFICIENT_CONTEXT"
             
         return best_passage
 

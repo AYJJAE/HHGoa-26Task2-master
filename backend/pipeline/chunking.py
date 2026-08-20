@@ -8,22 +8,29 @@ _enc = tiktoken.get_encoding("cl100k_base")
 
 def split_into_sentences(text: str) -> List[str]:
     """Splits text into sentences, supporting both English and Indic (e.g. Hindi/Marathi) punctuation."""
-    # Split on standard punctuation (. ! ?) or the Devanagari danda (।)
-    # Keep the delimiter by using capturing group and zipping
-    parts = re.split(r'([.!?।])', text)
+    if not text:
+        return []
+    # Protect abbreviations and numbered list items (e.g., 1. 2. St. Dr.)
+    protected = re.sub(r'\b([0-9]+)\.\s+', r'\1_DOT_ ', text)
+    protected = re.sub(r'\b(St|Dr|Mr|Mrs|Prof|vs)\.\s+', r'\1_DOT_ ', protected, flags=re.IGNORECASE)
+    
+    parts = re.split(r'([.!?।])', protected)
     sentences = []
     current_sentence = ""
     for i in range(0, len(parts)):
         if parts[i] in ['.', '!', '?', '।']:
             current_sentence += parts[i]
-            sentences.append(current_sentence.strip())
+            restored = current_sentence.replace('_DOT_', '.').strip()
+            if restored and len(restored) >= 5:
+                sentences.append(restored)
             current_sentence = ""
         else:
             current_sentence += parts[i]
     if current_sentence.strip():
-         sentences.append(current_sentence.strip())
+        restored = current_sentence.replace('_DOT_', '.').strip()
+        if restored:
+            sentences.append(restored)
     return [s for s in sentences if s]
-
 
 def split_into_paragraphs(text: str) -> List[str]:
     """Preserve author-provided paragraph boundaries; fall back to the passage."""
@@ -184,5 +191,3 @@ if __name__ == "__main__":
     
     for c in result_chunks:
         print(f"Strategy: {c['chunk_strategy']:<15} ID: {c['chunk_id']:<20} Length: {len(c['text'])} chars")
-        # print(c['text'])
-        # print("---")

@@ -218,13 +218,13 @@ def calculate_relevance_score(query: str, retrieved_chunks: List[Dict[str, Any]]
     q_entities = _detect_entities(query)
     c_entities = _detect_entities(combined_text)
     if q_entities and q_entities.intersection(c_entities):
-        collective_overlap = max(collective_overlap, 0.50)
+        collective_overlap = min(1.0, collective_overlap + 0.15)
 
     # Shared concept clusters in overlap
     q_concepts = _detect_concepts(query)
     c_concepts = _detect_concepts(combined_text)
     if q_concepts and q_concepts.intersection(c_concepts):
-        collective_overlap = max(collective_overlap, 0.40)
+        collective_overlap = min(1.0, collective_overlap + 0.10)
 
     max_sim = 0.0
     supporting_chunks = 0
