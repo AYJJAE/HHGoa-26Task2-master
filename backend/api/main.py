@@ -151,16 +151,18 @@ async def lifespan(app_instance: FastAPI):
     print("[ROUTES]")
     for route in app_instance.routes:
         methods = getattr(route, "methods", None)
-        path = getattr(route, "path", None)
-        if path:
+        route_path = getattr(route, "path", None)
+        if route_path:
             methods_str = ",".join(methods) if methods else "GET"
-            print(f"{methods_str}  {path}")
+            print(f"{methods_str}  {route_path}")
             
     print("[STARTUP] FastAPI application loaded")
-    print("[STARTUP] Health endpoint available")
-    print("[STARTUP] RAG resources will initialize lazily in background")
+    print("[STARTUP] Initializing RAG resources synchronously before accepting traffic...")
 
-    threading.Thread(target=resources.initialize, daemon=True).start()
+    # Run initialize synchronously so container doesn't accept requests until ready
+    await asyncio.to_thread(resources.initialize)
+    print("[STARTUP] Initialization complete. Server is now ready!")
+    
     yield
 
 app = FastAPI(title="HH Goa 2026 Voice RAG API", lifespan=lifespan)
