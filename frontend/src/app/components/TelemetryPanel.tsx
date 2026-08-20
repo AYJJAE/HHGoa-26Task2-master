@@ -7,7 +7,7 @@ interface TelemetryPanelProps {
 }
 
 export default function TelemetryPanel({ metrics }: TelemetryPanelProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   if (!metrics || Object.keys(metrics).length === 0) {
     return null;
@@ -55,8 +55,13 @@ export default function TelemetryPanel({ metrics }: TelemetryPanelProps) {
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <span style={{ color: "var(--tropical-green)" }}>⚡ Real Telemetry</span>
           {totalMs > 0 && (
-            <span style={{ fontFamily: "var(--font-mono)", color: "var(--tropical-green)", background: "rgba(0, 168, 120, 0.12)", border: "1px solid rgba(0, 168, 120, 0.3)", padding: "2px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: 700 }}>
-              Total: {Math.round(totalMs)}ms
+            <span style={{ fontFamily: "var(--font-mono)", color: "var(--tropical-green)", background: "rgba(0, 168, 120, 0.12)", border: "1px solid rgba(0, 168, 120, 0.3)", padding: "2px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: 700, display: "flex", gap: "8px" }}>
+              <span>Total: {Math.round(totalMs)}ms</span>
+              {!isOpen && sttMs !== undefined && (
+                <span style={{ color: "rgba(0, 168, 120, 0.7)", fontWeight: 500 }}>
+                  (Voice: {Math.round(sttMs)}ms | Search: {Math.round(searchMs + (embeddingMs || 0))}ms | AI: {Math.round(generationMs || 0)}ms)
+                </span>
+              )}
             </span>
           )}
         </div>
