@@ -148,7 +148,7 @@ Answer:"""
                     )
                     if response and response.text:
                         text = response.text.strip()
-                        if "INSUFFICIENT_CONTEXT" in text or "उपलब्ध नाही" in text or "माहिती नाही" in text or "not available" in text.lower() or "not mentioned" in text.lower():
+                        if text == "INSUFFICIENT_CONTEXT" or text.startswith("INSUFFICIENT_CONTEXT") or text.lower() in ["insufficient_context", "insufficient context", "not available in context", "information not available"]:
                             return "INSUFFICIENT_CONTEXT"
                         return text
                 except Exception as model_err:
