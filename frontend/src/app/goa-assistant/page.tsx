@@ -118,16 +118,31 @@ export default function GoaAssistantPage() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      let mimeType = "audio/webm";
-      if (typeof MediaRecorder !== "undefined" && !MediaRecorder.isTypeSupported(mimeType)) {
-        if (MediaRecorder.isTypeSupported("audio/mp4")) {
-          mimeType = "audio/mp4";
-        } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
-          mimeType = "audio/ogg";
+      let mimeType = "";
+      if (typeof MediaRecorder !== "undefined") {
+        const types = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/ogg;codecs=opus",
+          "audio/mp4"
+        ];
+        for (const type of types) {
+          if (MediaRecorder.isTypeSupported(type)) {
+            mimeType = type;
+            break;
+          }
         }
       }
 
-      const options = MediaRecorder.isTypeSupported(mimeType) ? { mimeType } : undefined;
+      console.log("[Diagnostic] Browser:", navigator.userAgent);
+      console.log("[Diagnostic] MediaRecorder exists:", !!window.MediaRecorder);
+      console.log("[Diagnostic] Supported types check:");
+      ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"].forEach(t => 
+        console.log(`[Diagnostic] ${t}:`, MediaRecorder.isTypeSupported(t))
+      );
+      console.log("[Diagnostic] Selected MIME type:", mimeType);
+
+      const options = mimeType ? { mimeType } : undefined;
       const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -138,19 +153,49 @@ export default function GoaAssistantPage() {
         }
       };
 
+      mediaRecorder.onerror = (e) => {
+        console.error("MediaRecorder error:", e);
+        setErrorMessage("An error occurred during audio recording.");
+        setStage("ERROR");
+      };
+
       mediaRecorder.onstop = async () => {
-        const actualMime = mediaRecorder.mimeType || mimeType;
+        const actualMime = mediaRecorder.mimeType || mimeType || "audio/webm";
         const audioBlob = new Blob(chunksRef.current, { type: actualMime });
+        
+        console.log("[Diagnostic] recorder.mimeType:", mediaRecorder.mimeType);
+        console.log("[Diagnostic] Audio Blob size:", audioBlob.size, "bytes");
+        console.log("[Diagnostic] Audio Blob MIME type:", audioBlob.type);
+
         stream.getTracks().forEach((track) => track.stop());
+        
+        if (audioBlob.size === 0) {
+          setErrorMessage("Recorded audio is empty. Please check your microphone.");
+          setStage("ERROR");
+          return;
+        }
+
         await processAudio(audioBlob, actualMime);
       };
 
-      mediaRecorder.start();
-      setIsRecording(true);
-      setStage("LISTENING");
-    } catch (err: unknown) {
+      try {
+        mediaRecorder.start();
+        setIsRecording(true);
+        setStage("LISTENING");
+      } catch (startErr) {
+        console.error("Failed to start MediaRecorder:", startErr);
+        setErrorMessage("Could not start audio recording. Your browser may not support this format.");
+        setStage("ERROR");
+      }
+    } catch (err: any) {
       console.error("Microphone error:", err);
-      setErrorMessage("Microphone access is required. Please allow microphone permissions.");
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setErrorMessage("Microphone access is denied. Please allow microphone permissions in your browser settings.");
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setErrorMessage("No microphone found. Please connect a microphone and try again.");
+      } else {
+        setErrorMessage("Could not access the microphone. Please check your permissions.");
+      }
       setStage("ERROR");
     }
   };

@@ -113,6 +113,11 @@ class RAGResources:
                     self.embedder = EmbeddingPipeline()
                     self.store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
                     self.retriever = RetrievalPipeline(self.embedder, self.store)
+                    
+                    print("Fallback: Ingesting dataset ONCE for production memory...")
+                    from pipeline.ingestion import ingest_dataset
+                    ingest_dataset(mode="mock", max_records=100, store=self.store)
+
                     self.ready = True
                 except Exception as e2:
                     print(f"Error initializing fallback retriever: {e2}")
@@ -175,7 +180,7 @@ if RATE_LIMITING_AVAILABLE:
 # --- CORS Configuration ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -218,6 +223,7 @@ def health_ready():
 
     return {
         "status": "ready",
+        "error_trace": resources.error,
         "services": {
             "gemini": gemini_status,
             "stt": {
