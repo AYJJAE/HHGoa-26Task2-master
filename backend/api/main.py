@@ -162,9 +162,9 @@ ALLOWED_ORIGINS = list(dict.fromkeys(REQUIRED_ORIGINS + env_origins))
 async def lifespan(app_instance: FastAPI):
     print("[STARTUP] HH Goa Voice RAG API starting")
     print(f"[STARTUP] Python version: {sys.version.split()[0]}")
-    port = os.getenv("PORT", "8080")
-    print(f"[STARTUP] PORT: {port}")
-    print("[STARTUP] Binding: 0.0.0.0")
+    port_val = int(os.getenv("PORT", "8080"))
+    print(f"[STARTUP] host=0.0.0.0")
+    print(f"[STARTUP] port={port_val}")
 
     print("[CORS] Production origins loaded:")
     for o in ALLOWED_ORIGINS:
@@ -179,11 +179,10 @@ async def lifespan(app_instance: FastAPI):
             print(f"{methods_str}  {route_path}")
             
     print("[STARTUP] FastAPI application loaded")
-    print("[STARTUP] Initializing RAG resources synchronously before accepting traffic...")
+    print("[STARTUP] Initializing RAG resources asynchronously to unblock port binding...")
 
-    # Run initialize synchronously so container doesn't accept requests until ready
-    await asyncio.to_thread(resources.initialize)
-    print("[STARTUP] Initialization complete. Server is now ready!")
+    # Run initialize as a background task so uvicorn binds to PORT immediately
+    asyncio.create_task(asyncio.to_thread(resources.initialize))
     
     yield
 
