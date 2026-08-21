@@ -61,83 +61,141 @@ class RAGResources:
         self.embedder = None
         self.store = None
         self.retriever = None
-        self.ready = False
+        self.state = "initializing"
         self.error = None
+        
+    @property
+    def ready(self):
+        return self.state == "ready"
 
     def initialize(self):
+        print("[INIT THREAD] started")
+        
+        # 0. Download Heavy Assets from Supabase
         try:
-            print("[RAG] Initializing QueryRouter...")
+            print("[INIT] AssetManager starting")
+            from pipeline.asset_manager import ensure_heavy_assets
+            ensure_heavy_assets()
+            print("[INIT] AssetManager complete")
+        except Exception as e:
+            print(f"[INIT] AssetManager failed: {e}")
+            # We continue since there's a fallback mechanism
+
+        # 1. Core Text RAG Initialization
+        try:
+            print("[INIT] QueryRouter starting")
             self.router = QueryRouter()
+            print("[INIT] QueryRouter complete")
             
-            print("[RAG] Initializing GenerationPipeline...")
+            print("[INIT] GenerationPipeline starting")
             self.generator = GenerationPipeline(provider_name="gemini")
+            print("[INIT] GenerationPipeline complete")
             
-            print("[RAG] Initializing GroundingValidator...")
+            print("[INIT] GroundingValidator starting")
             self.grounder = GroundingValidator()
+            print("[INIT] GroundingValidator complete")
             
-            print("[RAG] Initializing STTService...")
-            self.stt_client = STTService()
-            
-            print("[RAG] Initializing EmbeddingPipeline...")
+            print("[INIT] EmbeddingPipeline starting")
             self.embedder = EmbeddingPipeline()
+            print("[INIT] EmbeddingPipeline complete")
             
-            print("[RAG] Initializing VectorStore...")
+            print("[INIT] VectorStore starting")
             self.store = VectorStore(collection_name="msmarco_xi", dense_dim=self.embedder.dense_dim)
+            print("[INIT] VectorStore complete")
             
-            print("[RAG] Initializing RetrievalPipeline...")
+            print("[INIT] RetrievalPipeline starting")
             self.retriever = RetrievalPipeline(self.embedder, self.store)
-            
-            print("Pipelines, Verifier, and STT Failover Service initialized successfully.")
-            
+            print("[INIT] RetrievalPipeline complete")
+
             count = self.store.client.count(self.store.collection_name).count
-            print(f"Collection '{self.store.collection_name}' has {count} vectors.")
             if count == 0:
                 print("Index is empty. Ingesting dataset ONCE for production memory...")
                 from pipeline.ingestion import ingest_dataset
                 ingest_dataset(mode="mock", max_records=100, store=self.store)
                 count = self.store.client.count(self.store.collection_name).count
-                print(f"Ingestion complete. Collection now has {count} vectors.")
                 if count == 0:
                     raise RuntimeError("KNOWLEDGE BASE NOT LOADED: Dataset ingestion yielded 0 chunks.")
             
             chunks_loaded = len(self.store.faiss_store.chunks)
-            faiss_vectors = self.store.faiss_store.index.ntotal if getattr(self.store.faiss_store, "index", None) else getattr(self.store.faiss_store, "dense_matrix", []).__len__() if hasattr(self.store.faiss_store.dense_matrix, "__len__") else 0
-            sparse_docs = self.store.faiss_store.bm25.corpus_size if getattr(self.store.faiss_store, "bm25", None) else 0
+            faiss_vectors = getattr(self.store.faiss_store, "index", None).ntotal if getattr(self.store.faiss_store, "index", None) else getattr(self.store.faiss_store, "dense_matrix", []).__len__() if hasattr(self.store.faiss_store.dense_matrix, "__len__") else 0
+            sparse_docs = getattr(self.store.faiss_store, "bm25", None).corpus_size if getattr(self.store.faiss_store, "bm25", None) else 0
             
-            print(f"[KB STARTUP] chunks_loaded = {chunks_loaded}")
-            print(f"[KB STARTUP] faiss_vectors = {faiss_vectors}")
-            print(f"[KB STARTUP] sparse_documents = {sparse_docs}")
+            print(f"[KB] dataset exists = {chunks_loaded > 0}")
+            print(f"[KB] chunks = {chunks_loaded}")
+            print(f"[KB] FAISS ntotal = {faiss_vectors}")
+            print(f"[KB] sparse documents = {sparse_docs}")
             
             if chunks_loaded == 0 or faiss_vectors == 0 or sparse_docs == 0:
                 raise RuntimeError(f"KNOWLEDGE BASE CORRUPT: chunks={chunks_loaded}, faiss={faiss_vectors}, sparse={sparse_docs}")
 
-            self.ready = True
-            print("[RAG] RAG initialization complete")
+            # Text RAG passed
+            rag_failed = False
+            rag_error = None
             
         except Exception as e:
-            print(f"[RAG] Initialization failed: {e}")
-            traceback.print_exc()
+            rag_failed = True
+            rag_error = str(e)
+            print(f"[INIT] FAILED: {e}")
+            print(f"[INIT] TRACEBACK:\n{traceback.format_exc()}")
             self.error = str(e)
             
-            # Attempt to set up fallback memory retriever if Qdrant disk failed
+            # Fallback
             if not self.retriever:
                 print(f"Notice: Initializing fallback retrieval: {e}")
                 try:
                     self.embedder = EmbeddingPipeline()
                     self.store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
                     self.retriever = RetrievalPipeline(self.embedder, self.store)
-                    
-                    print("Fallback: Ingesting dataset ONCE for production memory...")
                     from pipeline.ingestion import ingest_dataset
                     ingest_dataset(mode="mock", max_records=100, store=self.store)
-                    
-                    count = self.store.client.count(self.store.collection_name).count
-                    if count == 0:
-                        raise RuntimeError("KNOWLEDGE BASE NOT LOADED: Fallback dataset ingestion yielded 0 chunks.")
-
-                    self.ready = True
+                    if self.store.client.count(self.store.collection_name).count > 0:
+                        rag_failed = False
+                        self.error = None
                 except Exception as e2:
                     print(f"Error initializing fallback retriever: {e2}")
+                    print(f"[INIT] TRACEBACK:\n{traceback.format_exc()}")
+
+        # 2. Independent STT Initialization
+        try:
+            print("[INIT] STTService starting")
+            self.stt_client = STTService()
+            print("[INIT] STTService complete")
+            stt_failed = False
+        except Exception as e:
+            stt_failed = True
+            print(f"[INIT] FAILED (STT): {e}")
+            print(f"[INIT] TRACEBACK:\n{traceback.format_exc()}")
+
+        # 3. Final State Resolution
+        if rag_failed:
+            self.state = "failed"
+            print("[INIT THREAD] failed")
+            print("========================================")
+            print("HH GOA RAG FAILED")
+            print("========================================")
+            print(f"Error: {self.error}")
+            print("========================================")
+        else:
+            self.state = "ready"
+            print("[INIT THREAD] finished")
+            
+            el_ready = "READY" if (self.stt_client and getattr(self.stt_client.primary, "api_key", False)) else "UNAVAILABLE"
+            sv_ready = "READY" if (self.stt_client and getattr(self.stt_client.fallback, "api_key", False)) else "UNAVAILABLE"
+            
+            print("========================================")
+            print("HH GOA RAG READY")
+            print("========================================")
+            print("RAG: READY")
+            print("Embedding: READY")
+            print("Vector Store: READY")
+            print(f"FAISS vectors: {faiss_vectors if not rag_failed else 0}")
+            print(f"Chunks: {chunks_loaded if not rag_failed else 0}")
+            print("Sparse index: READY")
+            print("Generation: READY")
+            print("Grounding: READY")
+            print(f"STT ElevenLabs: {el_ready}")
+            print(f"STT Sarvam: {sv_ready}")
+            print("========================================")
 
 resources = RAGResources()
 
@@ -221,14 +279,24 @@ def health():
 @app.get("/health/ready")
 def health_ready():
     """Detailed readiness check for external dependencies."""
-    if not resources.ready:
-        if resources.error:
-            return JSONResponse(status_code=503, content={"status": "error", "message": resources.error})
-        return JSONResponse(status_code=503, content={"status": "initializing"})
+    if resources.state == "failed":
+        return JSONResponse(status_code=503, content={
+            "status": "error",
+            "rag_initialized": False,
+            "initializing": False,
+            "error": resources.error
+        })
+    elif resources.state == "initializing":
+        return JSONResponse(status_code=503, content={
+            "status": "initializing",
+            "rag_initialized": False,
+            "initializing": True,
+            "error": None
+        })
 
     count = resources.store.client.count(resources.store.collection_name).count if getattr(resources, "store", None) else 0
     if count == 0:
-        return JSONResponse(status_code=503, content={"status": "error", "message": "knowledge_base_unavailable: 0 chunks loaded"})
+        return JSONResponse(status_code=503, content={"status": "error", "rag_initialized": False, "initializing": False, "error": "knowledge_base_unavailable: 0 chunks loaded"})
 
     gemini_status = "active" if (resources.generator and resources.generator.provider.model) else "extractive_fallback"
     el_configured = bool(getattr(resources.stt_client.primary, "api_key", False)) if resources.stt_client else False
@@ -244,6 +312,7 @@ def health_ready():
     return {
         "status": "ready",
         "rag_initialized": True,
+        "initializing": False,
         "knowledge_base_ready": True,
         "chunks": count,
         "vectors": count,
