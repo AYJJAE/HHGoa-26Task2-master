@@ -12,5 +12,4 @@ env/
 .git/
 .DS_Store
 qdrant_data/
-data/
 results/

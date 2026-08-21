@@ -97,7 +97,20 @@ class RAGResources:
                 ingest_dataset(mode="mock", max_records=100, store=self.store)
                 count = self.store.client.count(self.store.collection_name).count
                 print(f"Ingestion complete. Collection now has {count} vectors.")
+                if count == 0:
+                    raise RuntimeError("KNOWLEDGE BASE NOT LOADED: Dataset ingestion yielded 0 chunks.")
             
+            chunks_loaded = len(self.store.faiss_store.chunks)
+            faiss_vectors = self.store.faiss_store.index.ntotal if getattr(self.store.faiss_store, "index", None) else getattr(self.store.faiss_store, "dense_matrix", []).__len__() if hasattr(self.store.faiss_store.dense_matrix, "__len__") else 0
+            sparse_docs = self.store.faiss_store.bm25.corpus_size if getattr(self.store.faiss_store, "bm25", None) else 0
+            
+            print(f"[KB STARTUP] chunks_loaded = {chunks_loaded}")
+            print(f"[KB STARTUP] faiss_vectors = {faiss_vectors}")
+            print(f"[KB STARTUP] sparse_documents = {sparse_docs}")
+            
+            if chunks_loaded == 0 or faiss_vectors == 0 or sparse_docs == 0:
+                raise RuntimeError(f"KNOWLEDGE BASE CORRUPT: chunks={chunks_loaded}, faiss={faiss_vectors}, sparse={sparse_docs}")
+
             self.ready = True
             print("[RAG] RAG initialization complete")
             
@@ -117,6 +130,10 @@ class RAGResources:
                     print("Fallback: Ingesting dataset ONCE for production memory...")
                     from pipeline.ingestion import ingest_dataset
                     ingest_dataset(mode="mock", max_records=100, store=self.store)
+                    
+                    count = self.store.client.count(self.store.collection_name).count
+                    if count == 0:
+                        raise RuntimeError("KNOWLEDGE BASE NOT LOADED: Fallback dataset ingestion yielded 0 chunks.")
 
                     self.ready = True
                 except Exception as e2:
@@ -210,6 +227,10 @@ def health_ready():
             return JSONResponse(status_code=503, content={"status": "error", "message": resources.error})
         return JSONResponse(status_code=503, content={"status": "initializing"})
 
+    count = resources.store.client.count(resources.store.collection_name).count if getattr(resources, "store", None) else 0
+    if count == 0:
+        return JSONResponse(status_code=503, content={"status": "error", "message": "knowledge_base_unavailable: 0 chunks loaded"})
+
     gemini_status = "active" if (resources.generator and resources.generator.provider.model) else "extractive_fallback"
     el_configured = bool(getattr(resources.stt_client.primary, "api_key", False)) if resources.stt_client else False
     sv_configured = bool(getattr(resources.stt_client.fallback, "api_key", False)) if resources.stt_client else False
@@ -223,6 +244,10 @@ def health_ready():
 
     return {
         "status": "ready",
+        "rag_initialized": True,
+        "knowledge_base_ready": True,
+        "chunks": count,
+        "vectors": count,
         "error_trace": resources.error,
         "services": {
             "gemini": gemini_status,
@@ -231,7 +256,7 @@ def health_ready():
                 "fallback": "ready" if sv_configured else "not_configured",
                 "status": stt_status,
             },
-            "vector_store": "ready" if resources.store else "offline"
+            "vector_store": "ready"
         }
     }
 
