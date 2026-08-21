@@ -13,25 +13,49 @@ class RetrievalPipeline:
         self.final_top_k = max(1, int(os.environ.get("RAG_FINAL_TOP_K", "5")))
 
     def _reciprocal_rank_fusion(self, dense_results, sparse_results, query="", k=60, dense_weight=1.0, sparse_weight=1.0):
-        """Fuses dense and sparse result lists using weighted Reciprocal Rank Fusion (RRF) with entity boost."""
+        """Fuses dense and sparse result lists using weighted Reciprocal Rank Fusion (RRF) with score normalization."""
         scores = {}
-        q_lower = str(query or "").lower()
-        key_terms = [t for t in re.findall(r'[\w]+', q_lower) if len(t) > 2]
+        
+        # Max sparse score for normalization
+        max_sparse = max([float(res["score"] if isinstance(res, dict) else res.score) for res in sparse_results], default=1.0)
+        max_sparse = max(max_sparse, 1e-6)
 
         for rank, res in enumerate(dense_results):
             cid = res["id"] if isinstance(res, dict) else res.id
             payload = res["payload"] if isinstance(res, dict) else res.payload
             score_val = res["score"] if isinstance(res, dict) else res.score
+            norm_dense = max(0.0, min(1.0, float(score_val)))
             if cid not in scores:
-                scores[cid] = {"score": 0.0, "payload": payload, "dense_rank": rank, "sparse_rank": -1, "dense_score": float(score_val)}
+                scores[cid] = {
+                    "score": 0.0,
+                    "payload": payload,
+                    "dense_rank": rank,
+                    "sparse_rank": -1,
+                    "dense_score": norm_dense,
+                    "sparse_score": 0.0
+                }
+            else:
+                scores[cid]["dense_score"] = norm_dense
+                scores[cid]["dense_rank"] = rank
             scores[cid]["score"] += dense_weight / (k + rank)
             
         for rank, res in enumerate(sparse_results):
             cid = res["id"] if isinstance(res, dict) else res.id
             payload = res["payload"] if isinstance(res, dict) else res.payload
             score_val = res["score"] if isinstance(res, dict) else res.get("score", 0.0)
+            norm_sparse = max(0.0, min(1.0, float(score_val) / max_sparse))
             if cid not in scores:
-                scores[cid] = {"score": 0.0, "payload": payload, "dense_rank": -1, "sparse_rank": rank, "dense_score": float(score_val)}
+                scores[cid] = {
+                    "score": 0.0,
+                    "payload": payload,
+                    "dense_rank": -1,
+                    "sparse_rank": rank,
+                    "dense_score": 0.0,
+                    "sparse_score": norm_sparse
+                }
+            else:
+                scores[cid]["sparse_score"] = norm_sparse
+                scores[cid]["sparse_rank"] = rank
             scores[cid]["score"] += sparse_weight / (k + rank)
 
         q_lower = str(query or "").lower()
@@ -42,6 +66,11 @@ class RetrievalPipeline:
 
         for cid, data in scores.items():
             p_text = data.get("payload", {}).get("text", "").lower()
+            
+            # Strong dense semantic match protection (never discard top dense hits)
+            if data["dense_score"] >= 0.70:
+                data["score"] += 0.03
+                
             if q_tokens:
                 matches = sum(1 for t in q_tokens if t in p_text)
                 data["score"] += (matches / len(q_tokens)) * 0.05

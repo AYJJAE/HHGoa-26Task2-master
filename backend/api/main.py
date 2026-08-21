@@ -558,6 +558,22 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     print(f"[GROUNDING] threshold={resources.grounder.min_confidence if resources.grounder else 0}")
     print(f"[GROUNDING] context_sufficient={context_val.sufficient}")
 
+    if debug:
+        debug_info["retrieved_chunks"] = [
+            {
+                "id": r.get("id"),
+                "dense_score": r.get("dense_score", 0.0),
+                "sparse_score": r.get("sparse_score", 0.0),
+                "rrf_score": r.get("score", 0.0),
+                "text": r.get("payload", {}).get("text", "")[:120]
+            }
+            for r in retrieval_res.get("results", [])
+        ]
+        debug_info["scores"] = [r.get("dense_score", 0.0) for r in retrieval_res.get("results", [])]
+        debug_info["threshold"] = resources.grounder.min_confidence if resources.grounder else 0.55
+        debug_info["context_sufficient"] = context_val.sufficient
+        debug_info["context_reason"] = context_val.reason
+
     if not context_val.sufficient:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
         debug_info["generation_executed"] = False
@@ -598,6 +614,8 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     metrics["context_ms"] = (time.perf_counter() - t0) * 1000
     metrics["context_chars"] = len(context_text)
     metrics["context_estimated_tokens"] = max(1, len(context_text) // 4) if context_text else 0
+    if debug:
+        debug_info["final_context"] = context_text
 
     # 6. STAGE 3: Answer Generation
     t0 = time.perf_counter()
@@ -608,6 +626,9 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     
     if "INSUFFICIENT_CONTEXT" in candidate_answer:
         metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
+        if debug:
+            debug_info["grounding_score"] = 0.0
+            debug_info["verification_result"] = {"status": "insufficient_context_from_generator"}
         res = {
             "status": "refused",
             "grounded": False,
@@ -648,6 +669,17 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
         gemini_provider=resources.generator.provider
     )
     metrics["verification_ms"] = (time.perf_counter() - t0) * 1000
+
+    if debug:
+        debug_info["grounding_score"] = verification_res.confidence
+        debug_info["verification_result"] = {
+            "question_relevant": verification_res.question_relevant,
+            "answers_question": verification_res.answers_question,
+            "supported_by_context": verification_res.supported_by_context,
+            "verifier_confidence": verification_res.confidence,
+            "reason": verification_res.reason,
+            "unsupported_claims": verification_res.unsupported_claims
+        }
 
     # 8. Calibrated Acceptance Policy:
     is_valid = (

@@ -1,0 +1,168 @@
+
+=======================================================
+QUERY: Who is the Prime Minister of India? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.856, 0.723, 0.758, 0.706, 0.621] | RRF: [0.0595, 0.0591, 0.059, 0.0588, 0.0444]
+TOP CHUNK ID: passage_fact_9_2_passage
+TOP CHUNK TEXT: Narendra Modi is the current Prime Minister of India, serving since 2014....
+CONTEXT SUFFICIENT: True (Rel: 0.92, Overlap: 1.00, MaxSim: 0.8556939363479614)
+CONTEXT REASON: Context relevant (score: 0.92, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: Narendra Modi is the current Prime Minister of India, serving since 2014....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the capital of India? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.78, 0.754, 0.759, 0.748, 0.749] | RRF: [0.058, 0.0579, 0.0578, 0.0576, 0.0572]
+TOP CHUNK ID: passage_fact_0_0_passage
+TOP CHUNK TEXT: New Delhi is the capital of India. It serves as the seat of the Government of India and is located o...
+CONTEXT SUFFICIENT: True (Rel: 0.88, Overlap: 1.00, MaxSim: 0.779958188533783)
+CONTEXT REASON: Context relevant (score: 0.88, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: New Delhi is the capital of India. It serves as the seat of the Government of India and is located on the banks of the Y...
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the national flower of the United States? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.829, 0.684, 0.658, 0.544, 0.588] | RRF: [0.0611, 0.0496, 0.0494, 0.0436, 0.0434]
+TOP CHUNK ID: passage_fact_12_1_passage
+TOP CHUNK TEXT: The Rose is the national flower of the United States and England....
+CONTEXT SUFFICIENT: True (Rel: 0.91, Overlap: 1.00, MaxSim: 0.8290969133377075)
+CONTEXT REASON: Context relevant (score: 0.91, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: The Rose is the national flower of the United States and England....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the capital of Rajasthan? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.801, 0.658, 0.659, 0.652, 0.624] | RRF: [0.0583, 0.0493, 0.0492, 0.0486, 0.0485]
+TOP CHUNK ID: passage_fact_2_0_passage
+TOP CHUNK TEXT: Rajasthan is the largest state of India by area. It covers 342,239 square kilometres, which is 10.4%...
+CONTEXT SUFFICIENT: True (Rel: 0.89, Overlap: 1.00, MaxSim: 0.8005552291870117)
+CONTEXT REASON: Context relevant (score: 0.89, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: Rajasthan is the largest state of India by area. It covers 342,239 square kilometres, which is 10.4% of the total geogra...
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the height of Mount Everest? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.796, 0.703, 669.552, 0.65, 0.562] | RRF: [0.0524, 0.0521, 0.035, 0.0311, 0.0307]
+TOP CHUNK ID: passage_fact_10_1_passage
+TOP CHUNK TEXT: Mount Everest is the highest mountain in the world at 8,849 metres, located on the border of Nepal a...
+CONTEXT SUFFICIENT: True (Rel: 368.67, Overlap: 0.92, MaxSim: 669.5517870668332)
+CONTEXT REASON: Context relevant (score: 368.67, overlap: 92%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: Mount Everest is the highest mountain in the world at 8,849 metres, located on the border of Nepal and Tibet....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the population of the United States? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.606, 0.762, 0.711, 0.61, 0.542] | RRF: [0.0534, 0.0479, 0.047, 0.0469, 0.0457]
+TOP CHUNK ID: passage_fact_12_1_passage
+TOP CHUNK TEXT: The Rose is the national flower of the United States and England....
+CONTEXT SUFFICIENT: True (Rel: 0.87, Overlap: 1.00, MaxSim: 0.762332558631897)
+CONTEXT REASON: Context relevant (score: 0.87, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: The Rose is the national flower of the United States and England....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is FAISS used for? (Expected Answerable: True)
+ROUTING: Factual | English | Simple
+RETRIEVAL: 5 chunks | Dense: [256.862, 203.514, 312.3, 0.493, 63.749] | RRF: [0.0382, 0.0374, 0.0283, 0.0281, 0.0268]
+TOP CHUNK ID: passage_fact_14_0_sent_1
+TOP CHUNK TEXT: English is used as an additional official language for government proceedings....
+CONTEXT SUFFICIENT: True (Rel: 171.99, Overlap: 0.50, MaxSim: 312.3002293246847)
+CONTEXT REASON: Context relevant (score: 171.99, overlap: 50%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: English is used as an additional official language for government proceedings....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What are the main beaches in North Goa? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.885, 0.892, 0.644, 0.703, 0.723] | RRF: [0.2537, 0.2475, 0.2442, 0.2408, 0.2405]
+TOP CHUNK ID: passage_fact_20_0_passage
+TOP CHUNK TEXT: Goa features over 100 kilometers of coastline divided into North and South Goa. In North Goa, top be...
+CONTEXT SUFFICIENT: True (Rel: 0.94, Overlap: 1.00, MaxSim: 0.892163872718811)
+CONTEXT REASON: Context relevant (score: 0.94, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: The main beaches in North Goa include: 1. Calangute and Baga Beaches: Known as the busiest beaches with water sports (pa...
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: What is the capital of Goa? (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.794, 0.732, 0.728, 0.72, 0.754] | RRF: [0.2578, 0.2566, 0.2563, 0.2553, 0.2512]
+TOP CHUNK ID: passage_fact_20_1_passage
+TOP CHUNK TEXT: Panaji is the capital city of Goa located along the Mandovi River with the historic Latin Quarter Fo...
+CONTEXT SUFFICIENT: True (Rel: 0.89, Overlap: 1.00, MaxSim: 0.7942571640014648)
+CONTEXT REASON: Context relevant (score: 0.89, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: Panaji is the capital city of Goa located along the Mandovi River with the historic Latin Quarter Fontainhas....
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: Tell me a 2 day itinerary for Goa (Expected Answerable: True)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.855, 0.786, 0.806, 0.729, 0.69] | RRF: [0.25, 0.2491, 0.2488, 0.2393, 0.2392]
+TOP CHUNK ID: passage_fact_21_0_passage
+TOP CHUNK TEXT: A balanced 2-day Goa itinerary includes: Day 1 explores North Goa — start morning at historic Fort A...
+CONTEXT SUFFICIENT: True (Rel: 0.92, Overlap: 1.00, MaxSim: 0.8547704219818115)
+CONTEXT REASON: Context relevant (score: 0.92, overlap: 100%, 5 supporting chunks).
+PIPELINE RESULT: status=answered, confidence=HIGH, grounded=True, refusal_reason=None
+ANSWER: A balanced 2-day Goa itinerary includes: Day 1 explores North Goa — start morning at historic Fort Aguada and lighthouse...
+CORRECT OUTCOME: Answered
+
+=======================================================
+QUERY: Who is the President of the United States? (Expected Answerable: False)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.584, 0.6, 0.536, 0.491, 0.57] | RRF: [0.0539, 0.0479, 0.0465, 0.0399, 0.0347]
+TOP CHUNK ID: passage_fact_12_1_passage
+TOP CHUNK TEXT: The Rose is the national flower of the United States and England....
+CONTEXT SUFFICIENT: False (Rel: 0.20, Overlap: 0.92, MaxSim: 0.6004511117935181)
+CONTEXT REASON: Insufficient context relevance (score: 0.20 < 0.35, overlap: 92%, sim: 0.60).
+PIPELINE RESULT: status=refused, confidence=LOW, grounded=False, refusal_reason=insufficient_context
+ANSWER: I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately....
+CORRECT OUTCOME: Refused
+
+=======================================================
+QUERY: Who is the President of France? (Expected Answerable: False)
+ROUTING: Entity-heavy | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.479, 0.564, 0.511, 0.511, 0.508] | RRF: [0.0423, 0.035, 0.0348, 0.0347, 0.0345]
+TOP CHUNK ID: passage_fact_6_2_passage
+TOP CHUNK TEXT: Mahatma Gandhi was a prominent leader of the Indian independence movement who advocated for nonviole...
+CONTEXT SUFFICIENT: False (Rel: 0.20, Overlap: 0.10, MaxSim: 0.5635560154914856)
+CONTEXT REASON: Insufficient context relevance (score: 0.20 < 0.35, overlap: 10%, sim: 0.56).
+PIPELINE RESULT: status=refused, confidence=LOW, grounded=False, refusal_reason=insufficient_context
+ANSWER: I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately....
+CORRECT OUTCOME: Refused
+
+=======================================================
+QUERY: What is the recipe for chocolate lava cake? (Expected Answerable: False)
+ROUTING: Factual | English | Moderate
+RETRIEVAL: 5 chunks | Dense: [0.495, 0.473, 0.466, 0.451, 0.612] | RRF: [0.0201, 0.0195, 0.0193, 0.0192, 0.0146]
+TOP CHUNK ID: passage_fact_28_0_sent_7
+TOP CHUNK TEXT: 7. Netravali Bubble Lake (Budbudyanchi Tali): An ancient sacred pond where continuous methane/carbon...
+CONTEXT SUFFICIENT: False (Rel: 0.20, Overlap: 0.00, MaxSim: 0.6123709678649902)
+CONTEXT REASON: Insufficient context relevance (score: 0.20 < 0.35, overlap: 0%, sim: 0.61).
+PIPELINE RESULT: status=refused, confidence=LOW, grounded=False, refusal_reason=insufficient_context
+ANSWER: I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately....
+CORRECT OUTCOME: Refused
+
+=======================================================
+QUERY: Aliens on Mars (Expected Answerable: False)
+ROUTING: Entity-heavy | English | Simple
+RETRIEVAL: 5 chunks | Dense: [0.498, 0.473, 0.472, 0.45, 0.447] | RRF: [0.0267, 0.0263, 0.0262, 0.0259, 0.0258]
+TOP CHUNK ID: passage_fact_15_0_passage
+TOP CHUNK TEXT: Chandrayaan-3 was launched on 14 July 2023 by the Indian Space Research Organisation (ISRO) from the...
+CONTEXT SUFFICIENT: False (Rel: 0.20, Overlap: 0.00, MaxSim: 0.49787962436676025)
+CONTEXT REASON: Insufficient context relevance (score: 0.20 < 0.35, overlap: 0%, sim: 0.50).
+PIPELINE RESULT: status=refused, confidence=LOW, grounded=False, refusal_reason=insufficient_context
+ANSWER: I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately....
+CORRECT OUTCOME: Refused

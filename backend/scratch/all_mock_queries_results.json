@@ -1,0 +1,345 @@
+{
+  "answered": [
+    {
+      "id": "fact_0",
+      "query": "भारत की राजधानी क्या है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "नई दिल्ली भारत की राजधानी है।"
+    },
+    {
+      "id": "fact_1",
+      "query": "ताजमहल कहाँ स्थित है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "ताजमहल भारत के उत्तर प्रदेश के आगरा में यमुना नदी के दाहिने किनारे पर स्थित एक हाथीदांत-सफ़ेद संगमरम"
+    },
+    {
+      "id": "fact_2",
+      "query": "भारत का सबसे बड़ा राज्य कौन सा है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "राजस्थान क्षेत्रफल की दृष्टि से भारत का सबसे बड़ा राज्य है।"
+    },
+    {
+      "id": "fact_3",
+      "query": "गंगा नदी कहाँ से निकलती है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "गंगा हिंदू धर्म में सबसे पवित्र नदी है।"
+    },
+    {
+      "id": "fact_4",
+      "query": "Who wrote the Indian national anthem?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Jana Gana Mana is the national anthem of India."
+    },
+    {
+      "id": "fact_5",
+      "query": "What is the population of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "India is the most populous country in the world with an estimated population of over 1."
+    },
+    {
+      "id": "fact_6",
+      "query": "When did India gain independence?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "India gained independence from British colonial rule on 15 August 1947. Jawaharlal Nehru became the "
+    },
+    {
+      "id": "fact_7",
+      "query": "भारत का राष्ट्रीय पशु क्या है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "बंगाल टाइगर (पैंथेरा टाइग्रिस टाइग्रिस) भारत का राष्ट्रीय पशु है।"
+    },
+    {
+      "id": "fact_8",
+      "query": "What is the currency of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "The Indian Rupee (sign: ₹; code: INR) is the official currency of India."
+    },
+    {
+      "id": "fact_9",
+      "query": "भारत के प्रथम प्रधानमंत्री कौन थे?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "सरदार वल्लभभाई पटेल भारत के पहले उप प्रधानमंत्री थे और उन्हें भारत के लौह पुरुष के रूप में जाना जाता"
+    },
+    {
+      "id": "fact_10",
+      "query": "What is the highest mountain peak in India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Kangchenjunga is the highest mountain peak in India at 8,586 metres (28,169 ft)."
+    },
+    {
+      "id": "fact_11",
+      "query": "भारत का सबसे लंबा नदी पुल कौन सा है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "15 किलोमीटर की लंबाई के साथ भारत का सबसे लंबा नदी पुल है।"
+    },
+    {
+      "id": "fact_12",
+      "query": "What is the national flower of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "The Lotus (Nelumbo nucifera) is the national flower of India."
+    },
+    {
+      "id": "fact_13",
+      "query": "भारतीय संविधान कब लागू हुआ?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "भारत का संविधान 26 जनवरी 1950 को लागू हुआ, जिसे गणतंत्र दिवस के रूप में मनाया जाता है।"
+    },
+    {
+      "id": "fact_14",
+      "query": "What is the official language of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Hindi written in Devanagari script is the official language of the Union Government of India."
+    },
+    {
+      "id": "fact_15",
+      "query": "चंद्रयान-3 कब लॉन्च हुआ?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "चंद्रयान-3 को 14 जुलाई 2023 को भारतीय अंतरिक्ष अनुसंधान संगठन (इसरो) द्वारा आंध्र प्रदेश के श्रीहरिक"
+    },
+    {
+      "id": "fact_16",
+      "query": "What is the area of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Rajasthan is the largest state of India by area."
+    },
+    {
+      "id": "fact_17",
+      "query": "भारत में कितने राज्य हैं?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "भारत में प्रत्येक राज्य की अपनी निर्वाचित सरकार है, जबकि केंद्र शासित प्रदेश सीधे केंद्र सरकार द्वार"
+    },
+    {
+      "id": "fact_18",
+      "query": "Who is known as the Father of the Nation of India?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Mohandas Karamchand Gandhi, known as Mahatma Gandhi, is widely regarded as the Father of the Nation "
+    },
+    {
+      "id": "fact_19",
+      "query": "भारत का सबसे बड़ा शहर कौन सा है?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "दिल्ली भारत का दूसरा सबसे बड़ा शहर है और इसमें नई दिल्ली का राष्ट्रीय राजधानी क्षेत्र शामिल है।"
+    },
+    {
+      "id": "fact_20",
+      "query": "Best beaches in Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa features over 100 kilometers of coastline divided into North and South Goa. In North Goa, top be"
+    },
+    {
+      "id": "fact_21",
+      "query": "Plan a 2 day Goa trip.",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa trip itineraries based on trip duration: 1. 1-Day Express Itinerary: Morning in Old Goa visiting"
+    },
+    {
+      "id": "fact_22",
+      "query": "What should I visit in Old Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Old Goa (Velha Goa) was the former capital of Portuguese India from the 16th to 18th centuries and i"
+    },
+    {
+      "id": "fact_23",
+      "query": "What Goan food should I try?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Iconic dishes to try include: 1. Goan Fish Curry Rice (Humann/Kodi) prepared with fresh kingfish or "
+    },
+    {
+      "id": "fact_24",
+      "query": "Best places for sunset in Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa features over 100 kilometers of coastline divided into North and South Goa. In North Goa, top be"
+    },
+    {
+      "id": "fact_25",
+      "query": "Tell me about Goa's culture.",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa's unique culture ('Goenkarponn') is shaped by over 450 years of Portuguese rule from 1510 until "
+    },
+    {
+      "id": "fact_26",
+      "query": "Which places are good for families in Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "For families visiting Goa, top recommended destinations include: 1. Dudhsagar Waterfalls: A magnific"
+    },
+    {
+      "id": "fact_27",
+      "query": "Give me a relaxed itinerary for Goa.",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "A relaxed, unhurried Goa itinerary emphasizes peaceful South Goa and tranquil island villages: Day 1"
+    },
+    {
+      "id": "fact_28",
+      "query": "Best places to explore in South Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa features over 100 kilometers of coastline divided into North and South Goa. In North Goa, top be"
+    },
+    {
+      "id": "fact_29",
+      "query": "What can I do near Panjim?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Panjim (Panaji) is the state capital of Goa, located on the banks of the Mandovi River."
+    },
+    {
+      "id": "fact_30",
+      "query": "Plan my Goa trip for 1, 3, or 5 days.",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Goa trip itineraries based on trip duration: 1. 1-Day Express Itinerary: Morning in Old Goa visiting"
+    },
+    {
+      "id": "fact_31",
+      "query": "How to get around and transport in Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "Getting around Goa is convenient through several transport options: 1. Rental Scooters and Motorcycl"
+    },
+    {
+      "id": "fact_32",
+      "query": "गोवा राज्याची राजधानी कोणती?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "गोवा राज्याची राजधानी पणजी (Panaji) ही आसा, जी मांडवी न्हंयेच्या देगेर वसलेली आसा."
+    },
+    {
+      "id": "fact_33",
+      "query": "What are the main beaches in North Goa?",
+      "status": "answered",
+      "confidence": "HIGH",
+      "grounded": true,
+      "refusal_reason": null,
+      "context_sufficient": true,
+      "answer_snippet": "The main beaches in North Goa include: 1. Calangute and Baga Beaches: Known as the busiest beaches w"
+    }
+  ],
+  "refused": []
+}
