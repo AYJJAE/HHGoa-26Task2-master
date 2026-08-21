@@ -56,7 +56,7 @@ export default function AnswerCard({ data, onEditQuery }: AnswerCardProps) {
       hi: "Hindi",
       "hi-in": "Hindi",
       mr: "Marathi",
-      "mr-in": "Marathi"
+      "mr-in": "Marathi",
       "code-mixed": "Code-mixed",
     };
     return map[code.toLowerCase()] || code.toUpperCase();
