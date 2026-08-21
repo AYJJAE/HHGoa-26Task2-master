@@ -1,103 +1,203 @@
 # HH Goa 2026 — Task 2: Multilingual Voice-Enabled RAG
 
-A production-grade, voice-first Retrieval-Augmented Generation (RAG) system built for **Hacker House Goa 2026**. Features hybrid dense-sparse vector search, calibrated soft-gating relevance verification, grounded multi-turn response generation, and sub-second primary/fallback Speech-to-Text streaming.
+A production-grade, voice-first Retrieval-Augmented Generation (RAG) system built for **Hacker House Goa 2026 (Task 2)** by **Team Horizon Labs**. Features hybrid dense-sparse retrieval, calibrated relevance gating, grounded multi-turn response generation, and sub-second primary/fallback Speech-to-Text streaming.
 
 ---
 
-## System Architecture
+## Key Features
 
+- 🎙️ **Voice-Enabled Multilingual RAG:** Real-time microphone audio capture with acoustic script & morpheme classification (English, Hindi, Marathi).
+- ⚡ **Dual-Tier STT Streaming:** Primary ElevenLabs Scribe v2 streaming with instant automatic fallback to Sarvam AI Saaras v3.
+- 🔍 **Hybrid Dense + Sparse Search:** Dense BGE-M3 semantic embeddings combined with Sparse BM25 lexical search fused via Reciprocal Rank Fusion (RRF).
+- 🧩 **Multi-Strategy Chunking:** Sentence-level, paragraph, fixed-token, and semantic boundary chunking tailored to Indic and English corpora.
+- 🛡️ **Grounded Hallucination Guardrails:** Two-stage calibrated verification (Pre-generation Soft Gating + Post-generation Semantic Verification).
+- 🚫 **Reliable Refusal Policy:** Immediately refuses unanswerable, out-of-domain, or speculative queries without fabricating facts.
+- 📊 **Real Latency Percentiles:** Complete instrumentation capturing real P50, P70, and P100 metrics across embedding, search, generation, and total end-to-end stages.
+- 🧪 **Official Evaluation Suite:** Ready for `rag-local-eval-loop` with decoupled retrieval candidate inspection and standardized HTTP adapters.
+
+---
+
+## Architecture
+
+### Voice Query Pipeline
 ```
-User Query (Voice / Text)
+User Audio (Microphone)
        │
-       ├──► Voice Pipeline (ElevenLabs Primary STT / Sarvam Fallback)
-       │
-       ▼
-Query Router & Language Classifier (Indic Morpheme & Script Detection: EN, HI, MR)
+       ├──► ElevenLabs Primary STT (Fallback: Sarvam AI Saaras v3)
        │
        ▼
-Hybrid Search Pipeline (BGE-M3 Dense Embedding + Qdrant Sparse BM25 + Reciprocal Rank Fusion)
+Query Router & Intent Classifier (Language, Intent, Complexity)
        │
        ▼
-Context Gating & Relevance Scoring (Calibrated Multi-Signal Attribute Alignment)
+Hybrid Search (Dense FAISS Vector Search + Sparse BM25 Index)
        │
        ▼
-Answer Generation (Grounded Gemini 2.5 Flash with Dynamic Language Alignment)
+Reciprocal Rank Fusion (RRF Score Aggregation)
        │
        ▼
-Grounding & Semantic Verification (Strict Factual Verification & Hallucination Prevention)
+Context Gating & Relevance Scoring (Attribute Alignment & Conflict Detection)
        │
        ▼
-Structured Output (Answer, Sources, Confidence, Latency Percentiles: P50/P70/P100)
+Grounded Generation (Gemini 2.5 Flash with Enforced Target Language Parity)
+       │
+       ▼
+Semantic Verifier & Grounding Gate (Hallucination Prevention)
+       │
+       ▼
+Grounded Response (Answer, Sources, Confidence, Latency Percentiles: P50/P70/P100)
+```
+
+### Text Query Pipeline
+```
+Text Query ──► Query Router ──► Hybrid Search ──► Context Gate ──► Generation ──► Grounding ──► Answer
 ```
 
 ---
 
-## API Endpoints
+## Project Structure
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Lightweight service health verification |
-| `GET` | `/health/ready` | Readiness check (validates FAISS & Sparse vector counts) |
-| `POST` | `/api/retrieve` | Isolated hybrid retrieval candidate extraction |
-| `POST` | `/api/ask` | Full text RAG pipeline with grounding verification |
-| `POST` | `/api/voice_ask` | End-to-end voice-in / grounded answer response |
-| `POST` | `/api/transcribe` | Dedicated low-latency STT endpoint |
+```text
+├── backend/
+│   ├── api/                    # FastAPI routes (/api/ask, /api/retrieve, /api/voice_ask, STT)
+│   ├── app/                    # Configuration, retriever wrappers, and latency benchmarks
+│   ├── benchmark/              # Calibration, chunking, and correctness test suites
+│   ├── data/                   # MSMARCO-XI dataset and schema definitions
+│   ├── pipeline/               # Core RAG: embeddings, FAISS vector store, routing, generation, grounding
+│   ├── tests/                  # Pytest unit, integration, STT, and CORS test suites
+│   ├── Dockerfile              # Container definition for Railway/Cloud deployments
+│   └── requirements.txt        # Python dependencies
+│
+├── frontend/
+│   ├── public/                 # Static assets, logos, and fonts
+│   ├── src/
+│   │   └── app/
+│   │       ├── components/     # UI components (AnswerCard, TelemetryPanel, VoiceRecorder, etc.)
+│   │       ├── goa-assistant/  # Goa Companion island exploration page
+│   │       ├── rag/            # Main Multilingual Voice RAG workspace
+│   │       └── page.tsx        # Landing page
+│   ├── package.json            # Next.js dependencies
+│   └── next.config.ts          # Turbopack & asset configuration
+│
+├── eval/
+│   ├── target_config.json      # Official rag-local-eval-loop HTTP target configuration
+│   ├── http_target.py          # HTTP adapter for the live service
+│   ├── smoke_test.py           # 3 answerable + 3 unanswerable query smoke test
+│   └── run_eval.py             # 50+50 query local evaluation harness
+│
+├── .env.example                # Clean environment variables template
+├── .gitignore                  # Git repository exclusion rules
+├── docker-compose.yml          # Local multi-service orchestration
+└── README.md                   # Project documentation
+```
 
 ---
 
-## Local Evaluation
+## Local Setup
 
-To evaluate this repository against the official **`rag-local-eval-loop`** evaluation harness:
+### 1. Backend Setup
 
-### 1. Start backend
 ```bash
 cd backend
+
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables
+cp .env.example .env
+# Fill in your API keys in backend/.env
+
+# Run FastAPI server
 python -m uvicorn api.main:app --host 127.0.0.1 --port 8080
 ```
 
-### 2. Ensure `/api/ask` is reachable
+### 2. Frontend Setup
+
 ```bash
-curl -X POST http://127.0.0.1:8080/api/ask \
-  -H "Content-Type: application/json" \
-  -d "{\"query\": \"What is the capital of India?\"}"
+cd frontend
+
+# Install Node packages
+npm install
+
+# Run Next.js development server
+npm run dev
 ```
 
-### 3. Ensure `/api/retrieve` is reachable
-```bash
-curl -X POST http://127.0.0.1:8080/api/retrieve \
-  -H "Content-Type: application/json" \
-  -d "{\"query\": \"What is the capital of India?\", \"top_k\": 5}"
-```
-
-### 4. Configure the evaluator's HTTP target
-Use the provided target configuration file at [`eval/target_config.json`](eval/target_config.json) or point your HTTP runner to `http://127.0.0.1:8080`.
-
-### 5. Set the evaluator's own API keys (local environment only)
-```bash
-export GEMINI_API_KEY="your-gemini-api-key"
-# or if using external evaluators:
-export OPENAI_API_KEY="your-evaluator-key"
-```
-
-### 6. Run smoke test (3 answerable + 3 unanswerable queries)
-```bash
-python eval/smoke_test.py
-```
-
-### 7. Run full evaluation (50 answerable + 50 unanswerable queries)
-```bash
-python eval/run_eval.py http://127.0.0.1:8080 50 50
-```
-
-The evaluator will calculate and report the 5 official dimensions:
-- **Retrieval**: Recall@1, Recall@3, Recall@5, MRR
-- **Faithfulness**: Hallucination rate against retrieved context
-- **Correctness**: Semantic accuracy against gold MSMARCO-XI references
-- **Reliability**: Unanswerable refusal rate and fabrication rate
-- **Latency**: P50, P70, P100 from real requests
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## Security & Secrets
-- Never commit `.env` files or API keys.
-- All evaluation credentials and benchmark artifacts remain strictly local.
+## Environment Variables
+
+Only configure variable names; never commit actual secrets to version control.
+
+| Variable | Description | Default / Example |
+|---|---|---|
+| `GEMINI_API_KEY` | Google Gemini LLM API Key | Required |
+| `GEMINI_MODEL` | Target Gemini Generation Model | `gemini-2.5-flash` |
+| `ELEVENLABS_API_KEY` | ElevenLabs STT API Key | Required |
+| `ELEVENLABS_STT_MODEL` | ElevenLabs Scribe Model | `scribe_v2` |
+| `SARVAM_API_KEY` | Sarvam AI Fallback STT API Key | Required |
+| `SARVAM_STT_MODEL` | Sarvam Saaras Model | `saaras:v3` |
+| `GROUNDING_THRESHOLD` | Minimum Grounding Confidence | `0.55` |
+| `RELEVANCE_MIN_SCORE` | Pre-generation Soft Gating Threshold | `0.35` |
+| `PORT` | Backend Port Binding | `8080` |
+| `ALLOWED_ORIGINS` | CORS Allowed Origins | `*` |
+| `NEXT_PUBLIC_API_URL` | Frontend Backend Base URL | `http://127.0.0.1:8080` |
+
+---
+
+## Running Benchmarks & Tests
+
+### 1. Correctness & Grounding Tests
+```bash
+python -m pytest backend/benchmark/test_correctness.py
+```
+
+### 2. Comprehensive Backend Test Suite
+```bash
+python -m pytest backend/tests/
+```
+
+### 3. Latency Benchmark (P50 / P70 / P100)
+```bash
+python -m app.benchmark 50
+```
+
+### 4. Frontend Production Build Check
+```bash
+cd frontend && npm run build
+```
+
+---
+
+## Official Evaluation Loop (`rag-local-eval-loop`)
+
+The service is fully configured for evaluation in HTTP service mode:
+
+1. **Start backend:** `python -m uvicorn api.main:app --host 127.0.0.1 --port 8080`
+2. **Verify readiness:** `curl http://127.0.0.1:8080/health/ready`
+3. **Run Smoke Test (3 answerable + 3 unanswerable queries):**
+   ```bash
+   python eval/smoke_test.py
+   ```
+4. **Run Full Evaluation Loop (50 answerable + 50 unanswerable queries):**
+   ```bash
+   python eval/run_eval.py http://127.0.0.1:8080 50 50
+   ```
+
+---
+
+## Deployment
+
+- **Frontend:** Deployed on **Vercel** (`Next.js 16.3 Turbopack`).
+- **Backend:** Deployed on **Railway** with resident FAISS vector indexing and heavy asset streaming.
+
+---
+
+## License
+
+This project is licensed under the terms included in [LICENSE.txt](LICENSE.txt).
