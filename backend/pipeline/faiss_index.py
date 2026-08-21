@@ -5,7 +5,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from collections import defaultdict
 
 try:
-    import faiss
+    import faiss  # type: ignore
     FAISS_AVAILABLE = True
 except ImportError:
     FAISS_AVAILABLE = False

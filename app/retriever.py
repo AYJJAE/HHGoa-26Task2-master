@@ -45,8 +45,9 @@ def _get_in_process_retriever():
             _in_process_embedder = EmbeddingPipeline()
             _in_process_store = VectorStore(collection_name="msmarco_xi", dense_dim=_in_process_embedder.dense_dim)
             if _in_process_store.client.count().count == 0:
-                from pipeline.ingestion import ingest_dataset
-                ingest_dataset(mode="mock", max_records=100, store=_in_process_store)
+                ingestion_mod = importlib.import_module("pipeline.ingestion")
+                ingest_fn = getattr(ingestion_mod, "ingest_dataset")
+                ingest_fn(mode="mock", max_records=100, store=_in_process_store)
             _in_process_retriever = RetrievalPipeline(_in_process_embedder, _in_process_store)
             _in_process_router = QueryRouter()
         except Exception as e:

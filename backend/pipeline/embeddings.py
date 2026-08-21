@@ -18,7 +18,7 @@ class EmbeddingPipeline:
         self.dense_dim = 384
         self._query_cache_size = max(0, int(os.environ.get("RAG_QUERY_EMBED_CACHE_SIZE", "256")))
         self._query_cache_ttl = float(os.environ.get("RAG_QUERY_EMBED_CACHE_TTL_SEC", "3600"))
-        self._query_cache: Dict[str, Tuple[Tuple[List[float], Dict[int, float]], float]] = OrderedDict()
+        self._query_cache: OrderedDict[str, Tuple[Tuple[List[float], Dict[int, float]], float]] = OrderedDict()
         self._cache_lock = threading.RLock()
 
     @staticmethod

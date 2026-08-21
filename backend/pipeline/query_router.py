@@ -8,7 +8,7 @@ def _get_langdetect():
     global _langdetect_fn
     if _langdetect_fn is None:
         try:
-            from langdetect import detect_langs, DetectorFactory
+            from langdetect import detect_langs, DetectorFactory  # type: ignore
             DetectorFactory.seed = 0
             def _detect_wrapper(text: str):
                 langs = detect_langs(text)
@@ -19,7 +19,7 @@ def _get_langdetect():
             print("Loaded langdetect language detector.")
         except ImportError:
             try:
-                from ftlangdetect import detect as ft_detect
+                from ftlangdetect import detect as ft_detect  # type: ignore
                 _langdetect_fn = lambda text: ft_detect(text, low_memory=True)
                 print("Loaded fasttext language detector.")
             except ImportError:
