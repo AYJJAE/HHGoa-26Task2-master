@@ -68,6 +68,33 @@ CONCEPT_CLUSTERS = {
     "technology": {
         "faiss", "similarity search", "vector", "vectors", "embedding", "embeddings", "rag",
         "retrieval augmented", "retrieval-augmented", "qdrant", "hnsw", "indexing", "cluster", "clustering"
+    },
+    "beaches": {
+        "beach", "beaches", "sea", "coast", "shore", "sand", "ocean", "anjuna", "vagator", "baga", "calangute",
+        "palolem", "agonda", "colva", "benaulim", "arambol", "morjim", "mandrem", "candolim", "बीच", "समुद्र तट", "किनारा"
+    },
+    "itinerary": {
+        "itinerary", "plan", "trip", "tour", "day 1", "day 2", "day 3", "2 day", "3 day", "5 day", "योजना", "दौरा", "ट्रिप", "प्लॅन"
+    },
+    "food": {
+        "food", "dish", "eat", "cuisine", "curry", "fish curry", "poi", "bebinca", "vindaloo", "xacuti", "feni",
+        "cafreal", "taste", "खाना", "व्यंजन", "जेवण"
+    },
+    "heritage": {
+        "church", "basilica", "cathedral", "heritage", "history", "portuguese", "monument", "fort", "aguada",
+        "chapora", "cabo de rama", "old goa", "bom jesus", "se cathedral", "चर्च", "किला", "इतिहास"
+    },
+    "culture": {
+        "carnival", "shigmo", "sao joao", "culture", "tradition", "festival", "dance", "mando", "folk",
+        "संस्कृती", "त्योहार", "उत्सव", "परंपरा"
+    },
+    "nature": {
+        "waterfall", "dudhsagar", "bird", "salim ali", "spice", "plantation", "wildlife", "sanctuary", "forest",
+        "nature", "sunset", "peaceful", "quiet", "relaxed", "family", "families", "children", "kids", "झरना", "पक्षी"
+    },
+    "transport": {
+        "transport", "scooter", "bike", "car", "taxi", "cab", "goamiles", "bus", "ferry", "train", "airport", "reach",
+        "वाहतूक", "किराया", "गाड़ी"
     }
 }
 

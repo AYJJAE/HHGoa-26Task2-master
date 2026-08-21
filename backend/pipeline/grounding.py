@@ -191,11 +191,18 @@ class GroundingValidator:
         if "height_mountain" in q_concepts and "height_mountain" not in c_concepts:
             return False, False, "Attribute mismatch: Question asks for mountain height, but context lacks elevation data."
 
-        # 4. Candidate Answer vs Question Consistency
+        # 4. Candidate Answer vs Question & Context Consistency
         if q_entities and a_entities:
             if not q_entities.intersection(a_entities):
                 return True, False, "Answer mismatch: The candidate answer refers to a different entity than asked in the question."
         
+        # Check if answer introduces entities not supported by context
+        if a_entities and c_entities:
+            unsupported_entities = a_entities - c_entities
+            # Allow common geographical nesting if context supports the region, else reject
+            if unsupported_entities and not any(e in c_entities for e in a_entities):
+                return True, False, f"Answer mismatch: The candidate answer introduces unsupported entity: {', '.join(unsupported_entities)}."
+
         if "leader" in q_concepts and "flower" in a_concepts and "leader" not in a_concepts:
             return True, False, "Answer mismatch: The candidate answer describes a flower instead of a leader."
         if "capital" in q_concepts and "leader" in a_concepts and "capital" not in a_concepts:
@@ -222,7 +229,14 @@ class GroundingValidator:
         if not q_rel or not a_ans:
             return q_rel, a_ans, False, 0.95, mismatch_reason
 
-        # 2. Token / Semantic Overlap Check
+        # 2. Unsupported Numbers Check (e.g. 50 airports, 100km when not in text)
+        ans_numbers = set(re.findall(r'\b\d+\b', answer))
+        ctx_numbers = set(re.findall(r'\b\d+\b', context_combined))
+        unsupported_nums = ans_numbers - ctx_numbers
+        if unsupported_nums:
+            return q_rel, a_ans, False, 0.35, f"Unsupported numeric claims in answer: {', '.join(unsupported_nums)}."
+
+        # 3. Token / Semantic Overlap Check
         answer_tokens = self._tokenize_words(answer)
         if not answer_tokens:
             return False, False, False, 0.0, "Answer contains no substantive tokens."
@@ -242,10 +256,10 @@ class GroundingValidator:
         shared_concepts = a_concepts.intersection(c_concepts)
 
         # Calibrated support decision:
-        if ratio >= 0.40 or (ratio >= 0.25 and bool(shared_concepts)):
+        if ratio >= 0.50 or (ratio >= 0.35 and bool(shared_concepts)):
             conf = min(0.95, max(0.65, ratio * 1.1))
             return True, True, True, conf, f"Grounded evidence match: {ratio:.0%} lexical token overlap with supported concepts."
-        elif ratio >= 0.20:
+        elif ratio >= 0.30:
             return True, True, True, 0.55, f"Moderate evidence support ({ratio:.0%} lexical overlap)."
         else:
             return True, True, False, 0.40, f"Insufficient verifiable evidence in context: only {ratio:.0%} token support."
@@ -376,7 +390,7 @@ Candidate Answer:
 """
         try:
             from google import genai
-            for model_candidate in ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-2.5-flash"]:
+            for model_candidate in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
                 try:
                     response = gemini_provider.client.models.generate_content(
                         model=model_candidate,

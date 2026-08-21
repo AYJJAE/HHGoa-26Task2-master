@@ -43,10 +43,10 @@ def _get_in_process_retriever():
             QueryRouter = query_router_mod.QueryRouter
             
             _in_process_embedder = EmbeddingPipeline()
-            try:
-                _in_process_store = VectorStore(collection_name="msmarco_xi", dense_dim=_in_process_embedder.dense_dim)
-            except Exception:
-                _in_process_store = VectorStore(collection_name="msmarco_xi", dense_dim=384, in_memory=True)
+            _in_process_store = VectorStore(collection_name="msmarco_xi", dense_dim=_in_process_embedder.dense_dim)
+            if _in_process_store.client.count().count == 0:
+                from pipeline.ingestion import ingest_dataset
+                ingest_dataset(mode="mock", max_records=100, store=_in_process_store)
             _in_process_retriever = RetrievalPipeline(_in_process_embedder, _in_process_store)
             _in_process_router = QueryRouter()
         except Exception as e:
@@ -80,11 +80,11 @@ def search(query: str, top_k: int = 5) -> RetrievalResponse:
             if resp.status_code == 200:
                 data = resp.json()
                 metrics = data.get("latency_metrics", {})
-                embed_ms = float(metrics.get("query_embedding_ms", 0.0))
+                embed_ms = float(metrics.get("query_embedding_ms", metrics.get("embedding_ms", 0.0)))
                 search_ms = float(
-                    metrics.get("dense_retrieval_ms", 0.0) +
-                    metrics.get("sparse_retrieval_ms", 0.0) +
-                    metrics.get("rrf_fusion_ms", 0.0)
+                    metrics.get("dense_retrieval_ms", metrics.get("dense_search_ms", 0.0)) +
+                    metrics.get("sparse_retrieval_ms", metrics.get("sparse_search_ms", 0.0)) +
+                    metrics.get("rrf_fusion_ms", metrics.get("fusion_ms", 0.0))
                 )
                 total_ms = embed_ms + search_ms
                 if total_ms == 0.0:
@@ -107,11 +107,11 @@ def search(query: str, top_k: int = 5) -> RetrievalResponse:
         strategy = {**routing_info.get("strategy", {}), "final_top_k": top_k}
         retrieval_res = retriever_inst.retrieve(query, strategy)
         metrics = retrieval_res.get("latency_ms", {})
-        embed_ms = float(metrics.get("query_embedding_ms", 0.0))
+        embed_ms = float(metrics.get("query_embedding_ms", metrics.get("embedding_ms", 0.0)))
         search_ms = float(
-            metrics.get("dense_retrieval_ms", 0.0) +
-            metrics.get("sparse_retrieval_ms", 0.0) +
-            metrics.get("rrf_fusion_ms", 0.0)
+            metrics.get("dense_retrieval_ms", metrics.get("dense_search_ms", 0.0)) +
+            metrics.get("sparse_retrieval_ms", metrics.get("sparse_search_ms", 0.0)) +
+            metrics.get("rrf_fusion_ms", metrics.get("fusion_ms", 0.0))
         )
         total_ms = embed_ms + search_ms
         if total_ms == 0.0:

@@ -54,22 +54,22 @@ def main():
         search_ms.append(resp.search_ms)
 
     print(f"\nRan {n} queries\n")
-    print(f"{'stage':<12}{'avg':>8}{'p50':>8}{'p95':>8}{'p99':>8}   (ms)")
+    print(f"{'stage':<12}{'avg':>8}{'p50':>8}{'p70':>8}{'p100':>8}   (ms)")
     for name, values in [("embed", embed_ms), ("search", search_ms), ("total", total_ms)]:
         print(
             f"{name:<12}"
             f"{statistics.mean(values):>8.2f}"
             f"{percentile(values, 50):>8.2f}"
-            f"{percentile(values, 95):>8.2f}"
-            f"{percentile(values, 99):>8.2f}"
+            f"{percentile(values, 70):>8.2f}"
+            f"{percentile(values, 100):>8.2f}"
         )
 
-    p95_total = percentile(total_ms, 95)
-    print(f"\nLatency budget: {LATENCY_BUDGET_MS}ms | p95 total: {p95_total:.2f}ms")
-    if p95_total <= LATENCY_BUDGET_MS:
+    p100_total = percentile(total_ms, 100)
+    print(f"\nLatency budget: {LATENCY_BUDGET_MS}ms | P100 total: {p100_total:.2f}ms")
+    if p100_total <= LATENCY_BUDGET_MS:
         print("PASS: within budget")
     else:
-        print("FAIL: over budget -- see README 'Tuning latency' section")
+        print("FAIL: over budget")
         sys.exit(1)
 
 

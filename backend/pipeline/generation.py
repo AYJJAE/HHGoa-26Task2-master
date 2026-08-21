@@ -36,7 +36,7 @@ class GeminiProvider(LLMProvider):
         self.max_context_chars = max(256, int(os.environ.get("RAG_MAX_CONTEXT_CHARS", "12000")))
         self.max_output_tokens = max(32, int(os.environ.get("RAG_MAX_OUTPUT_TOKENS", "512")))
         self.answerability_use_llm = os.environ.get("RAG_ANSWERABILITY_USE_LLM", "false").lower() == "true"
-        self.model_name = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+        self.model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
         
         if self.api_key:
             try:
@@ -84,7 +84,7 @@ Question:
 """
         try:
             from google import genai
-            for model_candidate in [self.model_name, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-2.5-flash"]:
+            for model_candidate in [self.model_name, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
                 try:
                     response = self.client.models.generate_content(
                         model=model_candidate,
@@ -139,7 +139,7 @@ Answer:"""
 
         try:
             from google import genai
-            for model_candidate in [self.model_name, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.7-flash", "gemini-2.5-flash"]:
+            for model_candidate in [self.model_name, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
                 try:
                     response = self.client.models.generate_content(
                         model=model_candidate,

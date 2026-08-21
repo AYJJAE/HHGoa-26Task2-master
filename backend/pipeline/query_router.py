@@ -205,7 +205,7 @@ class QueryRouter:
             "dense_weight": 0.5,
             "sparse_weight": 0.5,
             "preferred_chunk_strategy": "sentence", # default
-            "top_k_retrieve": 10, # hybrid retrieve candidate pool
+            "top_k_retrieve": 25, # hybrid retrieve candidate pool
             "top_k_rerank": 0     # final context size (0 = disable cross-encoder reranker)
         }
         
@@ -213,19 +213,19 @@ class QueryRouter:
             strategy["dense_weight"] = 0.6
             strategy["sparse_weight"] = 0.4 # Favor dense semantic matching for entity distinction
             strategy["preferred_chunk_strategy"] = "passage" # Needs more context for entities
+            strategy["top_k_retrieve"] = 25
             
         elif intent == "Comparative" or intent == "Multi-hop" or complexity == "Complex":
             strategy["dense_weight"] = 0.7
             strategy["sparse_weight"] = 0.3 # Favor semantic similarity for complex reasoning
-            strategy["preferred_chunk_strategy"] = "parent" # Needs full passage or Parent-Child
-            strategy["top_k_retrieve"] = 20 # Cast a wider net
+            strategy["preferred_chunk_strategy"] = "passage" # Needs full passage
+            strategy["top_k_retrieve"] = 30 # Cast a wider net
             strategy["top_k_rerank"] = 0
             
-        elif lang == "Code-mixed":
-            # Code-mixed often struggles with dense semantic models unless they are specifically trained on code-mixed
-            # So we balance or slightly favor sparse if words are phonetic
-            strategy["dense_weight"] = 0.5
-            strategy["sparse_weight"] = 0.5
+        elif lang in ("Code-mixed", "Marathi", "Konkani", "Hindi"):
+            strategy["dense_weight"] = 0.6
+            strategy["sparse_weight"] = 0.4
+            strategy["top_k_retrieve"] = 30
             
         return {
             "language": lang,
