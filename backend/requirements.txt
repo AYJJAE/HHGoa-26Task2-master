@@ -105,3 +105,4 @@ slowapi
 python-dotenv
 nltk
 langdetect
+faiss-cpu
