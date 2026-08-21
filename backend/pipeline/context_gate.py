@@ -21,7 +21,7 @@ except ImportError:
     RETRIEVAL_MIN_SCORE = 0.40
     RELEVANCE_MIN_SCORE = 0.35
 
-# Multilingual stopwords (English, Hindi, Marathi, Konkani)
+# Multilingual stopwords (English, Hindi, Marathi)
 INDIC_STOPWORDS = {
     # English
     "a", "an", "the", "is", "are", "was", "were", "what", "who", "when", "where", "which",
@@ -31,9 +31,9 @@ INDIC_STOPWORDS = {
     # Hindi
     "है", "हैं", "का", "के", "की", "को", "में", "पर", "से", "और", "या", "नहीं", "क्या",
     "कौन", "कब", "कहाँ", "कहां", "कैसे", "कितना", "कितने", "था", "थी", "थे", "होगा", "होगी", "यह", "वह",
-    # Marathi / Konkani
+    # Marathi
     "आहे", "आहेत", "चा", "ची", "चे", "च्या", "ला", "ना", "मध्ये", "वर", "आणि", "किंवा",
-    "नाही", "काय", "कोण", "केव्हा", "कुठे", "कसे", "किती", "होता", "होती", "होते", "असेल", "हे", "ते", "जाय"
+    "नाही", "काय", "कोण", "केव्हा", "कुठे", "कसे", "किती", "होता", "होती", "होते", "असेल", "हे", "ते"
 }
 
 MIN_PASSAGE_CHARS = 15

@@ -368,11 +368,24 @@ async def retrieve_only(payload: RetrieveRequest):
     strategy = {**routing_info.get("strategy", {}), "final_top_k": payload.top_k or 5}
     retrieval_res = await asyncio.to_thread(resources.retriever.retrieve, payload.query, strategy)
     total_ms = (time.perf_counter() - t0) * 1000.0
+    
+    formatted_results = []
+    for r in retrieval_res.get("results", []):
+        formatted_results.append({
+            "id": r.get("id"),
+            "text": r.get("payload", {}).get("text", ""),
+            "score": r.get("score", 0.0),
+            "dense_score": r.get("dense_score", 0.0),
+            "sparse_score": r.get("sparse_score", 0.0),
+            "metadata": r.get("payload", {}),
+            "payload": r.get("payload", {})
+        })
+        
     return {
         "query": payload.query,
-        "results": retrieval_res["results"],
-        "confidence": retrieval_res["confidence"],
-        "latency_metrics": {**retrieval_res["latency_ms"], "total_ms": total_ms}
+        "results": formatted_results,
+        "confidence": retrieval_res.get("confidence", 0.0),
+        "latency_metrics": {**retrieval_res.get("latency_ms", {}), "total_ms": total_ms}
     }
 
 @app.post("/api/ask")
@@ -649,6 +662,20 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
     retrieval_metrics = retrieval_res["latency_ms"]
     top_dense_score = retrieval_res["results"][0].get("dense_score", 0.0) if retrieval_res["results"] else 0.0
 
+    # Format Traceable Sources early so the evaluation loop can always measure retrieval recall & MRR
+    retrieved_sources = []
+    for r in retrieval_res.get("results", []):
+        retrieved_sources.append({
+            "relevance": round(float(r.get("dense_score", r.get("score", 0.0)) or 0.0), 3),
+            "score": round(float(r.get("score", 0.0) or 0.0), 4),
+            "dense_score": round(float(r.get("dense_score", 0.0) or 0.0), 4),
+            "sparse_score": round(float(r.get("sparse_score", 0.0) or 0.0), 4),
+            "language": r.get("payload", {}).get("language", "en"),
+            "strategy": r.get("payload", {}).get("chunk_strategy", "unknown"),
+            "document_id": r.get("payload", {}).get("document_id", ""),
+            "text": r.get("payload", {}).get("text", "")
+        })
+
     # 4. STAGE 2: Relevance Scoring & Soft Gating
     t0 = time.perf_counter()
     context_val = is_context_sufficient(retrieval_query, retrieval_res["results"], resources.embedder)
@@ -683,7 +710,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "confidence": "LOW",
             "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
-            "sources": [],
+            "sources": retrieved_sources,
             "routing": routing_info,
             "context_sufficient": False,
             "refusal_reason": "insufficient_context",
@@ -718,7 +745,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 6. STAGE 3: Answer Generation
     t0 = time.perf_counter()
-    candidate_answer = resources.generator.generate_answer(query, retrieval_res["results"], history=history)
+    candidate_answer = resources.generator.generate_answer(query, retrieval_res["results"], history=history, language=routing_info.get("language"))
     metrics["generation_ms"] = (time.perf_counter() - t0) * 1000
     metrics["output_estimated_tokens"] = max(1, len(candidate_answer) // 4) if candidate_answer else 0
     debug_info["generation_executed"] = True
@@ -735,7 +762,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "confidence": "LOW",
             "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
-            "sources": [],
+            "sources": retrieved_sources,
             "routing": routing_info,
             "context_sufficient": False,
             "refusal_reason": "insufficient_context_after_generation",
@@ -807,7 +834,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
             "confidence": "LOW",
             "category": category,
             "answer": "I couldn't find enough relevant information in the retrieved knowledge base to answer that question accurately.",
-            "sources": [],
+            "sources": retrieved_sources,
             "routing": routing_info,
             "context_sufficient": True,
             "refusal_reason": "grounding_verification_failed",
@@ -833,15 +860,7 @@ def process_rag_pipeline(query: str, debug: bool = False, language_hint: str = N
 
     # 9. Format Traceable Sources
     t0 = time.perf_counter()
-    sources = []
-    for r in retrieval_res["results"]:
-        sources.append({
-            "relevance": round(r.get("rerank_score", 0), 2),
-            "language": r["payload"].get("language", "en"),
-            "strategy": r["payload"].get("chunk_strategy", "unknown"),
-            "document_id": r["payload"].get("document_id", ""),
-            "text": r["payload"].get("text", "")
-        })
+    sources = retrieved_sources
     metrics["response_processing_ms"] = (time.perf_counter() - t0) * 1000
     metrics["total_e2e_ms"] = (time.perf_counter() - t_start) * 1000
 

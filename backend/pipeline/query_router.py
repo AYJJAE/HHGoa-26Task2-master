@@ -11,21 +11,18 @@ def _get_langdetect():
             from langdetect import detect_langs, DetectorFactory  # type: ignore
             DetectorFactory.seed = 0
             def _detect_wrapper(text: str):
-                langs = detect_langs(text)
-                if langs:
-                    return {"lang": langs[0].lang, "score": langs[0].prob}
+                try:
+                    langs = detect_langs(text)
+                    if langs:
+                        return {"lang": langs[0].lang, "score": langs[0].prob}
+                except:
+                    pass
                 return {"lang": "hi", "score": 0.0}
             _langdetect_fn = _detect_wrapper
             print("Loaded langdetect language detector.")
         except ImportError:
-            try:
-                from ftlangdetect import detect as ft_detect  # type: ignore
-                _langdetect_fn = lambda text: ft_detect(text, low_memory=True)
-                print("Loaded fasttext language detector.")
-            except ImportError:
-                print("WARNING: Neither langdetect nor ftlangdetect installed. Falling back to regex-based language detection.")
-                print("         Install with: pip install langdetect")
-                _langdetect_fn = None
+            print("WARNING: langdetect not installed. Falling back to regex-based language detection.")
+            _langdetect_fn = None
     return _langdetect_fn
 
 
@@ -193,7 +190,7 @@ class QueryRouter:
         """
         # Speech-to-text already performs acoustic language identification. Preserve
         # that signal instead of reclassifying a code-switched transcript by script.
-        language_names = {"en-IN": "English", "hi-IN": "Hindi", "mr-IN": "Marathi", "kok-IN": "Konkani"}
+        language_names = {"en-IN": "English", "hi-IN": "Hindi", "mr-IN": "Marathi"}
         lang = language_names.get(language_hint) if language_hint else None
         if not lang:
             lang = self.detect_language(query)
@@ -222,7 +219,7 @@ class QueryRouter:
             strategy["top_k_retrieve"] = 30 # Cast a wider net
             strategy["top_k_rerank"] = 0
             
-        elif lang in ("Code-mixed", "Marathi", "Konkani", "Hindi"):
+        elif lang in ("Code-mixed", "Marathi", "Hindi"):
             strategy["dense_weight"] = 0.6
             strategy["sparse_weight"] = 0.4
             strategy["top_k_retrieve"] = 30

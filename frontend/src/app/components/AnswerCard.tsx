@@ -56,9 +56,7 @@ export default function AnswerCard({ data, onEditQuery }: AnswerCardProps) {
       hi: "Hindi",
       "hi-in": "Hindi",
       mr: "Marathi",
-      "mr-in": "Marathi",
-      kok: "Konkani",
-      "kok-in": "Konkani",
+      "mr-in": "Marathi"
       "code-mixed": "Code-mixed",
     };
     return map[code.toLowerCase()] || code.toUpperCase();
@@ -116,7 +114,7 @@ export default function AnswerCard({ data, onEditQuery }: AnswerCardProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "100%", maxWidth: "820px", margin: "0 auto" }}>
-      
+
       {/* 1. "YOU SAID" Card (Goa Night Map Node Card) */}
       <div
         className="glass-panel"

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-08-21T20:09:05Z",
+  "target_url": "http://127.0.0.1:8080",
+  "sample_counts": {
+    "answerable": 34,
+    "unanswerable": 34,
+    "total": 68
+  },
+  "metrics": {
+    "retrieval": {
+      "recall@1": 0.8529,
+      "recall@3": 0.9706,
+      "recall@5": 1.0,
+      "mrr": 0.9127
+    },
+    "faithfulness": {
+      "hallucination_rate": 0.0,
+      "grounded_rate": 1.0
+    },
+    "correctness": {
+      "score": 0.8123
+    },
+    "reliability": {
+      "unanswerable_refusal_rate": 0.9118,
+      "fabrication_rate": 0.0882
+    },
+    "latency": {
+      "embedding": {
+        "p50": 0.01,
+        "p70": 0.01,
+        "p100": 0.01
+      },
+      "search": {
+        "p50": 5.43,
+        "p70": 18.99,
+        "p100": 40.5
+      },
+      "generation": {
+        "p50": 651.23,
+        "p70": 865.83,
+        "p100": 984.6
+      },
+      "total_e2e": {
+        "p50": 1101.61,
+        "p70": 1156.21,
+        "p100": 1748.6
+      }
+    }
+  }
+}

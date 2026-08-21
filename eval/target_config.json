@@ -1,0 +1,39 @@
+{
+  "target_name": "hh-goa-task2-voice-rag",
+  "mode": "http",
+  "base_url": "http://127.0.0.1:8080",
+  "endpoints": {
+    "health": "/health",
+    "ready": "/health/ready",
+    "ask": "/api/ask",
+    "retrieve": "/api/retrieve"
+  },
+  "request_schema": {
+    "ask": {
+      "method": "POST",
+      "body": {
+        "query": "{query}"
+      }
+    },
+    "retrieve": {
+      "method": "POST",
+      "body": {
+        "query": "{query}",
+        "top_k": "{top_k}"
+      }
+    }
+  },
+  "response_mapping": {
+    "answer": "answer",
+    "refused": "refused",
+    "grounded": "grounded",
+    "confidence": "confidence",
+    "sources": "sources",
+    "retrieval_passages": "sources",
+    "latency_metrics": "latency_metrics"
+  },
+  "benchmarking": {
+    "metrics": ["recall@1", "recall@3", "recall@5", "mrr", "faithfulness", "correctness", "reliability", "latency"],
+    "latency_percentiles": ["p50", "p70", "p100"]
+  }
+}

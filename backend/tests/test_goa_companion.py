@@ -115,7 +115,7 @@ def test_goa_multilingual_queries():
     assert res_hi["grounded"] is True
     assert len(res_hi["sources"]) > 0
 
-    # Marathi / Konkani
+    # Marathi
     res_mr = process_rag_pipeline("गोवा राज्याची राजधानी कोणती?")
     assert res_mr["status"] == "answered"
     assert res_mr["grounded"] is True

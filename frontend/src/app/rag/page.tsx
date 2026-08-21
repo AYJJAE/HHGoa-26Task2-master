@@ -450,7 +450,7 @@ export default function RAGPage() {
           </h1>
 
           <p style={{ fontSize: "1.05rem", color: "var(--text-secondary)", maxWidth: "580px", margin: "0 auto", lineHeight: 1.6 }}>
-            Speak your question in English, Hindi, Marathi, or Konkani. Retrieve accurate knowledge with calibrated ground truth verification.
+            Speak your question in English, Hindi, or Marathi. Retrieve accurate knowledge with calibrated ground truth verification.
           </p>
         </section>
 
@@ -612,7 +612,7 @@ export default function RAGPage() {
             style={{ objectFit: "contain", opacity: 0.8 }}
           />
         </div>
-        <p>Built with ⚡ by Horizon Labs • Hacker House Goa 2026 • Vagator Node [15.60° N, 73.74° E]</p>
+        <p>built with love by Horizon labs</p>
       </footer>
     </div>
   );

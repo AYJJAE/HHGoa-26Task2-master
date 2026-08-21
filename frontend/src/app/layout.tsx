@@ -4,8 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "HH Goa 2026 — Multilingual Voice-Enabled RAG",
-  description: "Voice-enabled multilingual Retrieval-Augmented Generation system supporting English, Hindi, Marathi, and Konkani. Powered by ElevenLabs primary STT, Sarvam fallback, BGE-M3 hybrid search, and Gemini LLM.",
-  keywords: ["RAG", "multilingual", "voice", "Hindi", "Marathi", "Konkani", "ElevenLabs", "Sarvam", "BGE-M3", "HH Goa"],
+  description: "Voice-enabled multilingual Retrieval-Augmented Generation system supporting English, Hindi, and Marathi. Powered by ElevenLabs primary STT, Sarvam fallback, BGE-M3 hybrid search, and Gemini LLM.",
+  keywords: ["RAG", "multilingual", "voice", "Hindi", "Marathi", "ElevenLabs", "Sarvam", "BGE-M3", "HH Goa"],
 };
 
 export default function RootLayout({

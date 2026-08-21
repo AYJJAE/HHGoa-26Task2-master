@@ -101,13 +101,13 @@ Question:
         except Exception as e:
             return {"answerable": False, "confidence": 0.0, "reason": f"Error: {e}"}
         
-    def generate(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None) -> str:
+    def generate(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None, language: str = None) -> str:
         if self.model and self.client:
-            return self._generate_with_gemini(query, context, history=history)
+            return self._generate_with_gemini(query, context, history=history, language=language)
         else:
             return self._extractive_answer(query, context)
     
-    def _generate_with_gemini(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None) -> str:
+    def _generate_with_gemini(self, query: str, context: List[str], history: Optional[List[Dict[str, str]]] = None, language: str = None) -> str:
         """Call real Gemini API for grounded answer generation with multi-model fallback."""
         context_block = "\n---\n".join(context)[:self.max_context_chars]
         
@@ -120,6 +120,10 @@ Question:
             if recent_turns:
                 history_block = "Previous Conversation History:\n" + "\n".join(recent_turns) + "\n\n"
 
+        lang_instruction = ""
+        if language and language != "English":
+            lang_instruction = f"\n6. You MUST answer the user in {language}, translating the factual information from the context appropriately."
+
         prompt = f"""You are a strictly grounded RAG answer generator.
 
 CRITICAL RULES:
@@ -128,7 +132,7 @@ CRITICAL RULES:
 3. If the Context does not contain the factual answer to the Question, or if the Question asks about future/hypothetical/speculative events not explicitly documented in the context (e.g. year 2050, alien visits, Mars colonies), you MUST respond with EXACTLY:
 INSUFFICIENT_CONTEXT
 4. Do NOT attempt to answer from general knowledge. Do NOT provide speculative explanations if the direct answer is missing.
-5. You MUST answer in the EXACT SAME LANGUAGE as the user's Question. (e.g., Hindi for Hindi, Marathi for Marathi, Konkani for Konkani).
+5. You MUST answer in the EXACT SAME LANGUAGE as the user's Question. (e.g., Hindi for Hindi, Marathi for Marathi).{lang_instruction}
 
 Context:
 {context_block}
@@ -212,7 +216,7 @@ class GenerationPipeline:
         context = self._extract_texts(context_results)
         return self.provider.check_answerability(query, context)
 
-    def generate_answer(self, query: str, context_results: List[Any], history: Optional[List[Dict[str, str]]] = None) -> str:
+    def generate_answer(self, query: str, context_results: List[Any], history: Optional[List[Dict[str, str]]] = None, language: str = None) -> str:
         context = self._extract_texts(context_results)
-        return self.provider.generate(query, context, history=history)
+        return self.provider.generate(query, context, history=history, language=language)
 

@@ -568,7 +568,7 @@ export default function GoaAssistantPage() {
           </h1>
 
           <p style={{ fontSize: "1.05rem", color: "var(--text-secondary)", maxWidth: "620px", margin: "0 auto", lineHeight: 1.6 }}>
-            Ask anything about beaches, customized 1–5 day itineraries, local Goan cuisine, Old Goa heritage, sunsets, and transport in English, Hindi, Marathi, or Konkani.
+            Ask anything about beaches, customized 1–5 day itineraries, local Goan cuisine, Old Goa heritage, sunsets, and transport in English, Hindi, or Marathi.
           </p>
         </section>
 
@@ -855,7 +855,7 @@ export default function GoaAssistantPage() {
             style={{ objectFit: "contain", opacity: 0.8 }}
           />
         </div>
-        <p>© 2026 Hacker House Goa • Goa Companion • Built with ⚡ in Vagator [15.60° N, 73.74° E]</p>
+        <p>built with love by Horizon labs</p>
       </footer>
     </div>
   );

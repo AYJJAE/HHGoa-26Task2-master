@@ -14,9 +14,7 @@ LANGUAGE_HINTS = {
     "auto": "unknown", "unknown": "unknown",
     "en": "en-IN", "en-in": "en-IN", "english": "en-IN",
     "hi": "hi-IN", "hi-in": "hi-IN", "hindi": "hi-IN",
-    "mr": "mr-IN", "mr-in": "mr-IN", "marathi": "mr-IN",
-    "kok": "kok-IN", "kok-in": "kok-IN", "konkani": "kok-IN",
-}
+    "mr": "mr-IN", "mr-in": "mr-IN", "marathi": "mr-IN",}
 ALLOWED_CONTENT_TYPES = {
     "audio/wav", "audio/x-wav", "audio/mpeg", "audio/mp3", "audio/aac",
     "audio/ogg", "audio/opus", "audio/flac", "audio/webm", "audio/mp4",
