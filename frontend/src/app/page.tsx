@@ -106,7 +106,7 @@ export default function HomePage() {
           >
             <Link href="/rag" className="destination-card card-rag">
               <div className="card-top-tag">
-                <span className="card-badge rag-badge">LIVE PRODUCTION</span>
+                <span className="card-badge rag-badge">NOW LIVE</span>
                 <span className="card-lang-tag">HI • MR • EN</span>
               </div>
 
@@ -145,7 +145,7 @@ export default function HomePage() {
           >
             <Link href="/goa-assistant" className="destination-card card-assistant">
               <div className="card-top-tag">
-                <span className="card-badge assistant-badge">COMING NEXT</span>
+                <span className="card-badge assistant-badge">NOW LIVE</span>
                 <span className="card-lang-tag">ISLAND COMPANION</span>
               </div>
 
@@ -172,7 +172,7 @@ export default function HomePage() {
         {/* Footer info */}
         <footer className="home-footer">
           <p>
-            Hacker House Goa 2026 • Powered by Hybrid BGE-M3 Retrieval, Gemini LLM & Sarvam STT
+            BUILT BY TEAM HORIZON LABS
           </p>
         </footer>
       </div>
